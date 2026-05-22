@@ -1,0 +1,1 @@
+print ("AutoWashPro xin chào!")
