@@ -1,4 +1,7 @@
 ## Core latex/pdflatex auxiliary files:
+venv/
+__pycache__/
+.env
 *.aux
 *.lof
 *.log
@@ -11,6 +14,7 @@
 *.cb
 *.cb2
 .*.lb
+
 
 ## Intermediate documents:
 *.dvi
