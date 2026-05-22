@@ -115,26 +115,6 @@ git push origin main
 
 ---
 
-# Important Notes
-
-- Do NOT upload `.venv/` folder to GitHub.
-- Do NOT upload `.env` file.
-- Always include Jira task ID (`KAN-xx`) in commit messages.
-- Always pull latest code before coding to avoid conflicts.
-
----
-
-# .gitignore Configuration
-
-Make sure `.gitignore` contains:
-
-```text
-.venv/
-__pycache__/
-.env
-```
-
----
 
 # Project Structure
 
