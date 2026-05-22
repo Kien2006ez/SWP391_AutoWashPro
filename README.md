@@ -1,46 +1,179 @@
 # SWP391_AutoWashPro
+
 Automated Car Wash Management System - SWP391 Project.
 
+---
 
-## Installation Guide
+# Team Setup Guide
 
-### Prerequisites
-- Python 3.8 or higher
-- jupyter
+This guide helps team members clone, setup, and run the project correctly on their computers.
 
-### Step 1: Clone the Repository
+---
+
+# 1. Clone the Repository
+
+Open VSCode terminal or command prompt and run:
+
 ```bash
 git clone https://github.com/Kien2006ez/SWP391_AutoWashPro.git
-cd AutoWashPro
+cd SWP391_AutoWashPro
 ```
 
-### Step 2: Create Virtual Environment
+---
+
+# 2. Create Virtual Environment
+
+Create a Python virtual environment:
+
 ```bash
-# Create virtual environment
 python -m venv .venv
 ```
 
-# Activate virtual environment
-### On Windows:
-#### PowerShell
-```bash
+---
+
+# 3. Activate Virtual Environment
+
+## On Windows
+
+### CMD
+
+```cmd
 .venv\Scripts\activate.bat
 ```
-#### Terminal
-``` terminal
-.venv\Scripts\activate
+
+### PowerShell
+
+```powershell
+.venv\Scripts\Activate.ps1
 ```
 
-### On macOS/Linux:
+---
+
+## On macOS/Linux
+
 ```bash
 source .venv/bin/activate
 ```
 
-### Step 3: Install Dependencies
+---
+
+# 4. Install Required Libraries
+
+Install all required dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
 
-## Using Guide
+---
 
+# 5. Run the Project
 
+```bash
+python main.py
+```
+
+---
+
+# Git Workflow
+
+## Before Coding
+
+Always pull the latest code before starting:
+
+```bash
+git pull origin main
+```
+
+---
+
+## After Coding
+
+### Add changes
+
+```bash
+git add .
+```
+
+### Commit changes
+
+```bash
+git commit -m "KAN-xx: update feature"
+```
+
+Example:
+
+```bash
+git commit -m "KAN-11: implement login feature"
+```
+
+### Push code to GitHub
+
+```bash
+git push origin main
+```
+
+---
+
+# Important Notes
+
+- Do NOT upload `.venv/` folder to GitHub.
+- Do NOT upload `.env` file.
+- Always include Jira task ID (`KAN-xx`) in commit messages.
+- Always pull latest code before coding to avoid conflicts.
+
+---
+
+# .gitignore Configuration
+
+Make sure `.gitignore` contains:
+
+```text
+.venv/
+__pycache__/
+.env
+```
+
+---
+
+# Project Structure
+
+```text
+SWP391_AutoWashPro/
+│
+├── main.py
+├── requirements.txt
+├── README.md
+├── .gitignore
+├── src/
+├── assets/
+└── .venv/
+```
+
+---
+
+# Technologies Used
+
+- Python
+- Flask
+- MySQL
+- GitHub
+- Jira
+
+---
+
+# Team Workflow
+
+Jira Task
+↓
+Create Branch
+↓
+Code Feature
+↓
+Commit with KAN-xx
+↓
+Push to GitHub
+↓
+Review
+↓
+Done
