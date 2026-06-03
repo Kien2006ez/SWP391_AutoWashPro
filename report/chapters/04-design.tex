@@ -1,2 +1,36 @@
 \chapter{Thiết Kế Kiến Trúc Hệ Thống}
 \input{sections/erd}
+\chapter{Thiết Kế Hệ Thống}
+
+\section{Kiến trúc và Cấu trúc thư mục mã nguồn}
+Để đảm bảo tính mô-đun, dễ bảo trì và phát triển mở rộng, hệ thống AutoWashPro được tổ chức cấu trúc thư mục mã nguồn theo mô hình chuẩn của ứng dụng Flask như sau:
+
+\begin{verbatim}
+SWP391_AutoWashPro/
+│
+├── database/                # Nơi lưu trữ các file kịch bản SQL khởi tạo cơ sở dữ liệu
+│   └── autowashpro.sql      
+│
+├── app/                     # Thư mục mã nguồn chính của ứng dụng
+│   ├── __init__.py          # Khởi tạo cấu hình và các thành phần dùng chung
+│   │
+│   ├── routes/              # Xử lý các chức năng phía người dùng (Khách hàng)
+│   │   ├── index.py         # Trang chủ hiển thị thông tin cửa hàng
+│   │   ├── auth.py          # Chức năng Đăng nhập, Đăng ký, Đăng xuất (KAN-11)
+│   │   └── booking.py       # Chức năng Đặt lịch rửa xe và thanh toán (KAN-12, KAN-23)
+│   │
+│   ├── admin/               # Phân hệ quản trị dành cho chủ cửa hàng/nhân viên
+│   │   ├── dashboard.py     # Trang tổng quan, thống kê doanh thu và số lượng xe
+│   │   ├── services.py      # Quản lý các gói dịch vụ rửa xe và tích điểm
+│   │   └── orders.py        # Tiếp nhận và cập nhật trạng thái lịch hẹn rửa xe
+│   │
+│   ├── static/              # Quản lý các tài nguyên tĩnh (Assets)
+│   │   ├── css/             # Các file cấu hình giao diện (Giao diện chính, Admin)
+│   │   ├── js/              # Thư viện JavaScript xử lý bắt lỗi và tương tác
+│   │   └── images/          # Hình ảnh minh họa, logo hệ thống
+│   │
+│   └── templates/           # Chứa các tệp tin giao diện HTML của hệ thống
+│
+├── config.py                # Cấu hình môi trường và thông số kết nối Database (KAN-24)
+└── run.py                   # Tệp tin kích hoạt để khởi chạy toàn bộ hệ thống
+\end{verbatim}
