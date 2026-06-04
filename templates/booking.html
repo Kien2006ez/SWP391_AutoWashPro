@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt Lịch Rửa Xe - AutoWashPro</title>
+    <style>
+        /* Thiết lập nền và căn giữa biểu mẫu */
+        body { 
+            margin: 0; 
+            font-family: Arial, sans-serif; 
+            background-color: #f4f7f6; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            padding: 20px; 
+            box-sizing: border-box;
+        }
+        
+        /* Khung chứa form đặt lịch */
+        .booking-container { 
+            background-color: white; 
+            padding: 30px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+            width: 100%; 
+            max-width: 600px; 
+            border-top: 5px solid #3498db; 
+        }
+        
+        h2 { text-align: center; color: #2c3e50; margin-top: 0; margin-bottom: 25px; }
+        
+        /* Thiết lập khoảng cách các ô nhập liệu */
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: #34495e; font-weight: bold; }
+        
+        input[type="text"], input[type="tel"], input[type="date"], input[type="time"], select, textarea { 
+            width: 100%; 
+            padding: 10px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            box-sizing: border-box; 
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
+        /* Chia 2 cột cho các thông tin ngắn */
+        .row { display: flex; gap: 15px; }
+        .col { flex: 1; }
+        
+        /* Nút xác nhận */
+        button { 
+            width: 100%; 
+            padding: 12px; 
+            background-color: #3498db; 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: background-color 0.3s; 
+            margin-top: 15px;
+        }
+        button:hover { background-color: #2980b9; }
+        
+        /* Nút quay lại */
+        .back-link { 
+            display: block; 
+            text-align: center; 
+            margin-top: 15px; 
+            color: #7f8c8d; 
+            text-decoration: none; 
+            font-size: 14px;
+        }
+        .back-link:hover { color: #3498db; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <div class="booking-container">
+        <h2>📅 Đặt Lịch Rửa Xe</h2>
+        
+        <form action="/submit-booking" method="POST">
+            <div class="form-group">
+                <label for="fullname">Họ và tên khách hàng:</label>
+                <input type="text" id="fullname" name="fullname" placeholder="Nhập họ tên..." required>
+            </div>
+
+            <div class="row">
+                <div class="col form-group">
+                    <label for="phone">Số điện thoại:</label>
+                    <input type="tel" id="phone" name="phone" placeholder="Nhập SĐT liên hệ..." required>
+                </div>
+                <div class="col form-group">
+                    <label for="license_plate">Biển số xe:</label>
+                    <input type="text" id="license_plate" name="license_plate" placeholder="VD: 51H-123.45" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col form-group">
+                    <label for="vehicle_type">Loại xe:</label>
+                    <select id="vehicle_type" name="vehicle_type" required>
+                        <option value="">-- Chọn loại xe --</option>
+                        <option value="4_cho">Ô tô 4-5 chỗ</option>
+                        <option value="7_cho">Ô tô 7 chỗ / SUV</option>
+                        <option value="ban_tai">Xe bán tải</option>
+                        <option value="xe_may">Xe máy</option>
+                    </select>
+                </div>
+                <div class="col form-group">
+                    <label for="service">Gói dịch vụ:</label>
+                    <select id="service" name="service" required>
+                        <option value="">-- Chọn dịch vụ --</option>
+                        <option value="standard">Rửa xe tiêu chuẩn</option>
+                        <option value="premium">Rửa xe + Hút bụi nội thất</option>
+                        <option value="vip">Dọn nội thất chuyên sâu</option>
+                        <option value="ceramic">Rửa & Phủ Ceramic</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col form-group">
+                    <label for="booking_date">Ngày đặt:</label>
+                    <input type="date" id="booking_date" name="booking_date" required>
+                </div>
+                <div class="col form-group">
+                    <label for="booking_time">Giờ đến dự kiến:</label>
+                    <input type="time" id="booking_time" name="booking_time" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="notes">Ghi chú thêm (Không bắt buộc):</label>
+                <textarea id="notes" name="notes" rows="3" placeholder="Ví dụ: Xe có vết xước nhỏ ở cửa, cần vệ sinh kỹ cốp sau..."></textarea>
+            </div>
+
+            <button type="submit">Xác nhận đặt lịch</button>
+        </form>
+        
+        <a href="/dashboard" class="back-link">← Quay lại Bảng điều khiển</a>
+    </div>
+
+</body>
+</html>
