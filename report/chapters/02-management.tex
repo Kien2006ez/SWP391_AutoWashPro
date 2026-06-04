@@ -1,1 +1,57 @@
-\chapter{Quản Lý Dự Án Rửa Xe Thông Minh}
+\chapter{Quản Lý Dự Án}
+
+\section{Quy trình phát triển phần mềm}
+Nhóm thống nhất áp dụng quy trình phát triển phần mềm theo mô hình \textbf{Agile}, cụ thể là khung làm việc \textbf{Scrum}. Quy trình này giúp nhóm linh hoạt ứng phó với các thay đổi yêu cầu, tối ưu hóa hiệu suất làm việc của cả 7 thành viên và đảm bảo tiến độ chạy nước rút của dự án.
+
+Hệ thống quản lý công việc được trực quan hóa thông qua bảng \textbf{Kanban (Jira)}. Các nhiệm vụ (Tasks) của dự án được phân rã thành các mã định danh công việc (KAN) và được theo dõi nghiêm ngặt qua 3 trạng thái cốt lõi:
+\begin{itemize}
+    \item \textbf{To Do:} Danh sách các công việc chuẩn bị thực hiện.
+    \item \textbf{In Progress:} Các công việc đang được các thành viên triển khai.
+    \item \textbf{Done:} Các công việc đã hoàn thành, được Lead kiểm tra cấu trúc và kiểm thử thành công trước khi đóng ticket.
+\end{itemize}
+
+\subsection{Phân biệt triết lý Agile và khung làm việc Scrum trong dự án}
+Trong dự án AutoWashPro, nhóm áp dụng mối quan hệ tương hỗ giữa triết lý Agile và khung quản trị Scrum nhằm tối ưu hóa năng suất làm việc nhóm:
+\begin{itemize}
+    \item \textbf{Triết lý Agile (Agile Mindset):} Đóng vai trò là kim chỉ nam về tư duy, định hướng cho nhóm tinh thần sẵn sàng đón nhận sự thay đổi về yêu cầu chức năng từ phía Giảng viên hướng dẫn, ưu tiên việc bàn giao các module phần mềm chạy được hơn là việc hoàn thiện các tập tài liệu quá dày.
+    \item \textbf{Khung làm việc Scrum (Scrum Framework):} Đóng vai trò là công cụ triển khai cụ thể hóa tư duy Agile. Nhóm phân chia thời gian phát triển thành các phân đoạn ngắn (Sprints). Tại mỗi Sprint, nhóm thực hiện phân rã các yêu cầu thành hệ thống các thẻ công việc (Tickets) từ KAN-10 đến KAN-29 trên bảng Kanban để theo dõi sát sao chu trình phát triển sản phẩm.
+\end{itemize}
+
+\section{Cơ cấu nhân sự và Vai trò trong nhóm}
+Để dự án vận hành mượt mà, các thành viên trong nhóm được phân bổ vai trò rõ ràng dựa trên năng lực và mục tiêu học tập:
+
+\begin{enumerate}
+    \item \textbf{Lê Nguyên Kiên (Nhóm trưởng / Project Manager):} Chịu trách nhiệm điều phối chung, thiết lập cấu trúc tài liệu LaTeX, quản lý tiến độ Git và phát triển cấu trúc nền tảng API Backend.
+    \item \textbf{Thành viên 2 (NQ - Business Analyst / Documentation):} Phụ trách phân tích yêu cầu hệ thống, xây dựng các sơ đồ Use Case chi tiết.
+    \item \textbf{Thành viên 3 (LK - Database Engineer):} Phụ trách thiết kế cơ sở dữ liệu hệ thống, chuẩn hóa các bảng thuộc tính.
+    \item \textbf{Thành viên 4 (DT - Backend Developer):} Hỗ trợ thiết kế sơ đồ ERD và lập trình các API chức năng cốt lõi cùng nhóm trưởng.
+    \item \textbf{Thành viên 5 (T - Frontend Developer):} Phụ trách xây dựng giao diện người dùng (UI) cho hệ thống đặt lịch.
+    \item \textbf{Thành viên 6 (Thành viên F - Frontend Developer):} Phụ trách xây dựng giao diện Dashboard quản trị dành cho Admin.
+    \item \textbf{Thành viên 7 (Thành viên G - Tester / Quality Assurance):} Xây dựng các kịch bản kiểm thử (Test Cases), tìm và quản lý lỗi hệ thống.
+\end{enumerate}
+
+\section{Bảng phân công nhiệm vụ chi tiết (Jira Mapping)}
+Dưới đây là bảng tổng hợp phân công công việc cụ thể cho 7 thành viên dựa trên các mã thẻ KAN đã được thiết lập trên hệ thống quản lý:
+
+\begin{table}[htbp]
+\centering
+\caption{Bảng phân công nhiệm vụ thành viên theo mã KAN}
+\label{tab:jira_mapping}
+
+    \begin{spacing}{1.3}
+    \begin{tabular}{lllc}
+    \toprule
+    \textbf{STT} & \textbf{Thành viên} & \textbf{Nhiệm vụ phụ trách chính} & \textbf{Mã Ticket} \\
+    \midrule
+    1 & Lê Nguyên Kiên (Lead) & Setup khung báo cáo LaTeX, Viết Chương 1, 2 & KAN-16, KAN-20 \\
+    2 & Thành viên 2 (NQ)     & Phân tích yêu cầu chức năng, Vẽ sơ đồ Use Case & KAN-17, KAN-18 \\
+    3 & Thành viên 3 (LK)     & Thiết kế chi tiết cơ sở dữ liệu (Database) & KAN-10 \\
+    4 & Thành viên 4 (DT)     & Thiết kế sơ đồ mối quan hệ thực thể (ERD) & KAN-19 \\
+    5 & Thành viên 5 (T)      & Lập trình API chức năng đặt lịch hệ thống & KAN-12 \\
+    6 & Thành viên 6          & Xây dựng cấu trúc dự án và kết nối Flask & KAN-21, KAN-24 \\
+    7 & Thành viên 7          & Thực hiện kiểm thử và chuẩn bị Slide báo cáo & KAN-28, KAN-29 \\
+    \bottomrule
+    \end{tabular}
+    \end{spacing}
+
+\end{table}

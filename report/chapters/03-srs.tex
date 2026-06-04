@@ -1,3 +1,15 @@
 \chapter{Phân Tích Yêu Cầu Hệ Thống (SRS)}
-\input{sections/requirement}
-\input{sections/usecase}
+
+
+\section{Sơ đồ Use Case tổng quát hệ thống}
+Để làm rõ các chức năng cốt lõi cũng như ranh giới tương tác giữa các tác nhân (Actors) và hệ thống AutoWashPro, nhóm tiến hành xây dựng sơ đồ Use Case tổng quát dưới đây:
+
+\begin{figure}[htbp]
+    \centering
+    % Đảm bảo ảnh được đặt trong thư mục report/images/ và đổi tên file ảnh thành usecase_diagram.png (hoặc .jpg)
+    \includegraphics[width=0.85\textwidth]{images/usecase_diagram.png}
+    \caption{Sơ đồ Use Case tổng quát hệ thống AutoWashPro}
+    \label{fig:usecase_total}
+\end{figure}
+
+Dựa trên Sơ đồ Use Case (\ref{fig:usecase_total}), hệ thống được phân quyền rõ ràng dựa trên 03 tác nhân chính bao gồm: Khách hàng, Nhân viên và Quản trị viên. Các tương tác như đặt lịch, cập nhật trạng thái xe và xử lý thanh toán được thiết kế độc lập nhằm tối ưu hóa quy trình vận hành của cửa hàng.
