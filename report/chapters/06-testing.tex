@@ -1,11 +1,31 @@
 \chapter{Kiểm Thử Hệ Thống AutoWashPro}
+
 \section{Kịch bản kiểm thử (Test Cases)}
 
 \subsection{Kiểm thử chức năng Đăng nhập}
+
+% Kịch bản 1: Đăng nhập thành công (Của bạn)
 \begin{itemize}
     \item \textbf{Mục đích:} Kiểm tra xem người dùng có thể đăng nhập thành công với tài khoản hợp lệ không.
     \item \textbf{Dữ liệu đầu vào:} Tên đăng nhập: \textit{admin}, Mật khẩu: \textit{123456}
     \item \textbf{Kết quả mong đợi:} Hệ thống chuyển hướng vào trang Dashboard.
+    \item \textbf{Trạng thái:} Đang chờ.
+\end{itemize}
+
+% Kịch bản 2: Đăng nhập thất bại (Mình gợi ý thêm)
+\begin{itemize}
+    \item \textbf{Mục đích:} Kiểm tra phản hồi của hệ thống khi người dùng nhập sai mật khẩu.
+    \item \textbf{Dữ liệu đầu vào:} Tên đăng nhập: \textit{admin}, Mật khẩu: \textit{sai123}
+    \item \textbf{Kết quả mong đợi:} Hệ thống từ chối đăng nhập và hiển thị thông báo lỗi màu đỏ "Mật khẩu không chính xác".
+    \item \textbf{Trạng thái:} Đang chờ.
 \end{itemize}
 
 \subsection{Kiểm thử chức năng Đặt lịch (Booking)}
+
+% Kịch bản 3: Đặt lịch bỏ trống thông tin
+\begin{itemize}
+    \item \textbf{Mục đích:} Đảm bảo khách hàng không thể đặt lịch nếu thiếu các thông tin bắt buộc.
+    \item \textbf{Các bước thực hiện:} Bỏ trống ô "Biển số xe", điền đủ các ô còn lại và nhấn nút Xác nhận.
+    \item \textbf{Kết quả mong đợi:} Form không gửi đi, ô Biển số xe hiện viền đỏ cảnh báo yêu cầu nhập dữ liệu.
+    \item \textbf{Trạng thái:} Đang chờ.
+\end{itemize}
