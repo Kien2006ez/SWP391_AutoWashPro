@@ -1,15 +1,53 @@
 \chapter{Phân Tích Yêu Cầu Hệ Thống (SRS)}
 
 
-\section{Sơ đồ Use Case tổng quát hệ thống}
-Để làm rõ các chức năng cốt lõi cũng như ranh giới tương tác giữa các tác nhân (Actors) và hệ thống AutoWashPro, nhóm tiến hành xây dựng sơ đồ Use Case tổng quát dưới đây:
+\chapter{Software Requirements Specification}
 
-\begin{figure}[htbp]
-    \centering
-    % Đảm bảo ảnh được đặt trong thư mục report/images/ và đổi tên file ảnh thành usecase_diagram.png (hoặc .jpg)
-    \includegraphics[width=0.85\textwidth]{images/usecase_diagram.png}
-    \caption{Sơ đồ Use Case tổng quát hệ thống AutoWashPro}
-    \label{fig:usecase_total}
-\end{figure}
+\section{System Overview \& Constraints}
+Hệ thống vận hành trên môi trường mạng Internet, Client truy cập thông qua trình duyệt web responsive hiện đại (Chrome, Safari, Edge). Phía Back-end xử lý các luồng nghiệp vụ tập trung kết nối cơ sở dữ liệu quan hệ.
 
-Dựa trên Sơ đồ Use Case (\ref{fig:usecase_total}), hệ thống được phân quyền rõ ràng dựa trên 03 tác nhân chính bao gồm: Khách hàng, Nhân viên và Quản trị viên. Các tương tác như đặt lịch, cập nhật trạng thái xe và xử lý thanh toán được thiết kế độc lập nhằm tối ưu hóa quy trình vận hành của cửa hàng.
+Cấu trúc lõi của hệ thống dựa trên Bảng đặc quyền phân hạng thành viên (Multi-Tier Architecture Overview) được quy định nghiêm ngặt như sau:
+\begin{longtable}{|p{2.5cm}|c|c|p{2.2cm}|p{3.2cm}|}
+\hline
+\textbf{Phân hạng (Tier)} & \textbf{Chi tiêu tối thiểu} & \textbf{Hệ số điểm} & \textbf{Booking Window} & \textbf{Đặc quyền ưu tiên} \\ \hline
+\textbf{Member} & 0 VNĐ & 1.0x & Tối đa 7 ngày trước & Đặt lịch cơ bản. \\ \hline
+\textbf{Silver} & 500,000 VNĐ & 1.2x & Tối đa 10 ngày trước & Đặt lịch trước nhóm Member, giảm 5\% ngày sinh nhật. \\ \hline
+\textbf{Gold} & 1,500,000 VNĐ & 1.5x & Tối đa 12 ngày trước & Lối xếp hàng ưu tiên tại quầy, quà tặng sinh nhật đặc biệt. \\ \hline
+\textbf{Platinum} & 4,000,000 VNĐ & 2.0x & Tối đa 14 ngày trước & Đặt slot giờ cao điểm cố định, miễn phí dịch vụ đi kèm. \\ \hline
+\end{longtable}
+
+\noindent \textbf{Các ràng buộc hệ thống (System Constraints):}
+\begin{itemize}
+    \item Hệ thống không tích hợp cổng thanh toán trực tuyến. Do đó, quy trình kiểm soát trạng thái thanh toán và kích hoạt tích điểm hoàn toàn do nhân viên quầy (Admin) click xác nhận sau khi nhận tiền mặt.
+    \item Quy trình nâng hạ hạng được quét tự động vào ngày đầu tiên của mỗi tháng dựa trên tổng chi tiêu tích lũy của 3 tháng liền kề trước đó.
+\end{itemize}
+
+\section{Actors \& Use Cases}
+Hệ thống tương tác trực tiếp với hai tác nhân chính (Primary Actors):
+\begin{itemize}
+    \item \textbf{Customer (Khách hàng):} Người sở hữu phương tiện, thực hiện các hành động đăng ký, quản lý danh sách biển số xe cá nhân, tra cứu thông tin phân hạng, đặt lịch hẹn rửa xe theo khung giờ khả dụng và thực hiện đổi các mã phần thưởng.
+    \item \textbf{Admin (Chủ cơ sở / Nhân viên quầy):} Người vận hành hệ thống, thực hiện kiểm tra xe vào bãi, bấm xác nhận hoàn thành dịch vụ rửa xe, cấu hình các chương trình khuyến mãi theo hạng mục tiêu và xuất dữ liệu hành vi.
+\end{itemize}
+
+\section{Functional Requirements}
+Các chức năng bắt buộc phải được triển khai chi tiết:
+\begin{enumerate}
+    \item \textbf{Module 1 — Authentication \& Profile:} Đăng ký tài khoản bằng số điện thoại (gửi OTP giả lập), đăng nhập hệ thống, mã hóa mật khẩu bảo mật và cập nhật thông tin cá nhân ngày sinh nhật.
+    \item \textbf{Module 2 — Vehicle Management:} Khách hàng có quyền liên kết một hoặc nhiều biển số xe vào tài khoản. Biển số xe là định danh duy nhất để đối chiếu khi xe đến tiệm rửa.
+    \item \textbf{Module 3 — Booking Engine:} Cho phép chọn cơ sở, loại dịch vụ và khung giờ (Timeslot). Hệ thống phải tự động kiểm tra quy tắc Booking Window: nếu khách hàng là Member, hệ thống sẽ khóa không cho phép chọn các ngày xa hơn 7 ngày tiếp theo.
+    \item \textbf{Module 4 — Loyalty Engine:} Tự động tính toán số điểm thưởng nhận được sau mỗi đơn hàng hoàn thành (Số tiền $\times$ Hệ số điểm của hạng). Tự động chạy tác vụ ngầm quét thăng/hạ hạng định kỳ. Quản lý hạn sử dụng của từng dòng điểm (Hết hạn sau 12 tháng kể từ ngày tích lũy).
+    \item \textbf{Module 5 — Customer Portal:} Màn hình hiển thị thẻ thành viên điện tử, số dư điểm hiện tại (Wash Credits), tiến trình chi tiêu còn thiếu để thăng hạng tiếp theo và danh sách các phần thưởng có thể đổi.
+    \item \textbf{Module 6 — Admin CRM Dashboard:} Màn hình quản trị cho phép nhân viên tìm kiếm khách hàng nhanh qua số điện thoại hoặc biển số xe, theo dõi danh sách lịch hẹn trong ngày và chuyển trạng thái đơn hàng từ "Đã đặt" $\rightarrow$ "Đang rửa" $\rightarrow$ "Hoàn thành \& Tích điểm".
+    \item \textbf{Module 7 — Promotion Manager:} Cho phép tạo mã giảm giá nhắm mục tiêu chính xác theo hạng (Ví dụ: Mã \texttt{PLATINUM\_ONLY} chỉ áp dụng được cho tài khoản có hạng hiện tại là Platinum).
+    \item \textbf{Module 8 — Research Logger:} Tự động ghi lại nhật ký tất cả hành vi của người dùng vào cơ sở dữ liệu khi có bất kỳ sự thay đổi trạng thái nào liên quan đến điểm, hạng hoặc đặt lịch mà không làm ảnh hưởng đến hiệu năng trải nghiệm khách hàng.
+\end{enumerate}
+
+\section{Non-Functional Requirements}
+\begin{itemize}
+    \item \textbf{Hiệu năng (Performance):} Thời gian phản hồi của các API đọc dữ liệu phải nhỏ hơn 1 giây dưới áp lực 100 người dùng truy cập đồng thời (Concurrent Users). Giao diện tải trang đầu tiên không quá 3 giây.
+    \item \textbf{Bảo mật (Security):} Sử dụng cơ chế mã hóa mật khẩu bcrypt với cost factor $\geq$ 12. Xác thực quyền truy cập giữa Client và Server thông qua chuỗi ký số JSON Web Token (JWT) đặt trong HttpOnly Cookie để chống tấn công XSS.
+    \item \textbf{Tính tin cậy (Reliability):} Đảm bảo các tác vụ kiểm tra điểm tự động (Cron Jobs) chạy đúng giờ vào lúc 00:00 ngày đầu tháng mà không bị trùng lặp dữ liệu (Idempotency).
+\end{itemize}
+
+\section{Business Rules (Tóm tắt các quy tắc nghiệp vụ cốt lõi)}
+Hệ thống áp dụng chặt chẽ bộ quy tắc nghiệp vụ bao gồm: Quy tắc xác thực thông tin tài khoản (Identity Rules), Quy tắc giới hạn thời gian và hủy lịch hẹn (Booking Rules), Quy tắc tính toán thăng hạng và hết hạn điểm (Loyalty Rules), Quy tắc kiểm tra điều kiện áp dụng mã giảm giá (Promotion Rules), Quy tắc bảo mật phân quyền dữ liệu (Security Rules) và Quy tắc tách biệt dữ liệu định danh trong phân tích (Research Rules).

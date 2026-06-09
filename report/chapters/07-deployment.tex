@@ -1,1 +1,34 @@
 \chapter{Triển Khai Và Đánh Giá Dự Án}
+\chapter{Deployment}
+
+\section{Deliverable Package}
+Sản phẩm cuối cùng của dự án được đóng gói đầy đủ và bàn giao một cách minh bạch thông qua các liên kết lưu trữ trực tuyến dưới đây:
+\begin{itemize}
+    \item \textbf{Mã nguồn dự án (GitHub Repository):} Link dẫn tới kho lưu trữ mã nguồn chính thức của 7 thành viên.
+    \item \textbf{Phiên bản chạy thử nghiệm (Live Demo Website):} Địa chỉ trang web đã được triển khai lên máy chủ đám mây công cộng để chạy thử nghiệm các tính năng.
+    \item \textbf{Biểu mẫu khảo sát (Survey Form Link):} Liên kết công cụ Google Forms được nhóm sử dụng để thu thập dữ liệu người dùng.
+    \item \textbf{Bộ dữ liệu phân tích (Research Dataset):} Tệp lưu trữ toàn bộ dữ liệu khảo sát thực tế và nhật ký giả lập đã làm sạch phục vụ nghiên cứu khoa học.
+    \item \textbf{Tài liệu hướng dẫn API (API Docs):} Đường dẫn tra cứu tài liệu đặc tả các điểm cuối API theo chuẩn giao diện trực quan Swagger.
+\end{itemize}
+
+\section{Installation Guide}
+Để cấu hình và khởi chạy hệ thống AutoWash Pro tại môi trường máy tính cục bộ (Local Environment), hệ thống yêu cầu cấu hình nền tảng tối thiểu bao gồm môi trường thực thi Node.js phiên bản 20 trở lên (hoặc Python 3.11+ tùy thuộc cấu trúc Back-end lựa chọn), cùng hệ quản trị cơ sở dữ liệu quan hệ PostgreSQL phiên bản 15 trở lên.
+
+\noindent Quy trình các bước triển khai mã nguồn chi tiết như sau:
+\begin{enumerate}
+    \item Thực hiện tải mã nguồn từ kho lưu trữ GitHub về máy cục bộ bằng lệnh: \\
+    \texttt{git clone <github-repository-url>}
+    \item Di chuyển vào thư mục dự án và tiến hành sao chép file cấu hình môi trường: \\
+    \texttt{cp .env.example .env} (Tiến hành điền các thông số kết nối Database, cổng chạy Server và mã bí mật ký chuỗi mã hóa JWT).
+    \item Khởi tạo cài đặt toàn bộ các thư viện gói phụ thuộc bên thứ ba bắt buộc: \\
+    \texttt{npm install} (hoặc \texttt{pip install -r requirements.txt})
+    \item Chạy lệnh di cư khởi tạo cấu trúc các bảng dữ liệu quan hệ vào cơ sở dữ liệu PostgreSQL: \\
+    \texttt{npm run db:migrate}
+    \item Khởi chạy hệ thống ở chế độ phát triển để kiểm tra các tính năng giao diện: \\
+    \texttt{npm run dev}
+\end{enumerate}
+
+\section{User Manual}
+Tài liệu hướng dẫn sử dụng (User Manual) bắt buộc phải sử dụng các hình ảnh chụp màn hình giao diện thực tế (Actual Production Screenshots) được trích xuất trực tiếp từ phiên bản hệ thống đã triển khai chạy thật trên môi trường máy chủ đám mây, tuyệt đối nghiêm cấm việc sử dụng các hình ảnh phác thảo bản vẽ wireframe hoặc hình thiết kế tĩnh chưa lập trình.
+
+Tài liệu hướng dẫn bao gồm hai phần độc lập: Hướng dẫn dành cho Khách hàng (Customer Manual) hướng dẫn chi tiết qua 4 bước chụp màn hình minh họa bao gồm quy trình đăng ký tài khoản mới, lựa chọn lịch hẹn trên ô cửa sổ thời gian, kiểm tra số dư điểm tích lũy và thực hiện thao tác đổi quà thưởng; Hướng dẫn dành cho Người quản lý (Admin Manual) minh họa chi tiết màn hình Dashboard trung tâm điều phối, các bước click phê duyệt hoàn thành đơn hàng để kích hoạt tự động tích điểm, giao diện thiết lập cấu hình chương trình giảm giá mục tiêu và quy trình click nút trích xuất toàn bộ tệp nhật ký dữ liệu hành vi ra định dạng tệp CSV.
