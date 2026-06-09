@@ -6,7 +6,7 @@ import json
 # CONFIGURATION: ĐIỀN THÔNG TIN TÀI KHOẢN CỦA BẠN TẠI ĐÂY
 # ============================================================
 DOMAIN_JIRA = "ut-team-washpro"         # Đã cấu hình theo link dự án của nhóm bạn
-EMAIL_JIRA = "kienln0272@ut.edu.vngit add create_jira_tasks.py"  # <- THAY EMAIL CỦA BẠN VÀO ĐÂY
+EMAIL_JIRA = "kienln0272@ut.edu.vn"  # <- THAY EMAIL CỦA BẠN VÀO ĐÂY
 API_TOKEN = "YOUR_API_TOKEN_HERE"
 PROJECT_KEY = "KAN"                     # Mã dự án mặc định của nhóm bạn
 

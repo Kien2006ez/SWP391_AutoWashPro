@@ -1,4 +1,5 @@
 \chapter{Tổng Quan Về Dự Án Rửa Xe Thông Minh}
+
 \section{Lý do chọn đề tài}
 Trong bối cảnh công nghệ phát triển mạnh mẽ, việc tối ưu hóa dịch vụ chăm sóc xe thông qua các ứng dụng trực tuyến là xu hướng tất yếu. Dự án Hệ thống Rửa xe Thông minh (\textbf{AutoWashPro}) được phát triển nhằm giải quyết các vấn đề về thời gian chờ đợi của khách hàng và tối ưu hóa quy trình quản lý cho các trung tâm dịch vụ.
 
@@ -9,10 +10,34 @@ Hệ thống hướng tới việc cung cấp một giải pháp toàn diện ba
     \item Cung cấp bảng quản lý (Dashboard) cho quản trị viên theo dõi doanh thu, lịch hẹn và thông tin khách hàng.
 \end{itemize}
 
-\section{Phạm vi hệ thống}
-Dự án tập trung nghiên cứu, xây dựng và phát triển các khối chức năng chính bao gồm:
-\begin{enumerate}
-    \item \textbf{Khối Khách hàng (Ứng dụng/Web):} Đăng nhập, đặt lịch hẹn, chọn gói dịch vụ (rửa nhanh, rửa chi tiết, phủ nano), xem lịch sử đặt lịch và quản lý điểm thưởng.
-    \item \textbf{Khối Quản lý (Backend/Admin UI):} Điều phối lịch hẹn, quản lý danh mục dịch vụ, thống kê doanh thu và quản lý danh sách xe, khách hàng.
-\end{enumerate}
+\section{Phạm vi hệ thống và Các phân hệ chức năng (KAN)}
+Dự án tập trung nghiên cứu, xây dựng và phát triển các khối chức năng chính được quản lý theo mô hình Agile/Scrum bao gồm các phân hệ sau:
 
+\begin{enumerate}
+    \item \textbf{Phân hệ Đăng nhập \& Đăng ký (Feature 1):} 
+    \begin{itemize}
+        \item Cấu hình cơ sở dữ liệu xác thực, mã hóa mật khẩu, hệ thống gửi và xác thực mã OTP.
+        \item Giao diện và API cho các chức năng: Đăng ký tài khoản mới, Đăng nhập hệ thống, Thay đổi mật khẩu và Làm mới phiên đăng nhập (Refresh Token).
+    end{itemize}
+    
+    \item \textbf{Phân hệ Đặt lịch rửa xe \& Quản lý phương tiện (Feature 2):}
+    \begin{itemize}
+        \item Khách hàng quản lý danh sách xe cá nhân (Thêm/Sửa/Xóa thông tin xe, biển số).
+        \item Hệ thống hiển thị các gói dịch vụ trực quan (Rửa nhanh, Rửa chi tiết, Phủ Nano, Vệ sinh nội thất).
+        \item Chức năng kiểm tra slot trống theo thời gian thực và tiến hành Đặt lịch hẹn (Booking).
+    end{itemize}
+
+    \item \textbf{Phân hệ Thanh toán, Hóa đơn \& Điểm thưởng (Feature 3):}
+    \begin{itemize}
+        \item Tích hợp cổng thanh toán trực tuyến (VNPAY/Stripe/Momo) để tự động khởi tạo giao dịch an toàn.
+        \item Hệ thống tự động xuất hóa đơn điện tử (PDF Invoice) khi trạng thái đặt lịch hoàn thành.
+        \item Chức năng tích lũy điểm thưởng thành viên và áp dụng mã giảm giá (Coupon/Voucher).
+    \end{itemize}
+
+    \item \textbf{Phân hệ Quản lý \& Thống kê dành cho Admin/Staff (Feature 4):}
+    \begin{itemize}
+        \item Giao diện Dashboard hiển thị biểu đồ thống kê doanh thu theo ngày/tháng/năm.
+        \item Màn hình điều phối lịch hẹn dành cho nhân viên, cập nhật trạng thái rửa xe theo thời gian thực.
+        \item Quản lý danh mục dịch vụ (Thêm gói mới, sửa giá) và quản lý danh sách khách hàng.
+    \end{itemize}
+\end{enumerate}

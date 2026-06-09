@@ -1,16 +1,22 @@
 \documentclass[12pt,a4paper]{report}
 \usepackage[a4paper,margin=2.5cm]{geometry}
-\usepackage[pdftex]{graphicx}
+\usepackage{graphicx} % Bỏ [pdftex] để tránh xung đột driver hình ảnh
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{tipa}
 \usepackage{textcomp}
 \usepackage{fancyhdr}
 \setlength{\headheight}{18pt}
-\usepackage[utf8]{inputenc}
-\usepackage{booktabs}
-\usepackage[vietnamese]{babel}
 
+% =================================================================
+% CẤU HÌNH HIỂN THỊ TIẾNG VIỆT CHUẨN (KHÔNG LO LỖI FONT/DẤU)
+% =================================================================
+\usepackage[T1]{fontenc}        % Ép kiểu mã hóa font hiển thị dấu Tiếng Việt
+\usepackage[utf8]{inputenc}     % Đọc ký tự UTF-8 từ file nguồn
+\usepackage[vietnamese]{babel}  % Tự động dịch "Chapter 1" -> "Chương 1"
+
+\usepackage{booktabs}           % Hỗ trợ vẽ đường kẻ bảng biểu \toprule, \midrule
+\usepackage{setspace}           % Hỗ trợ căn chỉnh khoảng cách dòng (Sửa lỗi \begin{spacing} cũ)
 
 \pagestyle{plain}
 
@@ -32,7 +38,7 @@
 \input{chapters/06-testing}      % Chương 6
 \input{chapters/07-deployment}   % Chương 7
 
-
+\newpage
 \begin{thebibliography}{99}
 \bibitem{ref1} Tài liệu tham khảo dự án AutoWashPro.
 \end{thebibliography}

@@ -1,38 +1,131 @@
 \chapter{Thiết Kế Kiến Trúc Và Hệ Thống}
 
-\section{Thiết kế cơ sở dữ liệu và sơ đồ ERD}
-Nhóm tiến hành phân tích các thực thể cốt lõi và thiết lập mối quan hệ dữ liệu cho hệ thống thông qua sơ đồ ERD chi tiết được đính kèm dưới đây:
+Nhóm tiến hành phân tích hệ thống dữ liệu cốt lõi, kiến trúc mã nguồn tổng quan và giao diện người dùng dựa trên các yêu cầu chức năng của hệ thống Quản lý Rửa xe Thông minh (\textbf{AutoWashPro}). Toàn bộ quy trình thiết kế được bám sát theo tiến độ phân rã các thẻ công việc trên bảng quản trị Jira.
 
+% =================================================================
+\section{Thiết kế Cơ sở dữ liệu và Sơ đồ ERD (KAN-40)}
+Hệ thống sử dụng cơ sở dữ liệu quan hệ nhằm đảm bảo tính toàn vẹn dữ liệu, tính nhất quán trong các luồng nghiệp vụ phức tạp như xác thực tài khoản, đặt lịch hẹn và xử lý hóa đơn thanh toán.
 
-\section{Kiến trúc và Cấu trúc thư mục mã nguồn}
-Để đảm bảo tính mô-đun, dễ bảo trì và phát triển mở rộng, hệ thống AutoWashPro được tổ chức cấu trúc thư mục như sau:
+\subsection{Sơ đồ mối quan hệ thực thể (ERD Diagram)}
+Sơ đồ ERD dưới đây biểu diễn mối quan hệ logic giữa các thực thể chính trong hệ thống bao gồm người dùng (\textit{Users}), phương tiện xe (\textit{Vehicles}), lịch hẹn (\textit{Bookings}), hóa đơn (\textit{Invoices}) và danh mục dịch vụ (\textit{Services}).
+
+\begin{figure}[htbp]
+    \centering
+    % Nhóm thay thế tên file ảnh erd_diagram bằng file thực tế trong thư mục images
+    % \includegraphics[width=0.95\textwidth]{images/erd_diagram.png}
+    \caption{Sơ đồ mối quan hệ thực thể ERD - Phân hệ cốt lõi AutoWashPro}
+    \label{fig:erd_diagram}
+\end{figure}
+
+\subsection{Đặc tả cấu trúc chi tiết các bảng dữ liệu (Database Schema)}
+Dưới đây là chi tiết cấu trúc bảng thuộc tính phục vụ trực tiếp cho Phân hệ Xác thực và Đăng ký người dùng (\textbf{Feature 1}).
+
+\subsubsection{Bảng dữ liệu Người dùng (Users Table)}
+Bảng \textbf{Users} lưu trữ thông tin tài khoản của toàn bộ hệ thống bao gồm Khách hàng, Nhân viên và Quản trị viên (Admin).
+
+\begin{table}[htbp]
+\centering
+\caption{Đặc tả chi tiết thuộc tính bảng Users}
+\label{tab:users_schema}
+\small
+\begin{tabular}{llcl}
+\toprule
+\textbf{Tên Trường} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Mô Tả Chức Năng} \\
+\midrule
+id & INT (AUTO\_INCREMENT) & PK & Mã định danh duy nhất của người dùng \\
+email & VARCHAR(100) & Unique & Địa chỉ email dùng để đăng nhập hệ thống \\
+phone & VARCHAR(15) & Unique & Số điện thoại nhận mã xác thực OTP \\
+password\_hash & VARCHAR(255) & - & Mật khẩu đã được mã hóa an toàn bằng bcrypt \\
+fullname & VARCHAR(100) & - & Họ và tên đầy đủ của người dùng \\
+role & ENUM('Customer', 'Staff', 'Admin') & - & Vai trò phân quyền tương ứng trong hệ thống \\
+status & ENUM('Pending', 'Active', 'Suspended') & - & Trạng thái hoạt động của tài khoản \\
+created\_at & TIMESTAMP & - & Thời gian khởi tạo tài khoản hệ thống \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Bảng dữ liệu Xác thực OTP (OTP\_Verifications Table)}
+Bảng này lưu trữ tạm thời các mã OTP phục vụ luồng xác thực kích hoạt tài khoản an toàn với thời gian hết hạn cố định là 5 phút.
+
+\begin{table}[htbp]
+\centering
+\caption{Đặc tả chi tiết thuộc tính bảng OTP\_Verifications}
+\label{tab:otp_schema}
+\small
+\begin{tabular}{llcl}
+\toprule
+\textbf{Tên Trường} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Mô Tả Chức Năng} \\
+\midrule
+id & INT (AUTO\_INCREMENT) & PK & Mã định danh bản ghi xác thực \\
+user\_id & INT & FK & Liên kết tới bảng Users (Xác định chủ tài khoản) \\
+otp\_code & VARCHAR(6) & - & Mã số xác thực ngẫu nhiên gồm 6 ký tự \\
+expires\_at & TIMESTAMP & - & Thời điểm mã số OTP hết hiệu lực (5 phút) \\
+is\_used & BOOLEAN & - & Đánh dấu mã đã được sử dụng hay chưa \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =================================================================
+\newpage
+\section{Kiến trúc và Cấu trúc thư mục mã nguồn Backend (KAN-21, KAN-24)}
+Để đảm bảo hệ thống dễ dàng bảo trì, mở rộng và phát triển song song giữa các thành viên, cấu trúc mã nguồn Backend được phân chia theo mô hình cấu trúc phân lớp rõ ràng, quản lý chặt chẽ trên kho lưu trữ GitHub.
 
 \begin{verbatim}
 SWP391_AutoWashPro/
-│
 ├── database/                # Nơi lưu trữ các file kịch bản SQL khởi tạo cơ sở dữ liệu
-│   └── autowashpro.sql      
-│
-├── app/                     # Thư mục mã nguồn chính của ứng dụng
-│   ├── __init__.py          # Khởi tạo cấu hình và các thành phần dùng chung
-│   │
-│   ├── routes/              # Xử lý các chức năng phía người dùng (Khách hàng)
-│   │   ├── index.py         # Trang chủ hiển thị thông tin cửa hàng
-│   │   ├── auth.py          # Chức năng Đăng nhập, Đăng ký, Đăng xuất (KAN-11)
-│   │   └── booking.py       # Chức năng Đặt lịch rửa xe và thanh toán (KAN-12, KAN-23)
-│   │
-│   ├── admin/               # Phân hệ quản trị dành cho chủ cửa hàng/nhân viên
-│   │   ├── dashboard.py     # Trang tổng quan, thống kê doanh thu và số lượng xe
-│   │   ├── services.py      # Quản lý các gói dịch vụ rửa xe và tích điểm
-│   │   └── orders.py        # Tiếp nhận và cập nhật trạng thái lịch hẹn rửa xe
-│   │
-│   ├── static/              # Quản lý các tài nguyên tĩnh (Assets)
-│   │   ├── css/             # Các file cấu hình giao diện (Giao diện chính, Admin)
-│   │   ├── js/              # Thư viện JavaScript xử lý bắt lỗi và tương tác
-│   │   └── images/          # Hình ảnh minh họa, logo hệ thống
-│   │
-│   └── templates/           # Chứa các tệp tin giao diện HTML của hệ thống
-│
-├── config.py                # Cấu hình môi trường và thông số kết nối Database (KAN-24)
-└── run.py                   # Tệp tin kích hoạt để khởi chạy toàn bộ hệ thống
+│   └── autowashpro.sql      # Script tạo Schema, bảng và dữ liệu mẫu thô ban đầu
+├── app/                     # Thư mục mã nguồn chính của ứng dụng ứng dụng Flask API
+│   ├── __init__.py          # Khởi tạo cấu hình ứng dụng, định cấu hình môi trường và các gói mở rộng
+│   ├── routes/              # Xử lý các chức năng phân hệ phía người dùng (Client-side Endpoints)
+│   │   ├── index.py         # Trang chủ hiển thị thông tin và điều hướng hệ thống tổng quan
+│   │   ├── auth.py          # Chức năng Đăng nhập, Đăng ký, Xác thực OTP (KAN-41, KAN-43)
+│   │   └── booking.py       # Chức năng Đặt lịch rửa xe và xử lý thanh toán trực tuyến
+│   ├── admin/               # Phân hệ quản trị dành cho chủ cửa hàng/nhân viên điều phối
+│   │   ├── dashboard.py     # Trang tổng quan, thống kê doanh thu và quản trị số lượng xe
+│   │   ├── services.py      # Quản lý các gói dịch vụ rửa xe và thiết lập tích lũy điểm
+│   │   └── orders.py        # Tiếp nhận và cập nhật trạng thái lịch hẹn rửa xe theo thời gian thực
+│   └── static/              # Quản lý các tài nguyên tĩnh hệ thống (Assets)
+│       ├── css/             # Các file cấu hình giao diện, định dạng giao diện ứng dụng
+│       ├── js/              # Thư viện Javascript xử lý bất đồng bộ và tương tác giao diện
+│       └── images/          # Hình ảnh minh họa, biểu tượng logo thương hiệu hệ thống
+├── templates/               # Chứa các tệp tin giao diện HTML ứng dụng phía máy chủ
+├── config.py                # Cấu hình môi trường và thông số kết nối Database mật mã (KAN-24)
+├── run.py                   # Tệp tin kích hoạt khởi chạy toàn bộ hệ thống cục bộ
+├── .gitignore               # Loại bỏ các tệp không cần thiết (venv, cache) khỏi kho Git
+└── requirements.txt         # Danh sách thư viện phụ thuộc bắt buộc (Flask, PyMySQL, PyJWT)
 \end{verbatim}
+
+% =================================================================
+\newpage
+\section{Thiết kế giao diện người dùng UI/UX (KAN-45, KAN-46, KAN-47)}
+Nhóm thực hiện xây dựng wireframe chi tiết và các màn hình Mockup độ phân giải cao trên công cụ Figma nhằm đồng nhất trải nghiệm người dùng trước khi tiến hành viết mã lập trình Frontend.
+
+\subsection{Giao diện Màn hình Đăng ký tài khoản (KAN-45)}
+Màn hình cho phép người dùng mới nhập các trường thông tin bao gồm: Email, Số điện thoại và Mật khẩu. Hệ thống có cơ chế kiểm tra định dạng dữ liệu đầu vào thời gian thực để đưa ra cảnh báo trực quan cho người dùng.
+
+\begin{figure}[htbp]
+    \centering
+    % \includegraphics[width=0.45\textwidth]{images/register_screen.png}
+    \caption{Thiết kế Mockup giao diện Màn hình Đăng ký tài khoản}
+    \label{fig:register_screen}
+\end{figure}
+
+\subsection{Giao diện Màn hình Xác thực OTP (KAN-46)}
+Ngay sau khi đăng ký thành công, hệ thống chuyển sang giao diện nhập mã OTP gồm 6 ô số. Giao diện tích hợp bộ đếm ngược thời gian 5 phút và liên kết "Gửi lại mã" hỗ trợ người dùng khi không nhận được tin nhắn xác thực.
+
+\begin{figure}[htbp]
+    \centering
+    % \includegraphics[width=0.45\textwidth]{images/otp_screen.png}
+    \caption{Thiết kế Mockup giao diện Màn hình Xác thực mã OTP}
+    \label{fig:otp_screen}
+\end{figure}
+
+\subsection{Giao diện Màn hình Đăng nhập hệ thống (KAN-47)}
+Giao diện tối giản hỗ trợ khách hàng đăng nhập nhanh chóng bằng Email/Số điện thoại và Mật khẩu, cung cấp liên kết "Quên mật khẩu" và điều hướng nhanh sang màn hình Đăng ký dành cho tài khoản mới.
+
+\begin{figure}[htbp]
+    \centering
+    % \includegraphics[width=0.45\textwidth]{images/login_screen.png}
+    \caption{Thiết kế Mockup giao diện Màn hình Đăng nhập hệ thống}
+    \label{fig:login_screen}
+\end{figure}
