@@ -1,31 +1,271 @@
 \chapter{Kiểm Thử Hệ Thống AutoWashPro}
 
-\section{Kịch bản kiểm thử (Test Cases)}
+\section{Kế hoạch & Chiến lược kiểm thử}
+Quá trình kiểm thử hệ thống AutoWashPro được thực hiện theo các cấp độ: Unit Tests (kiểm thử từng module), Integration Tests (kiểm thử flow liên kết), System Tests (kiểm thử toàn bộ hệ thống) và User Acceptance Tests (kiểm thử với người dùng thực). Tất cả các test case được ghi nhận trên Jira board và được tự động hóa thông qua CI/CD pipeline.
 
-\subsection{Kiểm thử chức năng Đăng nhập}
+\section{Test Cases - Feature 1: Đăng nhập \& Đăng ký}
 
-% Kịch bản 1: Đăng nhập thành công (Của bạn)
+\subsection{Authentication Unit Tests}
+
+\begin{table}[htbp]
+\centering
+\caption{Test Cases - Feature 1 (Authentication)}
+\label{tab:test_auth}
+\small
+\begin{tabular}{|p{2cm}|p{3cm}|p{4cm}|p{3cm}|p{2.5cm}|}
+\hline
+\textbf{TC ID} & \textbf{Tính năng} & \textbf{Dữ liệu đầu vào} & \textbf{Kết quả mong đợi} & \textbf{Trạng thái} \\
+\hline
+TC-1-01 & Register - Email hợp lệ & email: valid@example.com, password: Pass123! & OTP được gửi, status=Pending & Chờ \\
+\hline
+TC-1-02 & Register - Email không hợp lệ & email: invalid-email, password: Pass123! & Lỗi "Email không hợp lệ" & Chờ \\
+\hline
+TC-1-03 & Register - Password yếu & email: user@test.com, password: 123 & Lỗi "Password phải tối thiểu 8 ký tự" & Chờ \\
+\hline
+TC-1-04 & Register - Email đã tồn tại & email: existing@test.com (đã có) & Lỗi "Email đã tồn tại" & Chờ \\
+\hline
+TC-1-05 & Verify OTP - Mã đúng & otp\_code: 123456 (trong 5 phút) & Account status = Active & Chờ \\
+\hline
+TC-1-06 & Verify OTP - Mã sai & otp\_code: 000000 & Lỗi "Mã OTP không hợp lệ" & Chờ \\
+\hline
+TC-1-07 & Verify OTP - Hết hạn & otp\_code: 123456 (sau 5 phút) & Lỗi "Mã OTP đã hết hạn" & Chờ \\
+\hline
+TC-1-08 & Login - Tài khoản hợp lệ & email: user@test.com, password: Pass123! & JWT token được trả về & Chờ \\
+\hline
+TC-1-09 & Login - Password sai & email: user@test.com, password: WrongPass & Lỗi "Email hoặc mật khẩu không chính xác" & Chờ \\
+\hline
+TC-1-10 & Login - Tài khoản chưa active & email: pending@test.com, password: Pass123! & Lỗi "Tài khoản chưa được kích hoạt" & Chờ \\
+\hline
+TC-1-11 & Login - Multiple attempts & 5 lần login sai liên tiếp & Tài khoản bị khóa 15 phút & Chờ \\
+\hline
+TC-1-12 & Refresh Token - Token hợp lệ & refresh\_token: valid\_jwt & Access token mới được cấp & Chờ \\
+\hline
+TC-1-13 & Refresh Token - Token hết hạn & refresh\_token: expired\_jwt & Lỗi "Token đã hết hạn" & Chờ \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Test Cases - Feature 2: Đặt lịch rửa xe}
+
+\subsection{Booking Feature Tests}
+
+\begin{table}[htbp]
+\centering
+\caption{Test Cases - Feature 2 (Booking)}
+\label{tab:test_booking}
+\small
+\begin{tabular}{|p{2cm}|p{3cm}|p{4cm}|p{3cm}|p{2.5cm}|}
+\hline
+\textbf{TC ID} & \textbf{Tính năng} & \textbf{Dữ liệu đầu vào} & \textbf{Kết quả mong đợi} & \textbf{Trạng thái} \\
+\hline
+TC-2-01 & Add Vehicle & brand: Honda, model: SH 150, plate: 29A-12345 & Vehicle được tạo, status=Active & Chờ \\
+\hline
+TC-2-02 & Add Vehicle - Plate trùng & plate: 29A-12345 (đã có) & Lỗi "Biển số này đã tồn tại" & Chờ \\
+\hline
+TC-2-03 & Get Services List & (no params) & Trả về 5+ services với price & Chờ \\
+\hline
+TC-2-04 & Get Available Slots & date: 2026-06-15 & Trả về danh sách khung giờ (09:00-20:00) & Chờ \\
+\hline
+TC-2-05 & Get Available Slots - Ngày quá xa & date: 2026-08-01 & Lỗi "Ngày không nằm trong booking window" & Chờ \\
+\hline
+TC-2-06 & Create Booking - Valid & vehicle\_id: 1, service\_id: 2, date: 2026-06-15, time: 09:00 & Booking tạo với status=pending & Chờ \\
+\hline
+TC-2-07 & Create Booking - Slot đã full & date: 2026-06-15, time: 09:00 (đã đặt) & Lỗi "Khung giờ này đã được đặt" & Chờ \\
+\hline
+TC-2-08 & Create Booking - Vehicle không tồn tại & vehicle\_id: 999 & Lỗi "Xe không tồn tại" & Chờ \\
+\hline
+TC-2-09 & Get Booking Detail & booking\_id: 1 (của user hiện tại) & Trả về toàn bộ info booking & Chờ \\
+\hline
+TC-2-10 & Get Booking Detail - Không có quyền & booking\_id: 2 (của user khác) & Lỗi "Bạn không có quyền xem booking này" & Chờ \\
+\hline
+TC-2-11 & Edit Booking - Trước 6 giờ & booking\_id: 1, new\_time: 10:00 & Booking được cập nhật & Chờ \\
+\hline
+TC-2-12 & Edit Booking - Trong 6 giờ & booking\_id: 2 (rửa trong 3 giờ) & Lỗi "Không thể chỉnh sửa trong vòng 6 giờ" & Chờ \\
+\hline
+TC-2-13 & Cancel Booking - Valid & booking\_id: 1 & Booking status = cancelled & Chờ \\
+\hline
+TC-2-14 & Cancel Booking - Refund check & booking\_id: 1 (đã thanh toán) & Refund request được tạo & Chờ \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Test Cases - Feature 3: Thanh toán \& Hóa đơn}
+
+\subsection{Payment \& Invoice Tests}
+
+\begin{table}[htbp]
+\centering
+\caption{Test Cases - Feature 3 (Payment \& Invoice)}
+\label{tab:test_payment}
+\small
+\begin{tabular}{|p{2cm}|p{3cm}|p{4cm}|p{3cm}|p{2.5cm}|}
+\hline
+\textbf{TC ID} & \textbf{Tính năng} & \textbf{Dữ liệu đầu vào} & \textbf{Kết quả mong đợi} & \textbf{Trạng thái} \\
+\hline
+TC-3-01 & Auto Invoice Creation & booking status → completed & Invoice tạo tự động, status=pending & Chờ \\
+\hline
+TC-3-02 & Invoice Amount Calculation & service price: 300k, tax rate: 10\% & total = 330k & Chờ \\
+\hline
+TC-3-03 & Get Invoices List & (no filters) & Trả về toàn bộ invoices của user & Chờ \\
+\hline
+TC-3-04 & Filter Invoices by Status & status: paid & Chỉ trả về invoices paid & Chờ \\
+\hline
+TC-3-05 & Get Invoice PDF & invoice\_id: 1 & File PDF được tải về & Chờ \\
+\hline
+TC-3-06 & Initiate Payment - Valid & invoice\_id: 1, method: vnpay & Payment URL được trả về & Chờ \\
+\hline
+TC-3-07 & Initiate Payment - Invalid invoice & invoice\_id: 999 & Lỗi "Hóa đơn không tồn tại" & Chờ \\
+\hline
+TC-3-08 & Payment Callback - Success & vnp\_ResponseCode: 00, signature valid & Invoice status = paid & Chờ \\
+\hline
+TC-3-09 & Payment Callback - Invalid signature & signature invalid & Lỗi "Chữ ký không hợp lệ" & Chờ \\
+\hline
+TC-3-10 & Payment Callback - Failed transaction & vnp\_ResponseCode: 01 & Payment status = failed & Chờ \\
+\hline
+TC-3-11 & Refund - Valid condition & booking hủy <6 giờ & Refund request → gateway & Chờ \\
+\hline
+TC-3-12 & Refund - Success response & gateway refund OK & Payment status = refunded & Chờ \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Integration Tests}
+
+\subsection{End-to-End Flow Tests}
+
+\begin{enumerate}
+    \item \textbf{TC-INT-01: Full Register \& Login Flow}
+    \begin{itemize}
+        \item Register với email mới → Verify OTP → Login → Nhận JWT token
+        \item Verify: Token valid, user info returned, can access dashboard
+    \end{itemize}
+    
+    \item \textbf{TC-INT-02: Complete Booking Flow}
+    \begin{itemize}
+        \item Add vehicle → Select service → Pick date/time → Confirm booking → Auto create invoice
+        \item Verify: Booking status=pending, Invoice created, email sent
+    \end{itemize}
+    
+    \item \textbf{TC-INT-03: Payment Processing Flow}
+    \begin{itemize}
+        \item Initiate payment → Redirect to VNPay → Receive callback → Update invoice
+        \item Verify: Invoice status=paid, email confirmation, refund available
+    \end{itemize}
+    
+    \item \textbf{TC-INT-04: Cancel Booking with Refund}
+    \begin{itemize}
+        \item Complete booking → Make payment → Cancel within 6 hours → Process refund
+        \item Verify: Booking cancelled, refund initiated, payment status=refunded
+    \end{itemize}
+\end{enumerate}
+
+\section{UI/UX Tests}
+
+\subsection{Frontend Interaction Tests}
+
+\begin{enumerate}
+    \item \textbf{TC-UI-01: Form Validation}
+    \begin{itemize}
+        \item Register form: Email field highlighted red when invalid, error message shows
+        \item Verify: Real-time validation, submit button disabled until valid
+    \end{itemize}
+    
+    \item \textbf{TC-UI-02: Responsive Design}
+    \begin{itemize}
+        \item Test on Mobile (320px), Tablet (768px), Desktop (1920px)
+        \item Verify: Layout adjusts, buttons clickable, no horizontal scroll
+    \end{itemize}
+    
+    \item \textbf{TC-UI-03: Calendar Widget}
+    \begin{itemize}
+        \item Select date → Time slots load → Click slot → Info displays
+        \item Verify: Slots update on date change, disabled slots grayed out
+    \end{itemize}
+    
+    \item \textbf{TC-UI-04: Payment Redirect}
+    \begin{itemize}
+        \item Click "Pay Now" → Redirect to VNPay → Return to app
+        \item Verify: Success page shows, invoice status updated, email sent
+    \end{itemize}
+\end{enumerate}
+
+\section{Security Tests}
+
+\subsection{Security Validation Tests}
+
+\begin{enumerate}
+    \item \textbf{TC-SEC-01: Password Hashing}
+    \begin{itemize}
+        \item Register user → Check database for password\_hash
+        \item Verify: Password hashed with bcrypt (not plaintext), cost \(\geq\) 12
+    \end{itemize}
+    
+    \item \textbf{TC-SEC-02: JWT Token Security}
+    \begin{itemize}
+        \item Login → Extract JWT token → Decode (should fail without secret)
+        \item Verify: Token contains user\_id, role; signed with HS256
+    \end{itemize}
+    
+    \item \textbf{TC-SEC-03: SQL Injection Prevention}
+    \begin{itemize}
+        \item Input: "'; DROP TABLE users; --" in email field
+        \item Verify: Rejected or escaped, no SQL error in response
+    \end{itemize}
+    
+    \item \textbf{TC-SEC-04: XSS Prevention}
+    \begin{itemize}
+        \item Input: "<script>alert('XSS')</script>" in vehicle brand
+        \item Verify: Escaped/sanitized, no script execution
+    \end{itemize}
+    
+    \item \textbf{TC-SEC-05: CSRF Protection}
+    \begin{itemize}
+        \item POST request without CSRF token
+        \item Verify: Request rejected with 403 Forbidden
+    \end{itemize}
+    
+    \item \textbf{TC-SEC-06: Payment Signature Verification}
+    \begin{itemize}
+        \item Receive callback with tampered amount
+        \item Verify: Signature mismatch detected, transaction rejected
+    \end{itemize}
+\end{enumerate}
+
+\section{Performance Tests}
+
+\subsection{Load \& Response Time Tests}
+
+\begin{enumerate}
+    \item \textbf{TC-PERF-01: API Response Time}
+    \begin{itemize}
+        \item GET /api/services with 100 concurrent users
+        \item Target: Response time < 1 second, 95th percentile
+    \end{itemize}
+    
+    \item \textbf{TC-PERF-02: Frontend Load Time}
+    \begin{itemize}
+        \item Load home page, booking page
+        \item Target: First Contentful Paint < 3 seconds
+    \end{itemize}
+    
+    \item \textbf{TC-PERF-03: Database Query Optimization}
+    \begin{itemize}
+        \item Query available slots for 30 days
+        \item Verify: Uses indexes, execution time < 500ms
+    \end{itemize}
+\end{enumerate}
+
+\section{Test Execution Summary}
+
+Tổng cộng \textbf{51 test cases} được thiết kế và sẽ được thực thi:
 \begin{itemize}
-    \item \textbf{Mục đích:} Kiểm tra xem người dùng có thể đăng nhập thành công với tài khoản hợp lệ không.
-    \item \textbf{Dữ liệu đầu vào:} Tên đăng nhập: \textit{admin}, Mật khẩu: \textit{123456}
-    \item \textbf{Kết quả mong đợi:} Hệ thống chuyển hướng vào trang Dashboard.
-    \item \textbf{Trạng thái:} Đang chờ.
+    \item Feature 1 (Authentication): 13 test cases
+    \item Feature 2 (Booking): 14 test cases
+    \item Feature 3 (Payment): 12 test cases
+    \item Integration Tests: 4 flows
+    \item UI/UX Tests: 4 scenarios
+    \item Security Tests: 6 validations
+    \item Performance Tests: 3 metrics
 \end{itemize}
 
-% Kịch bản 2: Đăng nhập thất bại (Mình gợi ý thêm)
-\begin{itemize}
-    \item \textbf{Mục đích:} Kiểm tra phản hồi của hệ thống khi người dùng nhập sai mật khẩu.
-    \item \textbf{Dữ liệu đầu vào:} Tên đăng nhập: \textit{admin}, Mật khẩu: \textit{sai123}
-    \item \textbf{Kết quả mong đợi:} Hệ thống từ chối đăng nhập và hiển thị thông báo lỗi màu đỏ "Mật khẩu không chính xác".
-    \item \textbf{Trạng thái:} Đang chờ.
-\end{itemize}
-
-\subsection{Kiểm thử chức năng Đặt lịch (Booking)}
-
-% Kịch bản 3: Đặt lịch bỏ trống thông tin
-\begin{itemize}
-    \item \textbf{Mục đích:} Đảm bảo khách hàng không thể đặt lịch nếu thiếu các thông tin bắt buộc.
-    \item \textbf{Các bước thực hiện:} Bỏ trống ô "Biển số xe", điền đủ các ô còn lại và nhấn nút Xác nhận.
-    \item \textbf{Kết quả mong đợi:} Form không gửi đi, ô Biển số xe hiện viền đỏ cảnh báo yêu cầu nhập dữ liệu.
-    \item \textbf{Trạng thái:} Đang chờ.
-\end{itemize}
+Tất cả test cases được tự động hóa thông qua Jest/Pytest và CI/CD pipeline (GitHub Actions), chạy tự động khi có commit mới lên main branch.

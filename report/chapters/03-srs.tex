@@ -29,18 +29,90 @@ Hệ thống tương tác trực tiếp với hai tác nhân chính (Primary Act
     \item \textbf{Admin (Chủ cơ sở / Nhân viên quầy):} Người vận hành hệ thống, thực hiện kiểm tra xe vào bãi, bấm xác nhận hoàn thành dịch vụ rửa xe, cấu hình các chương trình khuyến mãi theo hạng mục tiêu và xuất dữ liệu hành vi.
 \end{itemize}
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/use case.jpg}
+    \caption{Use Case Diagram - Hệ thống AutoWashPro}
+    \label{fig:usecase_diagram}
+\end{figure}
+
 \section{Functional Requirements}
-Các chức năng bắt buộc phải được triển khai chi tiết:
+Các chức năng bắt buộc phải được triển khai chi tiết theo 3 Feature chính:
+
+\subsection{Feature 1: Đăng nhập \& Đăng ký}
+\textit{Giảm tải cho thành viên: Lê Thị Quỳnh Nhung (NQ - BA), Trần Tiến Dũng (DT - Backend), Lê Sỹ Nghĩa (T - Frontend), Võ Quốc Trung (G - QA)}
+
+Phân hệ này cung cấp cơ chế xác thực an toàn cho toàn bộ người dùng của hệ thống. Bao gồm các chức năng:
 \begin{enumerate}
-    \item \textbf{Module 1 — Authentication \& Profile:} Đăng ký tài khoản bằng số điện thoại (gửi OTP giả lập), đăng nhập hệ thống, mã hóa mật khẩu bảo mật và cập nhật thông tin cá nhân ngày sinh nhật.
-    \item \textbf{Module 2 — Vehicle Management:} Khách hàng có quyền liên kết một hoặc nhiều biển số xe vào tài khoản. Biển số xe là định danh duy nhất để đối chiếu khi xe đến tiệm rửa.
-    \item \textbf{Module 3 — Booking Engine:} Cho phép chọn cơ sở, loại dịch vụ và khung giờ (Timeslot). Hệ thống phải tự động kiểm tra quy tắc Booking Window: nếu khách hàng là Member, hệ thống sẽ khóa không cho phép chọn các ngày xa hơn 7 ngày tiếp theo.
-    \item \textbf{Module 4 — Loyalty Engine:} Tự động tính toán số điểm thưởng nhận được sau mỗi đơn hàng hoàn thành (Số tiền $\times$ Hệ số điểm của hạng). Tự động chạy tác vụ ngầm quét thăng/hạ hạng định kỳ. Quản lý hạn sử dụng của từng dòng điểm (Hết hạn sau 12 tháng kể từ ngày tích lũy).
-    \item \textbf{Module 5 — Customer Portal:} Màn hình hiển thị thẻ thành viên điện tử, số dư điểm hiện tại (Wash Credits), tiến trình chi tiêu còn thiếu để thăng hạng tiếp theo và danh sách các phần thưởng có thể đổi.
-    \item \textbf{Module 6 — Admin CRM Dashboard:} Màn hình quản trị cho phép nhân viên tìm kiếm khách hàng nhanh qua số điện thoại hoặc biển số xe, theo dõi danh sách lịch hẹn trong ngày và chuyển trạng thái đơn hàng từ "Đã đặt" $\rightarrow$ "Đang rửa" $\rightarrow$ "Hoàn thành \& Tích điểm".
-    \item \textbf{Module 7 — Promotion Manager:} Cho phép tạo mã giảm giá nhắm mục tiêu chính xác theo hạng (Ví dụ: Mã \texttt{PLATINUM\_ONLY} chỉ áp dụng được cho tài khoản có hạng hiện tại là Platinum).
-    \item \textbf{Module 8 — Research Logger:} Tự động ghi lại nhật ký tất cả hành vi của người dùng vào cơ sở dữ liệu khi có bất kỳ sự thay đổi trạng thái nào liên quan đến điểm, hạng hoặc đặt lịch mà không làm ảnh hưởng đến hiệu năng trải nghiệm khách hàng.
+    \item \textbf{[F1-DB] Database Schema:} Thiết kế bảng Users (id, email, phone, password\_hash, fullname, role, status, created\_at, updated\_at) và bảng OTP\_Verifications (id, email, otp\_code, expiry\_time) với indexes tối ưu.
+    \item \textbf{[F1-BE-1] API Register:} Endpoint POST /api/auth/register nhận email/phone, password, fullname. Validate email format, password strength (tối thiểu 8 ký tự, chứa chữ hoa/thường/số). Hash password bằng bcrypt (cost factor \(\geq\) 12). Gửi OTP qua email/SMS.
+    \item \textbf{[F1-BE-2] API Verify OTP:} Endpoint POST /api/auth/verify-otp nhận email/phone và OTP code. Kiểm tra OTP còn hiệu lực (5 phút), xác thực account trong database, trả về success/error message.
+    \item \textbf{[F1-BE-3] API Login:} Endpoint POST /api/auth/login nhận email/phone và password. Verify password với password\_hash. Tạo JWT token (access\_token + refresh\_token). Trả về user info (id, email, fullname, role) và token.
+    \item \textbf{[F1-BE-4] API Refresh Token:} Endpoint POST /api/auth/refresh-token. Middleware xác thực JWT. Kiểm tra token expiration, user status. Trả về new access\_token khi hết hạn.
+    \item \textbf{[F1-FE-1] Register Screen:} Form register với input: email/phone, password, confirm password, fullname. Validate client-side realtime. Gọi API register. Hiển thị status verification khi gửi OTP. Redirect sang Verify OTP screen.
+    \item \textbf{[F1-FE-2] Verify OTP Screen:} Form input OTP 6 ký tự với countdown timer 5 phút. Button "Resend OTP". Gọi API verify-otp khi nhập đủ ký tự. Redirect sang Login khi thành công.
+    \item \textbf{[F1-FE-3] Login Screen:} Form login với input: email/phone, password, "Remember me" checkbox. Gọi API login. Lưu JWT token vào localStorage/sessionStorage. Redirect sang Dashboard.
+    \item \textbf{[F1-TEST-1] Unit Tests:} Test register, verify-otp, login endpoints với mock database. Test cases: valid/invalid email, weak password, expired OTP, wrong password.
+    \item \textbf{[F1-TEST-2] Integration Tests:} Test end-to-end flow: Register → Verify OTP → Login → Receive Token. Kiểm tra database state sau mỗi bước.
+    \item \textbf{[F1-TEST-3] UI Tests:} Test validation messages, button states, redirect pages trên multiple screen sizes.
 \end{enumerate}
+
+\subsection{Feature 2: Đặt lịch rửa xe}
+\textit{Giảm tải cho thành viên: Phan Triều Cường (LK - Database), Trần Tiến Dũng (DT - Backend), Lê Sỹ Nghĩa (T - Frontend), Nguyễn Đức Phú (F - Frontend)}
+
+Phân hệ này cho phép khách hàng quản lý xe cá nhân và đặt lịch hẹn rửa xe theo khung giờ trống:
+\begin{enumerate}
+    \item \textbf{[F2-DB-1] Vehicles \& Services Schema:} Bảng Vehicles (id, user\_id, brand, model, license\_plate, color). Bảng Services (id, name, price, duration\_minutes, description). Bảng Bookings (id, user\_id, vehicle\_id, service\_id, booking\_date, time\_slot, status, notes). Thêm indexes cho queries thường xuyên.
+    \item \textbf{[F2-DB-2] Time Slots Schema:} Bảng TimeSlots (id, start\_time, end\_time, is\_available, booking\_id). Bảng ScheduleBlocks (id, date, max\_bookings\_per\_slot). Seed data cho 7 ngày tiếp theo.
+    \item \textbf{[F2-BE-1] API Get Services:} Endpoint GET /api/services trả về danh sách dịch vụ với giá, thời gian, mô tả. Hỗ trợ filter, sort, pagination.
+    \item \textbf{[F2-BE-2] API Manage Vehicles:} Endpoints GET /api/vehicles (lấy danh sách xe) và POST /api/vehicles (thêm xe mới). Validate license\_plate unique, required fields.
+    \item \textbf{[F2-BE-3] API Check Available Slots:} Endpoint GET /api/bookings/available-slots?date=YYYY-MM-DD trả về danh sách khung giờ trống. Tính toán dựa trên duration service và các booking hiện tại.
+    \item \textbf{[F2-BE-4] API Create Booking:} Endpoint POST /api/bookings nhận vehicle\_id, service\_id, booking\_date, time\_slot. Validate: user logged in, vehicle exists, slot available. Tạo record booking với status='pending'.
+    \item \textbf{[F2-BE-5] API Get Booking Detail:} Endpoint GET /api/bookings/:id trả về booking details + vehicle info + service info. Kiểm tra authorization (user chỉ xem được booking của mình).
+    \item \textbf{[F2-BE-6] API Edit/Cancel Booking:} Endpoint PATCH /api/bookings/:id (chỉnh sửa date/time nếu >6 giờ trước) và DELETE /api/bookings/:id (hủy booking).
+    \item \textbf{[F2-FE-1] Service Selection Screen:} Hiển thị danh sách dịch vụ dưới dạng cards: tên, giá, thời gian, mô tả. Click để chọn. Lưu selection vào state.
+    \item \textbf{[F2-FE-2] Vehicle Management Screen:} Hiển thị danh sách xe của user. Cho phép add/edit/delete. Form add xe: brand, model, license\_plate, color. Validate license\_plate format.
+    \item \textbf{[F2-FE-3] Calendar \& Time Slot Screen:} Calendar widget cho phép chọn ngày (min hôm nay, max 30 ngày). Khi chọn ngày, load available time slots. Hiển thị slots dưới dạng buttons, disable slots đã hết.
+    \item \textbf{[F2-FE-4] Review \& Confirm Screen:} Hiển thị summary: xe, dịch vụ, ngày, giờ, giá. Button "Confirm Booking" gọi API. Hiển thị success/error message.
+    \item \textbf{[F2-FE-5] My Bookings List:} Hiển thị danh sách booking của user (upcoming, completed, cancelled tabs). Mỗi item show: ngày, giờ, xe, dịch vụ, giá, status. Click để view detail, hủy booking.
+    \item \textbf{[F2-TEST-1] Unit Tests:} Test available-slots, create booking, get booking, cancel booking với mock database.
+    \item \textbf{[F2-TEST-2] Integration Tests:} Test end-to-end: Select service → Choose vehicle → Pick date/time → Review → Confirm booking.
+    \item \textbf{[F2-TEST-3] UI Tests:} Test calendar widget, time slot button states, validation messages trên multiple devices.
+\end{enumerate}
+
+\subsection{Feature 3: Quản lý hóa đơn \& Thanh toán}
+\textit{Giảm tải cho thành viên: Phan Triều Cường (LK - Database), Trần Tiến Dũng (DT - Backend), Nguyễn Đức Phú (F - Frontend), Võ Quốc Trung (G - QA)}
+
+Phân hệ này quản lý hóa đơn tự động, tích hợp payment gateway, và xử lý hoàn tiền:
+\begin{enumerate}
+    \item \textbf{[F3-DB-1] Invoices \& Payments Schema:} Bảng Invoices (id, booking\_id, user\_id, amount, tax, total, status, issued\_date, due\_date, paid\_date). Bảng Payments (id, invoice\_id, amount, payment\_method, transaction\_id, status, paid\_at).
+    \item \textbf{[F3-DB-2] Payment Methods Schema:} Bảng PaymentMethods (id, user\_id, type, account\_number, is\_default). Bảng TransactionLogs (id, invoice\_id, payment\_id, status, gateway\_response, created\_at).
+    \item \textbf{[F3-BE-1] Auto Create Invoice:} Service/function gọi khi booking status change thành "completed". Tính toán amount = service\_price + tax. Tạo record Invoice. Gửi email invoice cho user.
+    \item \textbf{[F3-BE-2] API Get Invoices List:} Endpoint GET /api/invoices lấy danh sách hóa đơn của user. Hỗ trợ filter: status (paid/unpaid/overdue), date range. Hỗ trợ pagination, sort.
+    \item \textbf{[F3-BE-3] API Get Invoice Detail \& Download PDF:} Endpoint GET /api/invoices/:id trả về invoice details. Endpoint GET /api/invoices/:id/download-pdf để download hóa đơn PDF.
+    \item \textbf{[F3-BE-4] Payment Gateway Integration:} Service integrate với payment gateway (VNPay/Stripe/Momo). Hỗ trợ tạo payment URL, xác thực callback từ gateway. Cập nhật status Invoice/Payment khi thanh toán thành công.
+    \item \textbf{[F3-BE-5] API Initiate Payment:} Endpoint POST /api/payments/initiate nhận invoice\_id, payment\_method. Tạo Payment record. Trả về payment URL hoặc payment info cho frontend.
+    \item \textbf{[F3-BE-6] API Verify Payment Callback:} Endpoint POST /api/payments/callback để nhận callback từ payment gateway. Verify signature, cập nhật Invoice/Payment status, gửi confirmation email.
+    \item \textbf{[F3-BE-7] API Refund:} Logic refund: khi user hủy booking <6 giờ. Tạo refund request, call payment gateway refund API, update Payment status, send notification.
+    \item \textbf{[F3-FE-1] Invoice List Screen:} Hiển thị danh sách hóa đơn dưới dạng table/cards. Columns: Invoice\#, Date, Amount, Status (badge), Actions. Hỗ trợ filter, sort, search. Button view detail, download PDF.
+    \item \textbf{[F3-FE-2] Invoice Detail Screen:} Hiển thị invoice details: invoice number, date, service details, amount breakdown (subtotal, tax, total), payment status. Button "Pay Now", "Download PDF", "Email".
+    \item \textbf{[F3-FE-3] Payment Method Selection:} Hiển thị danh sách payment methods (Credit Card, Bank Transfer, E-Wallet). Radio button để chọn. Option để add new payment method.
+    \item \textbf{[F3-FE-4] Payment Processing Screen:} Redirect user đến payment gateway. Sau thanh toán, show success/error message. Hiển thị order summary + transaction details.
+    \item \textbf{[F3-FE-5] Admin Revenue Dashboard:} Hiển thị stats: total revenue, pending invoices, completed payments, today's earnings. Charts: revenue trend, payment method breakdown.
+    \item \textbf{[F3-TEST-1] Unit Tests:} Test create invoice, get invoices, payment initiation với mock payment gateway.
+    \item \textbf{[F3-TEST-2] Integration Tests:} Test end-to-end: Complete booking → Auto create invoice → Initiate payment → Receive callback → Update status.
+    \item \textbf{[F3-TEST-3] Security Tests:} Test HTTPS, signature verification, token validation, XSS/CSRF protection.
+    \item \textbf{[F3-TEST-4] UI Tests:} Test invoice list, detail view, payment methods, payment processing screens trên responsive design.
+\end{enumerate}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\textwidth]{images/Untitled Diagram.drawio.png}
+    \caption{Sequence Diagram - Flow kiểm tra mã giảm giá và xử lý thanh toán}
+    \label{fig:payment_sequence}
+\end{figure}
+
+\noindent \textbf{Tóm tắt số lượng task:} Feature 1 có 11 tasks, Feature 2 có 16 tasks, Feature 3 có 18 tasks. Tổng cộng 45 tasks chính được quản lý trên Jira board (KAN-1 đến KAN-45), cùng với 6 tasks hỗ trợ về Documentation, Testing Infrastructure, Deployment (KAN-46 đến KAN-51).
 
 \section{Non-Functional Requirements}
 \begin{itemize}

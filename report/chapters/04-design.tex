@@ -129,3 +129,375 @@ Giao diện tối giản hỗ trợ khách hàng đăng nhập nhanh chóng bằ
     \caption{Thiết kế Mockup giao diện Màn hình Đăng nhập hệ thống}
     \label{fig:login_screen}
 \end{figure}
+
+% =================================================================
+\newpage
+\section{Thiết kế API REST Specification (KAN-41, KAN-42, KAN-43)}
+Hệ thống sử dụng kiến trúc RESTful API phía Backend tương tác với Frontend thông qua các endpoint HTTP chuẩn. Dưới đây là đặc tả chi tiết các API endpoints cho Feature 1 (Authentication):
+
+\subsection{API Authentication Endpoints}
+
+\subsubsection{POST /api/auth/register - Đăng ký tài khoản mới}
+\begin{verbatim}
+Request Body:
+{
+  "email": "user@example.com",
+  "phone": "0987654321",
+  "password": "SecurePass123",
+  "fullname": "Nguyễn Văn A"
+}
+
+Response (201 Created):
+{
+  "status": "success",
+  "message": "OTP đã được gửi đến email/SMS",
+  "user_id": 123,
+  "expires_at": "2026-06-10T15:05:00Z"
+}
+
+Error Response (400 Bad Request):
+{
+  "status": "error",
+  "message": "Email đã tồn tại",
+  "errors": { "email": "Email này đã được đăng ký" }
+}
+\end{verbatim}
+
+\subsubsection{POST /api/auth/verify-otp - Xác thực mã OTP}
+\begin{verbatim}
+Request Body:
+{
+  "email": "user@example.com",
+  "otp_code": "123456"
+}
+
+Response (200 OK):
+{
+  "status": "success",
+  "message": "Tài khoản đã được kích hoạt",
+  "user": { "id": 123, "email": "user@example.com", "status": "Active" }
+}
+
+Error Response (400 Bad Request):
+{
+  "status": "error",
+  "message": "Mã OTP không hợp lệ hoặc đã hết hạn"
+}
+\end{verbatim}
+
+\subsubsection{POST /api/auth/login - Đăng nhập}
+\begin{verbatim}
+Request Body:
+{
+  "email": "user@example.com",
+  "password": "SecurePass123"
+}
+
+Response (200 OK):
+{
+  "status": "success",
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": 123,
+    "email": "user@example.com",
+    "fullname": "Nguyễn Văn A",
+    "role": "Customer"
+  }
+}
+
+Error Response (401 Unauthorized):
+{
+  "status": "error",
+  "message": "Email hoặc mật khẩu không chính xác"
+}
+\end{verbatim}
+
+\subsubsection{POST /api/auth/refresh-token - Làm mới Access Token}
+\begin{verbatim}
+Request Header:
+Authorization: Bearer <refresh_token>
+
+Response (200 OK):
+{
+  "status": "success",
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+
+Error Response (401 Unauthorized):
+{
+  "status": "error",
+  "message": "Token không hợp lệ hoặc đã hết hạn"
+}
+\end{verbatim}
+
+% =================================================================
+\subsection{API Booking Endpoints (Feature 2)}
+
+\subsubsection{GET /api/services - Lấy danh sách dịch vụ}
+\begin{verbatim}
+Query Parameters:
+?page=1&limit=10&sort=price_asc
+
+Response (200 OK):
+{
+  "status": "success",
+  "data": [
+    {
+      "id": 1,
+      "name": "Rửa nhanh",
+      "price": 150000,
+      "duration_minutes": 30,
+      "description": "Rửa ngoài nhanh chóng"
+    },
+    {
+      "id": 2,
+      "name": "Rửa chi tiết",
+      "price": 300000,
+      "duration_minutes": 60,
+      "description": "Rửa toàn thân xe chi tiết"
+    }
+  ],
+  "total": 5,
+  "page": 1
+}
+\end{verbatim}
+
+\subsubsection{POST /api/bookings - Đặt lịch rửa xe mới}
+\begin{verbatim}
+Request Body:
+{
+  "vehicle_id": 10,
+  "service_id": 2,
+  "booking_date": "2026-06-15",
+  "time_slot": "09:00-10:00"
+}
+
+Response (201 Created):
+{
+  "status": "success",
+  "message": "Lịch hẹn đã được tạo",
+  "booking": {
+    "id": 456,
+    "vehicle_id": 10,
+    "service_id": 2,
+    "booking_date": "2026-06-15",
+    "time_slot": "09:00-10:00",
+    "status": "pending"
+  }
+}
+
+Error Response (400 Bad Request):
+{
+  "status": "error",
+  "message": "Khung giờ này đã được đặt"
+}
+\end{verbatim}
+
+\subsubsection{GET /api/bookings/:id - Lấy chi tiết lịch hẹn}
+\begin{verbatim}
+Response (200 OK):
+{
+  "status": "success",
+  "booking": {
+    "id": 456,
+    "vehicle": {
+      "license_plate": "29A-12345",
+      "brand": "Honda",
+      "model": "SH 150"
+    },
+    "service": {
+      "id": 2,
+      "name": "Rửa chi tiết",
+      "price": 300000
+    },
+    "booking_date": "2026-06-15",
+    "time_slot": "09:00-10:00",
+    "status": "completed"
+  }
+}
+\end{verbatim}
+
+% =================================================================
+\subsection{API Payment Endpoints (Feature 3)}
+
+\subsubsection{POST /api/payments/initiate - Bắt đầu thanh toán}
+\begin{verbatim}
+Request Body:
+{
+  "invoice_id": 789,
+  "payment_method": "vnpay"
+}
+
+Response (200 OK):
+{
+  "status": "success",
+  "payment_url": "https://sandbox.vnpayment.vn/paygate?...",
+  "payment_id": 999
+}
+
+Error Response (400 Bad Request):
+{
+  "status": "error",
+  "message": "Hóa đơn không tồn tại"
+}
+\end{verbatim}
+
+\subsubsection{POST /api/payments/callback - Callback từ Payment Gateway}
+\begin{verbatim}
+Request Body (VNPay):
+{
+  "vnp_TxnRef": "INV000789",
+  "vnp_TransactionNo": "12345678",
+  "vnp_ResponseCode": "00",
+  "vnp_SecureHash": "hash_signature_here"
+}
+
+Response (200 OK):
+{
+  "status": "success",
+  "message": "Thanh toán thành công",
+  "invoice_status": "paid"
+}
+
+Error Response (400 Bad Request):
+{
+  "status": "error",
+  "message": "Chữ ký không hợp lệ"
+}
+\end{verbatim}
+
+\subsubsection{GET /api/invoices - Lấy danh sách hóa đơn}
+\begin{verbatim}
+Query Parameters:
+?status=paid&page=1&limit=10
+
+Response (200 OK):
+{
+  "status": "success",
+  "invoices": [
+    {
+      "id": 789,
+      "booking_id": 456,
+      "amount": 300000,
+      "tax": 30000,
+      "total": 330000,
+      "status": "paid",
+      "issued_date": "2026-06-15T10:30:00Z",
+      "paid_date": "2026-06-15T10:35:00Z"
+    }
+  ]
+}
+\end{verbatim}
+
+% =================================================================
+\newpage
+\section{Database Schema - Chi tiết các bảng (Feature 2 \& 3)}
+
+\subsection{Bảng Vehicles}
+\begin{table}[htbp]
+\centering
+\caption{Schema bảng Vehicles}
+\label{tab:vehicles_schema}
+\small
+\begin{tabular}{llcl}
+\toprule
+\textbf{Tên Trường} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Mô Tả} \\
+\midrule
+id & INT (AUTO\_INCREMENT) & PK & Mã xe duy nhất \\
+user\_id & INT & FK & Liên kết người sở hữu xe \\
+brand & VARCHAR(50) & - & Hãng sản xuất (Honda, Yamaha) \\
+model & VARCHAR(100) & - & Model xe (SH 150, Wave 110) \\
+license\_plate & VARCHAR(20) & Unique & Biển số xe (29A-12345) \\
+color & VARCHAR(30) & - & Màu sắc xe \\
+created\_at & TIMESTAMP & - & Ngày tạo record \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Bảng Services}
+\begin{table}[htbp]
+\centering
+\caption{Schema bảng Services}
+\label{tab:services_schema}
+\small
+\begin{tabular}{llcl}
+\toprule
+\textbf{Tên Trường} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Mô Tả} \\
+\midrule
+id & INT (AUTO\_INCREMENT) & PK & Mã dịch vụ \\
+name & VARCHAR(100) & - & Tên gói dịch vụ \\
+price & DECIMAL(10,2) & - & Giá dịch vụ (VNĐ) \\
+duration\_minutes & INT & - & Thời gian dự kiến (phút) \\
+description & TEXT & - & Mô tả chi tiết dịch vụ \\
+status & ENUM('Active', 'Inactive') & - & Trạng thái hoạt động \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Bảng Bookings}
+\begin{table}[htbp]
+\centering
+\caption{Schema bảng Bookings}
+\label{tab:bookings_schema}
+\small
+\begin{tabular}{llcl}
+\toprule
+\textbf{Tên Trường} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Mô Tả} \\
+\midrule
+id & INT (AUTO\_INCREMENT) & PK & Mã lịch hẹn \\
+user\_id & INT & FK & Khách hàng đặt lịch \\
+vehicle\_id & INT & FK & Xe cần rửa \\
+service\_id & INT & FK & Dịch vụ lựa chọn \\
+booking\_date & DATE & - & Ngày dự kiến rửa \\
+time\_slot & VARCHAR(20) & - & Khung giờ (09:00-10:00) \\
+status & ENUM('pending', 'confirmed', 'in\_progress', 'completed', 'cancelled') & - & Trạng thái \\
+notes & TEXT & - & Ghi chú thêm \\
+created\_at & TIMESTAMP & - & Ngày tạo lịch \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Bảng Invoices}
+\begin{table}[htbp]
+\centering
+\caption{Schema bảng Invoices}
+\label{tab:invoices_schema}
+\small
+\begin{tabular}{llcl}
+\toprule
+\textbf{Tên Trường} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Mô Tả} \\
+\midrule
+id & INT (AUTO\_INCREMENT) & PK & Mã hóa đơn \\
+booking\_id & INT & FK & Lịch hẹn tương ứng \\
+user\_id & INT & FK & Người tạo hóa đơn \\
+amount & DECIMAL(10,2) & - & Giá gốc dịch vụ \\
+tax & DECIMAL(10,2) & - & Thuế (10\% amount) \\
+total & DECIMAL(10,2) & - & Tổng tiền (amount + tax) \\
+status & ENUM('pending', 'paid', 'refunded') & - & Trạng thái thanh toán \\
+issued\_date & TIMESTAMP & - & Ngày tạo hóa đơn \\
+paid\_date & TIMESTAMP & - & Ngày thanh toán thực tế \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Bảng Payments}
+\begin{table}[htbp]
+\centering
+\caption{Schema bảng Payments}
+\label{tab:payments_schema}
+\small
+\begin{tabular}{llcl}
+\toprule
+\textbf{Tên Trường} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Mô Tả} \\
+\midrule
+id & INT (AUTO\_INCREMENT) & PK & Mã ghi nhận thanh toán \\
+invoice\_id & INT & FK & Hóa đơn được thanh toán \\
+amount & DECIMAL(10,2) & - & Số tiền thanh toán \\
+payment\_method & VARCHAR(20) & - & Phương thức (vnpay, stripe, momo) \\
+transaction\_id & VARCHAR(100) & - & Mã giao dịch từ gateway \\
+status & ENUM('pending', 'success', 'failed') & - & Trạng thái giao dịch \\
+paid\_at & TIMESTAMP & - & Thời điểm thanh toán \\
+\bottomrule
+\end{tabular}
+\end{table}
