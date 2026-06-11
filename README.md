@@ -131,6 +131,16 @@ SWP391_AutoWashPro/
 ```
 
 ---
+### Bảng Phân Công & Cấu Trúc File Hệ Thống (Frontend & Backend)
+
+| Phân hệ (Mảng) | Thư mục / Tên File | Chức năng chi tiết | Phân công KAN |
+| :--- | :--- | :--- | :--- |
+| **1. FRONTEND (Giao diện)** | `templates/` | Chứa toàn bộ file giao diện khung xương HTML (`login.html`, `dashboard.html`, `booking.html`...). | Nhóm Frontend |
+| | `assets/` | Chứa các file tĩnh để trang trí web (CSS, hình ảnh logo, icon, JavaScript). | Nhóm Frontend |
+| **2. BACKEND (Xử lý logic)** | `main.py` | File chạy server chính của hệ thống Flask. Giao tiếp giữa Giao diện và Dữ liệu. | Nhóm Backend |
+| | `src/` | Chứa code xử lý logic nghiệp vụ ngầm (kiểm tra mật khẩu, tính toán giờ trống...). | Nhóm Backend |
+| | `requirements.txt` | Danh sách các thư viện Python bắt buộc phải cài đặt để chạy dự án. | Cả nhóm |
+| **3. DATABASE (Dữ liệu)** | MySQL Database | Hệ quản trị cơ sở dữ liệu lưu thông tin khách hàng, xe, lịch đặt, ưu đãi. | Database Admin |
 
 # Technologies Used
 
