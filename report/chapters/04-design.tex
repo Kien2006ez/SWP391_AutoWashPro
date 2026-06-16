@@ -3,7 +3,7 @@
 Nhóm tiến hành phân tích hệ thống dữ liệu cốt lõi, kiến trúc mã nguồn tổng quan và giao diện người dùng dựa trên các yêu cầu chức năng của hệ thống Quản lý Rửa xe Thông minh (\textbf{AutoWashPro}). Toàn bộ quy trình thiết kế được bám sát theo tiến độ phân rã các thẻ công việc trên bảng quản trị Jira.
 
 % =================================================================
-\section{Thiết kế Cơ sở dữ liệu và Sơ đồ ERD (KAN-40)}
+\section{Thiết kế Cơ sở dữ liệu và Sơ đồ ERD (KAN-45 đến KAN-95)}
 Hệ thống sử dụng cơ sở dữ liệu quan hệ nhằm đảm bảo tính toàn vẹn dữ liệu, tính nhất quán trong các luồng nghiệp vụ phức tạp như xác thực tài khoản, đặt lịch hẹn và xử lý hóa đơn thanh toán.
 
 \subsection{Sơ đồ mối quan hệ thực thể (ERD Diagram)}
@@ -67,7 +67,7 @@ is\_used & BOOLEAN & - & Đánh dấu mã đã được sử dụng hay chưa \\
 
 % =================================================================
 \newpage
-\section{Kiến trúc và Cấu trúc thư mục mã nguồn Backend (KAN-21, KAN-24)}
+\section{Kiến trúc và Cấu trúc thư mục mã nguồn Backend (KAN-45 đến KAN-95)}
 Để đảm bảo hệ thống dễ dàng bảo trì, mở rộng và phát triển song song giữa các thành viên, cấu trúc mã nguồn Backend được phân chia theo mô hình cấu trúc phân lớp rõ ràng, quản lý chặt chẽ trên kho lưu trữ GitHub.
 
 \begin{verbatim}
@@ -89,7 +89,7 @@ SWP391_AutoWashPro/
 │       ├── js/              # Thư viện Javascript xử lý bất đồng bộ và tương tác giao diện
 │       └── images/          # Hình ảnh minh họa, biểu tượng logo thương hiệu hệ thống
 ├── templates/               # Chứa các tệp tin giao diện HTML ứng dụng phía máy chủ
-├── config.py                # Cấu hình môi trường và thông số kết nối Database mật mã (KAN-24)
+├── config.py                # Cấu hình môi trường và thông số kết nối Database mật mã (KAN-45 đến KAN-95)
 ├── run.py                   # Tệp tin kích hoạt khởi chạy toàn bộ hệ thống cục bộ
 ├── .gitignore               # Loại bỏ các tệp không cần thiết (venv, cache) khỏi kho Git
 └── requirements.txt         # Danh sách thư viện phụ thuộc bắt buộc (Flask, PyMySQL, PyJWT)
@@ -132,7 +132,7 @@ Giao diện tối giản hỗ trợ khách hàng đăng nhập nhanh chóng bằ
 
 % =================================================================
 \newpage
-\section{Thiết kế API REST Specification (KAN-41, KAN-42, KAN-43)}
+\section{Thiết kế API REST Specification (KAN-45 đến KAN-95)}
 Hệ thống sử dụng kiến trúc RESTful API phía Backend tương tác với Frontend thông qua các endpoint HTTP chuẩn. Dưới đây là đặc tả chi tiết các API endpoints cho Feature 1 (Authentication):
 
 \subsection{API Authentication Endpoints}
