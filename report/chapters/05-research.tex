@@ -1,9 +1,9 @@
 \chapter{Nghiên Cứu Công Nghệ Dự Án}
 
-\section{Research Question \& Hypotheses}
+\section{Câu hỏi nghiên cứu và Giả thuyết (Research Question \& Hypotheses)}
 Để đáp ứng chuẩn nghiên cứu khoa học thực nghiệm (Research-Based Learning), dự án tập trung giải quyết Câu hỏi nghiên cứu (Research Question - RQ) cốt lõi sau:
 \begin{quote}
-    \textbf{RQ:} Các yếu tố nào có ảnh hưởng quyết định mạnh mẽ nhất đến hành vi thăng hạng thành viên (Tier Progression) và duy trì lòng trung thành của khách hàng trong hệ sinh thái dịch vụ chăm sóc xe thông minh?
+    \textbf{RQ:} Các yếu tố đặc quyền của hệ thống Loyalty (Hệ số điểm thưởng, Quyền ưu tiên đặt lịch, Quy tắc hết hạn điểm, Khung giờ cao điểm) có ảnh hưởng quyết định và tác động như thế nào đến hành vi thăng hạng thành viên (Tier Progression) và duy trì lòng trung thành của khách hàng trong hệ sinh thái AutoWashPro?
 \end{quote}
 
 \noindent Dự án thiết lập 5 giả thuyết nghiên cứu (Hypotheses) để tiến hành kiểm định thực nghiệm thông qua số liệu thu thập:
@@ -15,7 +15,22 @@
     \item \textbf{H5:} Quyền lợi ưu tiên chọn khung giờ cao điểm có tác động giữ chân nhóm khách hàng bận rộn cao hơn các chương trình giảm giá thuần túy.
 \end{itemize}
 
-\section{Survey Design \& Data Collection}
+% =================================================================
+\subsection{Mô hình nghiên cứu lý thuyết (Conceptual Framework)}
+Dựa trên các giả thuyết thiết lập, nhóm xây dựng sơ đồ khung khái niệm nghiên cứu nhằm mô tả trực quan mối quan hệ tương quan giữa các biến tác động (biến độc lập) và biến mục tiêu (biến phụ thuộc).
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{images/conceptual_model.png}
+    \caption{Sơ đồ mô hình nghiên cứu lý thuyết (Conceptual Model) - AutoWashPro}
+    \label{fig:conceptual_model}
+\end{figure}
+
+Sơ đồ trên định hình rõ ràng 5 nhánh tác động tương ứng với 5 giả thuyết từ $H_1$ đến $H_5$. Các khối chức năng kỹ thuật của hệ thống như bộ lập lịch Cron Job quét hạng, thuật toán tính điểm thưởng nhân theo hệ số cấp bậc và quy tắc đóng mở cửa sổ thời gian đặt lịch chính là nguồn sinh dữ liệu thực nghiệm để chứng minh mô hình lý thuyết này.
+
+% =================================================================
+\newpage
+\section{Thiết kế khảo sát và Thu thập dữ liệu (Survey Design \& Data Collection)}
 Để có đủ cơ sở dữ liệu chạy mô hình toán học, quá trình thu thập dữ liệu được thiết kế quy mô lớn và chia làm 5 giai đoạn kéo dài trong vòng 16 tuần:
 \begin{enumerate}
     \item \textbf{Giai đoạn 1 (Tuần 1-4): Xây dựng hệ thống mẫu thử (Prototype)} và phân phối biểu mẫu khảo sát sơ bộ để thu thập ý kiến từ đối tượng khách hàng tiềm năng bao gồm: Sinh viên, giảng viên và nhân viên trong khuôn viên trường Đại học FPT, các chủ phương tiện xe máy bên ngoài và nhân viên trực tiếp rửa xe tại các cơ sở. Kênh triển khai: chia sẻ mã QR trên Facebook, Tiktok và các hội nhóm xe máy.
@@ -25,21 +40,40 @@
     \item \textbf{Giai đoạn 5 (Tuần 13-16): Phân tích nâng cao}, chạy mô hình thống kê và hoàn thiện bài báo nghiên cứu khoa học.
 \end{enumerate}
 
-\section{Behavioral Log Schema \& Analysis}
-Bộ ghi nhận dữ liệu hành vi (Research Logger) tự động xuất ra cấu trúc file dữ liệu gồm 10 trường thông tin chuẩn hóa để đưa vào phần mềm phân tích (SPSS, R hoặc Python):
-\begin{enumerate}
-    \item \texttt{timestamp}: Thời gian phát sinh hành động giao dịch.
-    \item \texttt{customer\_id}: Mã định danh tài khoản khách hàng (Đã được mã hóa mã băm bảo mật).
-    \item \texttt{current\_tier}: Hạng thành viên tại thời điểm phát sinh hành vi (Member/Silver/Gold/Platinum).
-    \item \texttt{service\_type}: Loại dịch vụ rửa xe lựa chọn (Rửa phổ thông, Rửa cao cấp, Phủ bóng nano).
-    \item \texttt{amount}: Số tiền chi trả thực tế cho hóa đơn dịch vụ.
-    \item \texttt{points\_earned}: Số lượng điểm thưởng được cộng vào ví hệ thống.
-    \item \texttt{points\_redeemed}: Số lượng điểm thưởng tiêu tốn để đổi quà tặng (nếu có).
-    \item \texttt{booking\_lead\_days}: Số ngày đặt lịch trước (Khoảng cách giữa ngày đặt và ngày rửa thật).
-    \item \texttt{promo\_used}: Trạng thái có sử dụng mã giảm giá giới hạn hạng hay không (0 hoặc 1).
-    \item \texttt{tier\_changed}: Ghi nhận trạng thái biến động hạng sau đơn hàng (Lên hạng / Giữ hạng / Hạ hạng).
-\end{enumerate}
-\noindent Các phương pháp toán học và mô hình kinh tế lượng sẽ áp dụng bao gồm: Hồi quy Logistic (Logistic Regression) để dự báo tỷ lệ thăng hạng; Phân tích sinh tồn (Survival Analysis) để đo lường khoảng thời gian khách hàng rời bỏ hệ thống; thuật toán phân cụm K-Means để phân nhóm chân dung hành vi tiêu dùng.
+% =================================================================
+\section{Đặc tả dữ liệu Log hành vi và Mô hình phân tích (Behavioral Log Schema)}
+Bộ ghi nhận dữ liệu hành vi (Research Logger) tích hợp ngầm trong Server API tự động trích xuất ra tệp dữ liệu phẳng (.csv) gồm 10 trường thông tin chuẩn hóa để đưa vào các công cụ phân tích (Python/Pandas, R hoặc SPSS):
 
-\section{Ethical Considerations}
-Nghiên cứu cam kết tuân thủ nghiêm ngặt các quy định đạo đức khoa học và pháp lý: toàn bộ người tham gia khảo sát đều được thông báo rõ mục đích và tự nguyện đồng ý (Informed Consent). Hệ thống tự động thực hiện ẩn danh hóa thông tin cá nhân (Anonymization) bằng cách băm chuỗi số điện thoại và họ tên, đảm bảo tuân thủ tuyệt đối theo Nghị định 13/2023/NĐ-CP của Chính phủ Việt Nam về bảo vệ dữ liệu cá nhân. Dữ liệu phục vụ nghiên cứu được tách biệt hoàn toàn trên một phân vùng độc lập, không gây ảnh hưởng đến dữ liệu vận hành thời gian thực của ứng dụng.
+\begin{enumerate}
+    \item \texttt{timestamp}: Thời gian phát sinh hành động giao dịch hệ thống.
+    \item \texttt{customer\_hash}: Mã định danh tài khoản khách hàng (Đã được băm bảo mật SHA-256).
+    \item \texttt{current\_tier}: Hạng thành viên tại thời điểm phát sinh hành vi (\textit{Member, Silver, Gold, Platinum}).
+    \item \texttt{service\_id}: Mã gói dịch vụ rửa xe khách hàng lựa chọn sử dụng.
+    \item \texttt{amount}: Số tiền chi trả thực tế cho hóa đơn dịch vụ sau khi trừ điểm hoặc áp mã (VNĐ).
+    \item \texttt{points\_earned}: Số lượng điểm thưởng thực tế được cộng vào ví hệ thống (Đã nhân hệ số hạng).
+    \item \texttt{points\_redeemed}: Số lượng điểm thưởng tiêu tốn để đổi mã ưu đãi trong phiên giao dịch.
+    \item \texttt{booking\_lead\_days}: Số ngày đặt lịch trước (Khoảng cách giữa ngày đặt và ngày rửa xe thực tế).
+    \item \texttt{promo\_used}: Trạng thái có áp dụng mã giảm giá giới hạn hạng hay không (Nhận giá trị $0$ hoặc $1$).
+    \item \texttt{tier\_changed}: Trạng thái biến động hạng sau kỳ quét đầu tháng ($-1$: Hạ hạng, $0$: Giữ hạng, $1$: Lên hạng).
+\end{enumerate}
+
+\subsection{Mô hình toán học ứng dụng trong kiểm định giả thuyết}
+Để chứng minh các giả thuyết nghiên cứu một cách khoa học, nhóm triển khai hai mô hình toán học thực nghiệm cốt lõi:
+
+\subsubsection{1. Mô hình hồi quy tuyến tính đa biến (Multiple Linear Regression)}
+Áp dụng kiểm định giả thuyết $H_2$ và $H_5$ nhằm đánh giá mức độ tác động của hệ số tích điểm (\textit{Tier Multiplier}) và quyền ưu tiên chọn khung giờ đến tổng giá trị chi tiêu hóa đơn đơn hàng ($AOV$):
+\begin{equation}
+    AOV = \beta_0 + \beta_1 \cdot \text{Tier\_Multiplier} + \beta_2 \cdot \text{Booking\_Lead\_Days} + \beta_3 \cdot \text{Promo\_Used} + \epsilon
+\end{equation}
+Trong đó: $\beta_0$ là hằng số tự do; $\beta_1, \beta_2, \beta_3$ là các hệ số hồi quy riêng phần thể hiện trọng số tác động của từng biến độc lập; $\epsilon$ là sai số ngẫu nhiên của mô hình.
+
+\subsubsection{2. Mô hình hồi quy Logistic nhị phân (Binary Logistic Regression)}
+Áp dụng kiểm định giả thuyết $H_1$ và $H_4$ nhằm dự báo xác suất một khách hàng sẽ thực hiện hành vi thăng hạng thành viên ($P(\text{Tier\_Progression} = 1)$) dựa trên các biến số hành vi tích lũy:
+\begin{equation}
+    \ln\left(\frac{P}{1-P}\right) = \alpha_0 + \alpha_1 \cdot \text{Amount} + \alpha_2 \cdot \text{Points\_Earned} + \alpha_3 \cdot \text{Booking\_Lead\_Days}
+\end{equation}
+Hàm Logit giúp chuyển đổi ranh giới xác suất từ khoảng $[0,1]$ sang tập số thực $[-\infty, +\infty]$, phục vụ đắc lực cho thuật toán phân cụm K-Means nhằm nhận diện chính xác chân dung tiêu dùng của khách hàng bận rộn và khách hàng nhạy cảm về giá.
+
+% =================================================================
+\section{Đạo đức nghiên cứu và Bảo mật dữ liệu (Ethical Considerations)}
+Nghiên cứu cam kết tuân thủ nghiêm ngặt các quy định đạo đức khoa học và pháp lý: toàn bộ người tham gia khảo sát đều được thông báo rõ mục đích và tự nguyện đồng ý (Informed Consent). Hệ thống tự động thực hiện ẩn danh hóa thông tin cá nhân (Anonymization) bằng cách băm chuỗi số điện thoại và họ tên bằng thuật toán mã hóa một chiều SHA-256, đảm bảo tuân thủ tuyệt đối theo Nghị định 13/2023/NĐ-CP của Chính phủ Việt Nam về bảo vệ dữ liệu cá nhân. Dữ liệu phục vụ nghiên cứu được tách biệt hoàn toàn trên một phân vùng độc lập, không gây ảnh hưởng đến dữ liệu vận hành thời gian thực của ứng dụng.

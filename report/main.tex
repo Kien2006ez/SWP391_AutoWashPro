@@ -1,47 +1,89 @@
-\documentclass[12pt,a4paper]{report}
-\usepackage[a4paper,margin=2.5cm]{geometry}
-\usepackage{graphicx} % Bỏ [pdftex] để tránh xung đột driver hình ảnh
+\documentclass[12pt,a4paper,oneside]{report}
+\usepackage[a4paper,left=3.5cm,right=2.0cm,top=3.0cm,bottom=3.5cm]{geometry} % Cấu hình lề chuẩn đồ án tốt nghiệp
+\usepackage{graphicx} 
+\graphicspath{ {./images/} } % Định nghĩa thư mục chứa ảnh mặc định
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{tipa}
 \usepackage{textcomp}
 \usepackage{fancyhdr}
-\setlength{\headheight}{18pt}
 
 % =================================================================
-% CẤU HÌNH HIỂN THỊ TIẾNG VIỆT CHUẨN (KHÔNG LO LỖI FONT/DẤU)
+% CẤU HÌNH HIỂN THỊ TIẾNG VIỆT CHUẨN ĐẸP (KHÔNG LO LỖI FONT/DẤU)
 % =================================================================
-\usepackage[T1]{fontenc}        % Ép kiểu mã hóa font hiển thị dấu Tiếng Việt
+\usepackage[T1]{fontenc}        % Mã hóa font hiển thị dấu Tiếng Việt sắc nét
 \usepackage[utf8]{inputenc}     % Đọc ký tự UTF-8 từ file nguồn
-\usepackage[vietnamese]{babel}  % Tự động dịch "Chapter 1" -> "Chương 1"
+\usepackage[vietnamese]{babel}  % Tự động dịch "Chapter" -> "Chương", "Table of Contents" -> "Mục lục"
+\usepackage{times}              % Ép cấu hình font chữ về dạng Times New Roman chuẩn học thuật
 
-\usepackage{booktabs}           % Hỗ trợ vẽ đường kẻ bảng biểu \toprule, \midrule
-\usepackage{longtable}          % Hỗ trợ bảng dài (multi-page tables)
-\usepackage{setspace}           % Hỗ trợ căn chỉnh khoảng cách dòng (Sửa lỗi \begin{spacing} cũ)
+% =================================================================
+% BỔ SUNG GÓI LỆNH BẮT BUỘC ĐỂ TRÁNH LỖI BIÊN DỊCH BẢNG & URL
+% =================================================================
+\usepackage{booktabs}           % Hỗ trợ vẽ đường kẻ bảng biểu cao cấp \toprule, \midrule, \bottomrule
+\usepackage{longtable}          % Hỗ trợ bảng dài tự động ngắt trang (multi-page tables)
+\usepackage{tabularx}           % Tự động co giãn và ngắt dòng trong các ô của bảng biểu lớn
+\usepackage{array}              % Hỗ trợ định dạng căn lề nâng cao cho các cột bảng biểu
+\usepackage{setspace}           % Hỗ trợ căn chỉnh khoảng cách dòng chuẩn khoa học
+\usepackage{url}                % Định dạng hiển thị đường dẫn Web thô
+\usepackage[unicode]{hyperref}  % Tự động tạo link liên kết nhấp chuột trong PDF và mục lục không bị lỗi font
+\hypersetup{
+    colorlinks=true,       % Bật màu sắc cho liên kết (thay vì đóng khung đỏ)
+    linkcolor=black,       % Đổi tất cả các liên kết nội bộ (Mục lục, Chương, Hình, Bảng) thành MÀU ĐEN
+    filecolor=magenta,      
+    urlcolor=blue,         % Giữ các đường link Web (GitHub, Demo) ở Chương 7 màu xanh dương cho đúng chuẩn
+    pdftitle={Hệ thống Rửa xe Thông minh AutoWashPro},
+    pdfpagemode=FullScreen,
+}
 
-\pagestyle{plain}
+% =================================================================
+% CẤU HÌNH TIÊU ĐỀ TRANG (HEADER & FOOTER) CHUYÊN NGHIỆP
+% =================================================================
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\leftmark}        % Hiển thị tên Chương hiện tại ở góc trên bên phải trang giấy
+\fancyfoot[C]{\thepage}         % Căn giữa số trang ở phần dưới chân trang
+\renewcommand{\headrulewidth}{0.4pt} % Đường kẻ ngang mảnh phân cách tiêu đề trang
+
+% Cấu hình khoảng cách dòng 1.5 line chuẩn quy định đồ án
+\onehalfspacing
 
 \begin{document}
 
-% Các trang thủ tục đầu tiên (đánh số trang La Mã i, ii, iii...)
-\pagenumbering{roman} 
+% -----------------------------------------------------------------
+% PHẦN THỦ TỤC ĐẦU TRANG (Đánh số trang La Mã: i, ii, iii...)
+% -----------------------------------------------------------------
+% SỬA LỖI: Gọi file frontmatter TRƯỚC để thiết lập trang bìa không số, 
+% sau đó mới bật \pagenumbering{roman} ngay tại các trang mục lục bên trong file frontmatter.
 \input{chapters/00-frontmatter} 
 
-\newpage
-% Vào nội dung chính (Bắt đầu tính số trang 1, 2, 3... từ Chương 1)
+\cleardoublepage
+
+% -----------------------------------------------------------------
+% PHẦN NỘI DUNG CHÍNH (Bắt đầu tính số trang 1, 2, 3... từ Chương 1)
+% -----------------------------------------------------------------
 \pagenumbering{arabic}
 
-\input{chapters/01-introduction} % Chương 1
-\input{chapters/02-management}   % Chương 2
-\input{chapters/03-srs}          % Chương 3
-\input{chapters/04-design}       % Chương 4
-\input{chapters/05-research}     % Chương 5
-\input{chapters/06-testing}      % Chương 6
-\input{chapters/07-deployment}   % Chương 7
+\input{chapters/01-introduction} % Chương 1: Tổng quan dự án
+\input{chapters/02-management}   % Chương 2: Quản lý dự án (Agile/Scrum)
+\input{chapters/03-srs}          % Chương 3: Đặc tả yêu cầu phần mềm (SRS)
+\input{chapters/04-design}       % Chương 4: Thiết kế kiến trúc & Cơ sở dữ liệu (ERD)
+\input{chapters/05-research}     % Chương 5: Nghiên cứu công nghệ hệ thống Loyalty
+\input{chapters/06-testing}      % Chương 6: Kiểm thử toàn diện hệ thống
+\input{chapters/07-deployment}   % Chương 7: Triển khai và Hướng dẫn vận hành
 
 \newpage
+\cleardoublepage
+
+% -----------------------------------------------------------------
+% DANH MỤC TÀI LIỆU THAM KHẢO CHUẨN ĐỒ ÁN
+% -----------------------------------------------------------------
+\addcontentsline{toc}{chapter}{Tài liệu tham khảo}
 \begin{thebibliography}{99}
-\bibitem{ref1} Tài liệu tham khảo dự án AutoWashPro.
+\bibitem{ref1} \textbf{Bộ Giáo dục và Đào tạo}, \textit{Quy định về quy cách trình bày báo cáo nghiên cứu khoa học và đồ án tốt nghiệp}, Nhà xuất bản Giáo dục Việt Nam, 2024.
+\bibitem{ref2} \textbf{Chính phủ nước CHXHCN Việt Nam}, \textit{Nghị định số 13/2023/NĐ-CP về Bảo vệ dữ liệu cá nhân (Anonymization)}, ban hành ngày 17/04/2023.
+\bibitem{ref3} \textbf{Ian Sommerville}, \textit{Software Engineering (10th Edition)}, Pearson, 2015.
+\bibitem{ref4} \textbf{Robert C. Martin}, \textit{Clean Architecture: A Craftsman's Guide to Software Structure and Design}, Prentice Hall, 2017.
+\bibitem{ref5} Mã nguồn và tài liệu hướng dẫn vận hành hệ thống \textit{AutoWashPro}, \url{https://github.com/kienlndev/SWP391_AutoWashPro}, Truy cập cuối cùng tháng 06/2026.
 \end{thebibliography}
 
 \end{document}
