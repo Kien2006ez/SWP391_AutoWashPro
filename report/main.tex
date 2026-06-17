@@ -1,19 +1,26 @@
 \documentclass[12pt,a4paper,oneside]{report}
 \usepackage[a4paper,left=3.5cm,right=2.0cm,top=3.0cm,bottom=3.5cm]{geometry} % Cấu hình lề chuẩn đồ án tốt nghiệp
 \usepackage{graphicx} 
-\graphicspath{ {./images/} } % Định nghĩa thư mục chứa ảnh mặc định
+\graphicspath{{images/}{./images/}} % Định nghĩa thư mục chứa ảnh mặc định
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{tipa}
 \usepackage{textcomp}
 \usepackage{fancyhdr}
-
 % =================================================================
 % CẤU HÌNH HIỂN THỊ TIẾNG VIỆT CHUẨN ĐẸP (KHÔNG LO LỖI FONT/DẤU)
 % =================================================================
-\usepackage[T1]{fontenc}        % Mã hóa font hiển thị dấu Tiếng Việt sắc nét
+\usepackage[T5]{fontenc}        % SỬA THÀNH T5: Mã hóa chuẩn chuyên dụng cho Tiếng Việt
 \usepackage[utf8]{inputenc}     % Đọc ký tự UTF-8 từ file nguồn
 \usepackage[vietnamese]{babel}  % Tự động dịch "Chapter" -> "Chương", "Table of Contents" -> "Mục lục"
+\babelprovide[hyphenrules=nohyphenation]{vietnamese} % THÊM DÒNG NÀY: Ép bỏ qua quy tắc ngắt từ gây lỗi
 \usepackage{times}              % Ép cấu hình font chữ về dạng Times New Roman chuẩn học thuật
 
 % =================================================================
@@ -22,7 +29,9 @@
 \usepackage{booktabs}           % Hỗ trợ vẽ đường kẻ bảng biểu cao cấp \toprule, \midrule, \bottomrule
 \usepackage{longtable}          % Hỗ trợ bảng dài tự động ngắt trang (multi-page tables)
 \usepackage{tabularx}           % Tự động co giãn và ngắt dòng trong các ô của bảng biểu lớn
-\usepackage{array}              % Hỗ trợ định dạng căn lề nâng cao cho các cột bảng biểu
+\usepackage{array}  
+\usepackage{ltablex}
+\keepXColumns            % Hỗ trợ định dạng căn lề nâng cao cho các cột bảng biểu
 \usepackage{setspace}           % Hỗ trợ căn chỉnh khoảng cách dòng chuẩn khoa học
 \usepackage{url}                % Định dạng hiển thị đường dẫn Web thô
 \usepackage[unicode]{hyperref}  % Tự động tạo link liên kết nhấp chuột trong PDF và mục lục không bị lỗi font
@@ -83,7 +92,7 @@
 \bibitem{ref2} \textbf{Chính phủ nước CHXHCN Việt Nam}, \textit{Nghị định số 13/2023/NĐ-CP về Bảo vệ dữ liệu cá nhân (Anonymization)}, ban hành ngày 17/04/2023.
 \bibitem{ref3} \textbf{Ian Sommerville}, \textit{Software Engineering (10th Edition)}, Pearson, 2015.
 \bibitem{ref4} \textbf{Robert C. Martin}, \textit{Clean Architecture: A Craftsman's Guide to Software Structure and Design}, Prentice Hall, 2017.
-\bibitem{ref5} Mã nguồn và tài liệu hướng dẫn vận hành hệ thống \textit{AutoWashPro}, \url{https://github.com/kienlndev/SWP391_AutoWashPro}, Truy cập cuối cùng tháng 06/2026.
+\bibitem{ref5} Mã nguồn và tài liệu hướng dẫn vận hành hệ thống \textit{AutoWashPro}, \url{https://github.com/Kien2006ez/SWP391_AutoWashPro}, Truy cập cuối cùng tháng 06/2026.
 \end{thebibliography}
 
 \end{document}
