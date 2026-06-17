@@ -149,6 +149,9 @@ SWP391_AutoWashPro/
 - MySQL
 - GitHub
 - Jira
+- HTML5
+- CSS3
+- JavaScript
 
 ---
 
