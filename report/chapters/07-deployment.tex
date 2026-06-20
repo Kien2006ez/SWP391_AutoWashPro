@@ -30,7 +30,7 @@ Sản phẩm cuối cùng của dự án AutoWashPro được đóng gói đầy
     \item \textbf{Khung thư viện chính (Library):} React.js 18+ thiết kế giao diện theo kiến trúc thành phần (Component-based) tái sử dụng cao.
     \item \textbf{Quản lý trạng thái (State Management):} Zustand thư viện quản lý luồng dữ liệu toàn cục gọn nhẹ, tối ưu hiệu năng render của ứng dụng.
     \item \textbf{Kết nối mạng (HTTP Client):} Thư viện Axios cấu hình cơ chế Interceptors hỗ trợ đính kèm tự động Access Token vào header của mọi yêu cầu.
-    \item \textbf{Thư viện giao diện trực quan (UI & Styling):} Tailwind CSS kết hợp thư viện Material-UI (MUI) xây dựng hệ thống lưới linh hoạt, đáp ứng hoàn hảo tiêu chuẩn thiết kế tương thích (Responsive Web Design).
+    \item \textbf{Thư viện giao diện trực quan (UI \& Styling):} Tailwind CSS kết hợp thư viện Material-UI (MUI) xây dựng hệ thống lưới linh hoạt, đáp ứng hoàn hảo tiêu chuẩn thiết kế tương thích (Responsive Web Design).
     \item \textbf{Xử lý biểu mẫu dữ liệu (Form Handling):} React Hook Form tối ưu hóa tốc độ nhập liệu, tích hợp thư viện Yup thực thi kiểm tra dữ liệu đầu vào thời gian thực (Real-time Frontend Validation).
 \end{itemize}
 
@@ -48,7 +48,7 @@ Sản phẩm cuối cùng của dự án AutoWashPro được đóng gói đầy
 \begin{enumerate}
     \item \textbf{Tải mã nguồn từ kho lưu trữ (Clone Repository):}
 \begin{verbatim}
-git clone https://github.com/kienlndev/SWP391_AutoWashPro.git
+git clone https://github.com/Kien2006ez/SWP391_AutoWashPro
 cd SWP391_AutoWashPro
 \end{verbatim}
 
@@ -163,7 +163,7 @@ psql -U postgres -d autowashpro < backup_database.sql
     \item Khi đặt lịch hẹn, tại bước tính hóa đơn dự kiến, khách hàng nhập mã Voucher vào ô "Mã giảm giá". Hệ thống sẽ tự động đối chiếu phân hạng mục tiêu (\textit{Target Tier}), nếu đạt điều kiện sẽ thực hiện khấu trừ tiền trực tiếp trên hóa đơn.
 \end{enumerate}
 
-\subsubsection{Bước 5: Tra cứu lịch sử & Quy tắc hủy lịch}
+\subsubsection{Bước 5: Tra cứu lịch sử \& Quy tắc hủy lịch}
 \begin{enumerate}
     \item Khách hàng vào mục "Lịch sử dịch vụ" để theo dõi vòng đời trạng thái của xe.
     \item Trong trường hợp thay đổi kế hoạch, khách hàng được quyền ấn nút "Hủy lịch hẹn" trực tiếp trên giao diện \textbf{chỉ khi thời gian hủy cách giờ rửa thực tế lớn hơn 6 tiếng}. Điểm thưởng quy đổi tương ứng (nếu có) sẽ được tự động hoàn về ví tài khoản khách hàng.
