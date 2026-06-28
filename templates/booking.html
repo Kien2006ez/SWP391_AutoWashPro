@@ -3,151 +3,366 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đặt Lịch Rửa Xe - AutoWashPro</title>
-    <style>
-        /* Thiết lập nền và căn giữa biểu mẫu */
-        body { 
-            margin: 0; 
-            font-family: Arial, sans-serif; 
-            background-color: #f4f7f6; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            padding: 20px; 
-            box-sizing: border-box;
-        }
-        
-        /* Khung chứa form đặt lịch */
-        .booking-container { 
-            background-color: white; 
-            padding: 30px; 
-            border-radius: 8px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
-            width: 100%; 
-            max-width: 600px; 
-            border-top: 5px solid #3498db; 
-        }
-        
-        h2 { text-align: center; color: #2c3e50; margin-top: 0; margin-bottom: 25px; }
-        
-        /* Thiết lập khoảng cách các ô nhập liệu */
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; color: #34495e; font-weight: bold; }
-        
-        input[type="text"], input[type="tel"], input[type="date"], input[type="time"], select, textarea { 
-            width: 100%; 
-            padding: 10px; 
-            border: 1px solid #ccc; 
-            border-radius: 4px; 
-            box-sizing: border-box; 
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-        }
-        
-        input:focus, select:focus, textarea:focus {
-            border-color: #3498db;
-            outline: none;
-        }
-        
-        /* Chia 2 cột cho các thông tin ngắn */
-        .row { display: flex; gap: 15px; }
-        .col { flex: 1; }
-        
-        /* Nút xác nhận */
-        button { 
-            width: 100%; 
-            padding: 12px; 
-            background-color: #3498db; 
-            color: white; 
-            border: none; 
-            border-radius: 4px; 
-            font-size: 16px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            transition: background-color 0.3s; 
-            margin-top: 15px;
-        }
-        button:hover { background-color: #2980b9; }
-        
-        /* Nút quay lại */
-        .back-link { 
-            display: block; 
-            text-align: center; 
-            margin-top: 15px; 
-            color: #7f8c8d; 
-            text-decoration: none; 
-            font-size: 14px;
-        }
-        .back-link:hover { color: #3498db; text-decoration: underline; }
-    </style>
+    <title>Đặt Lịch Rửa Xe - CarWash</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/booking.css">
 </head>
 <body>
 
-    <div class="booking-container">
-        <h2>📅 Đặt Lịch Rửa Xe</h2>
-        
-        <form action="/submit-booking" method="POST">
-            <div class="form-group">
-                <label for="fullname">Họ và tên khách hàng:</label>
-                <input type="text" id="fullname" name="fullname" placeholder="Nhập họ tên..." required>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="images/logo.png" alt="CarWash">
+                </a>
             </div>
+            <nav>
+                <ul>
+                    <li><a href="aboutus.html">Về Chúng Tôi</a></li>
+                    <li class="dropdown">
+                        <a href="service.html">Chăm Sóc Xe <i class="fa-solid fa-chevron-down"></i></a>
+                    <div class="dropdown-menu">
+    <a href="service.html#ruaxe"><i class="fa-solid fa-car"></i> Rửa Xe</a>
+    <a href="service.html#noithat"><i class="fa-solid fa-couch"></i> Vệ Sinh Nội Thất</a>
+    <a href="service.html#khoangmay"><i class="fa-solid fa-gear"></i> Vệ Sinh Khoang Máy</a>
+    <a href="service.html#danhbong"><i class="fa-solid fa-spray-can-sparkles"></i> Đánh Bóng Xe Ô Tô</a>
+    <a href="service.html#ceramic"><i class="fa-solid fa-shield"></i> Phủ Ceramic Ô Tô</a>
+    <a href="service.html#kinhoto"><i class="fa-solid fa-eye"></i> Đánh Bóng Kính Ô Tô</a>
+    <a href="service.html#phuGam"><i class="fa-solid fa-car-side"></i> Phủ Gầm Ô Tô</a>
+    <a href="service.html#danlanh"><i class="fa-solid fa-wind"></i> Vệ Sinh Dàn Lạnh Ô Tô</a>
+</div>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#">Phụ Kiện Ô Tô <i class="fa-solid fa-chevron-down"></i></a>
+                    </li>
+                    <li><a href="#">Tin Tức</a></li>
+                    <li><a href="booking.html">Đặt Lịch Rửa Xe</a></li>
+                    <li><a href="stores.html">Hệ Thống Cửa Hàng</a></li>
+                </ul>
+            </nav>
+            <a href="booking.html" class="booking-btn">
+                Booking Online
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </header>
 
-            <div class="row">
-                <div class="col form-group">
-                    <label for="phone">Số điện thoại:</label>
-                    <input type="tel" id="phone" name="phone" placeholder="Nhập SĐT liên hệ..." required>
-                </div>
-                <div class="col form-group">
-                    <label for="license_plate">Biển số xe:</label>
-                    <input type="text" id="license_plate" name="license_plate" placeholder="VD: 51H-123.45" required>
-                </div>
-            </div>
+    <div class="booking-page">
+        <div class="booking-wrapper">
 
-            <div class="row">
-                <div class="col form-group">
-                    <label for="vehicle_type">Loại xe:</label>
-                    <select id="vehicle_type" name="vehicle_type" required>
-                        <option value="">-- Chọn loại xe --</option>
-                        <option value="4_cho">Ô tô 4-5 chỗ</option>
-                        <option value="7_cho">Ô tô 7 chỗ / SUV</option>
-                        <option value="ban_tai">Xe bán tải</option>
-                        <option value="xe_may">Xe máy</option>
-                    </select>
-                </div>
-                <div class="col form-group">
-                    <label for="service">Gói dịch vụ:</label>
-                    <select id="service" name="service" required>
-                        <option value="">-- Chọn dịch vụ --</option>
-                        <option value="standard">Rửa xe tiêu chuẩn</option>
-                        <option value="premium">Rửa xe + Hút bụi nội thất</option>
-                        <option value="vip">Dọn nội thất chuyên sâu</option>
-                        <option value="ceramic">Rửa & Phủ Ceramic</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col form-group">
-                    <label for="booking_date">Ngày đặt:</label>
-                    <input type="date" id="booking_date" name="booking_date" required>
-                </div>
-                <div class="col form-group">
-                    <label for="booking_time">Giờ đến dự kiến:</label>
-                    <input type="time" id="booking_time" name="booking_time" required>
+            <div class="booking-brand">
+                <img src="images/logo.png" alt="CarWash">
+                <div>
+                    <h3>CarWash</h3>
+                    <p>Đặt lịch chăm sóc xe</p>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="notes">Ghi chú thêm (Không bắt buộc):</label>
-                <textarea id="notes" name="notes" rows="3" placeholder="Ví dụ: Xe có vết xước nhỏ ở cửa, cần vệ sinh kỹ cốp sau..."></textarea>
+            <div class="booking-steps">
+                <div class="step active" data-step="1">
+                    <span class="step-num">1</span>
+                    <span class="step-label">Size xe</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" data-step="2">
+                    <span class="step-num">2</span>
+                    <span class="step-label">Chi nhánh</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" data-step="3">
+                    <span class="step-num">3</span>
+                    <span class="step-label">Dịch vụ</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" data-step="4">
+                    <span class="step-num">4</span>
+                    <span class="step-label">Ngày & Giờ</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" data-step="5">
+                    <span class="step-num">5</span>
+                    <span class="step-label">Thông tin</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" data-step="6">
+                    <span class="step-num">6</span>
+                    <span class="step-label">Xác nhận</span>
+                </div>
             </div>
 
-            <button type="submit">Xác nhận đặt lịch</button>
-        </form>
-        
-        <a href="/dashboard" class="back-link">← Quay lại Bảng điều khiển</a>
+            <div class="booking-content">
+
+                <div class="step-content active" id="step-1">
+                    <div class="step-badge">BƯỚC 1 / 6</div>
+                    <h2>Chọn size xe</h2>
+                    <p class="step-desc">Bắt đầu bằng việc chọn đúng nhóm xe. Ở bước sau bạn chọn chi nhánh trước, rồi hệ thống mới hiện giá dịch vụ chính xác.</p>
+                    <div class="size-grid">
+                        <div class="size-card" data-value="small">
+                            <div class="size-card-top">
+                                <h3>Small</h3>
+                                <span class="size-tag">Sedan nhỏ</span>
+                            </div>
+                            <p>Phù hợp sedan, hatchback cỡ nhỏ và các mẫu xe thân xe gọn.</p>
+                        </div>
+                        <div class="size-card" data-value="medium">
+                            <div class="size-card-top">
+                                <h3>Medium</h3>
+                                <span class="size-tag">SUV/CUV</span>
+                            </div>
+                            <p>Phù hợp SUV, CUV, MPV cỡ trung và các xe gầm cao phổ biến.</p>
+                        </div>
+                        <div class="size-card" data-value="large">
+                            <div class="size-card-top">
+                                <h3>Large</h3>
+                                <span class="size-tag">Full-size</span>
+                            </div>
+                            <p>Phù hợp MPV lớn, bán tải, SUV full-size hoặc xe có thân xe lớn.</p>
+                        </div>
+                    </div>
+                    <div class="size-hint">
+                        <i class="fa-solid fa-circle-info"></i>
+                        Không biết xe thuộc nhóm nào? <a href="#">Xem hướng dẫn phân loại xe</a>
+                    </div>
+                </div>
+
+                <div class="step-content" id="step-2">
+                    <div class="step-badge">BƯỚC 2 / 6</div>
+                    <h2>Chọn chi nhánh</h2>
+                    <p class="step-desc">Chọn chi nhánh CarWash gần bạn nhất để tiếp tục đặt lịch.</p>
+                    <div class="branch-list">
+                        <div class="branch-option" data-value="tanphu">
+                            <div class="branch-option-icon">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div class="branch-option-info">
+                                <h3>CarWash Tân Phú</h3>
+                                <p>87 Tân Thắng, Tân Sơn Nhì, Hồ Chí Minh</p>
+                                <span><i class="fa-solid fa-clock"></i> 7:00 – 18:00 (Thứ 2 – Chủ Nhật)</span>
+                            </div>
+                            <div class="branch-option-check">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+                        </div>
+                        <div class="branch-option" data-value="quan9">
+                            <div class="branch-option-icon">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div class="branch-option-info">
+                                <h3>CarWash Quận 9</h3>
+                                <p>77 Đ. Đỗ Xuân Hợp, Phước Long, Hồ Chí Minh</p>
+                                <span><i class="fa-solid fa-clock"></i> 7:00 – 18:00 (Thứ 2 – Chủ Nhật)</span>
+                            </div>
+                            <div class="branch-option-check">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+                        </div>
+                        <div class="branch-option" data-value="phunhuan">
+                            <div class="branch-option-icon">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div class="branch-option-info">
+                                <h3>CarWash Phú Nhuận</h3>
+                                <p>84 Cù Lao, Cầu Kiệu, Hồ Chí Minh</p>
+                                <span><i class="fa-solid fa-clock"></i> 7:00 – 18:00 (Thứ 2 – Chủ Nhật)</span>
+                            </div>
+                            <div class="branch-option-check">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-content" id="step-3">
+                    <div class="step-badge">BƯỚC 3 / 6</div>
+                    <h2>Chọn dịch vụ</h2>
+                    <p class="step-desc">Chọn một hoặc nhiều dịch vụ bạn muốn thực hiện.</p>
+                    <div class="service-list">
+                        <div class="service-option" data-value="ruaxe">
+                            <div class="service-option-info">
+                                <h3>Rửa Xe Ô Tô</h3>
+                                <p>Rửa xe cơ bản, rửa cao cấp và rửa bảo dưỡng định kỳ</p>
+                            </div>
+                            <div class="service-option-price">
+                                <span>Từ 80,000đ</span>
+                                <div class="service-check"><i class="fa-solid fa-check"></i></div>
+                            </div>
+                        </div>
+                        <div class="service-option" data-value="noithat">
+                            <div class="service-option-info">
+                                <h3>Vệ Sinh Nội Thất</h3>
+                                <p>Làm sạch ghế da/nỉ, sàn, taplo, cửa gió, khử mùi</p>
+                            </div>
+                            <div class="service-option-price">
+                                <span>Từ 250,000đ</span>
+                                <div class="service-check"><i class="fa-solid fa-check"></i></div>
+                            </div>
+                        </div>
+                        <div class="service-option" data-value="khoangmay">
+                            <div class="service-option-info">
+                                <h3>Vệ Sinh Khoang Máy</h3>
+                                <p>Làm sạch bụi bẩn, dầu mỡ trong khoang động cơ</p>
+                            </div>
+                            <div class="service-option-price">
+                                <span>Từ 200,000đ</span>
+                                <div class="service-check"><i class="fa-solid fa-check"></i></div>
+                            </div>
+                        </div>
+                        <div class="service-option" data-value="danhbong">
+                            <div class="service-option-info">
+                                <h3>Đánh Bóng Xe Ô Tô</h3>
+                                <p>Xóa xước nhẹ, phục hồi độ sáng bóng bề mặt sơn xe</p>
+                            </div>
+                            <div class="service-option-price">
+                                <span>Từ 500,000đ</span>
+                                <div class="service-check"><i class="fa-solid fa-check"></i></div>
+                            </div>
+                        </div>
+                        <div class="service-option" data-value="ceramic">
+                            <div class="service-option-info">
+                                <h3>Phủ Ceramic Ô Tô</h3>
+                                <p>Phủ bảo vệ sơn, tăng độ bóng, hạn chế bám bẩn</p>
+                            </div>
+                            <div class="service-option-price">
+                                <span>Từ 3,000,000đ</span>
+                                <div class="service-check"><i class="fa-solid fa-check"></i></div>
+                            </div>
+                        </div>
+                        <div class="service-option" data-value="danlanh">
+                            <div class="service-option-info">
+                                <h3>Vệ Sinh Dàn Lạnh</h3>
+                                <p>Vệ sinh dàn lạnh nội soi, khử mùi, khử khuẩn điều hòa</p>
+                            </div>
+                            <div class="service-option-price">
+                                <span>Từ 350,000đ</span>
+                                <div class="service-check"><i class="fa-solid fa-check"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-content" id="step-4">
+                    <div class="step-badge">BƯỚC 4 / 6</div>
+                    <h2>Chọn ngày & giờ</h2>
+                    <p class="step-desc">Chọn thời gian phù hợp để chúng tôi chuẩn bị tốt nhất cho xe của bạn.</p>
+                    <div class="datetime-grid">
+                        <div class="datetime-col">
+                            <label>Chọn ngày</label>
+                            <input type="date" id="booking-date" class="datetime-input">
+                            <div class="date-quick">
+                                <button class="date-quick-btn" onclick="setDate(0)">Hôm nay</button>
+                                <button class="date-quick-btn" onclick="setDate(1)">Ngày mai</button>
+                                <button class="date-quick-btn" onclick="setDate(2)">Ngày kia</button>
+                            </div>
+                        </div>
+                        <div class="datetime-col">
+                            <label>Chọn giờ</label>
+                            <div class="time-grid">
+                                <div class="time-slot" data-time="07:00">07:00</div>
+                                <div class="time-slot" data-time="08:00">08:00</div>
+                                <div class="time-slot" data-time="09:00">09:00</div>
+                                <div class="time-slot" data-time="10:00">10:00</div>
+                                <div class="time-slot" data-time="11:00">11:00</div>
+                                <div class="time-slot" data-time="13:00">13:00</div>
+                                <div class="time-slot" data-time="14:00">14:00</div>
+                                <div class="time-slot" data-time="15:00">15:00</div>
+                                <div class="time-slot" data-time="16:00">16:00</div>
+                                <div class="time-slot" data-time="17:00">17:00</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-content" id="step-5">
+                    <div class="step-badge">BƯỚC 5 / 6</div>
+                    <h2>Thông tin của bạn</h2>
+                    <p class="step-desc">Điền thông tin để chúng tôi xác nhận lịch hẹn với bạn.</p>
+                    <div class="info-form">
+                        <div class="info-row">
+                            <div class="info-field">
+                                <label>Họ và tên <span>*</span></label>
+                                <input type="text" id="input-name" placeholder="Nhập họ và tên">
+                            </div>
+                            <div class="info-field">
+                                <label>Số điện thoại <span>*</span></label>
+                                <input type="text" id="input-phone" placeholder="Nhập số điện thoại">
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-field">
+                                <label>Email</label>
+                                <input type="email" id="input-email" placeholder="Nhập email (không bắt buộc)">
+                            </div>
+                            <div class="info-field">
+                                <label>Biển số xe <span>*</span></label>
+                                <input type="text" id="input-plate" placeholder="VD: 51A-123.45">
+                            </div>
+                        </div>
+                        <div class="info-field full">
+                            <label>Ghi chú thêm</label>
+                            <textarea id="input-note" placeholder="Yêu cầu đặc biệt hoặc ghi chú thêm cho kỹ thuật viên..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-content" id="step-6">
+                    <div class="step-badge">BƯỚC 6 / 6</div>
+                    <h2>Xác nhận đặt lịch</h2>
+                    <p class="step-desc">Kiểm tra lại thông tin trước khi xác nhận.</p>
+                    <div class="confirm-box">
+                        <div class="confirm-row">
+                            <span class="confirm-label"><i class="fa-solid fa-car"></i> Size xe</span>
+                            <span class="confirm-value" id="confirm-size">—</span>
+                        </div>
+                        <div class="confirm-row">
+                            <span class="confirm-label"><i class="fa-solid fa-location-dot"></i> Chi nhánh</span>
+                            <span class="confirm-value" id="confirm-branch">—</span>
+                        </div>
+                        <div class="confirm-row">
+                            <span class="confirm-label"><i class="fa-solid fa-screwdriver-wrench"></i> Dịch vụ</span>
+                            <span class="confirm-value" id="confirm-service">—</span>
+                        </div>
+                        <div class="confirm-row">
+                            <span class="confirm-label"><i class="fa-solid fa-calendar"></i> Ngày & Giờ</span>
+                            <span class="confirm-value" id="confirm-datetime">—</span>
+                        </div>
+                        <div class="confirm-row">
+                            <span class="confirm-label"><i class="fa-solid fa-user"></i> Họ tên</span>
+                            <span class="confirm-value" id="confirm-name">—</span>
+                        </div>
+                        <div class="confirm-row">
+                            <span class="confirm-label"><i class="fa-solid fa-phone"></i> Điện thoại</span>
+                            <span class="confirm-value" id="confirm-phone">—</span>
+                        </div>
+                        <div class="confirm-row">
+                            <span class="confirm-label"><i class="fa-solid fa-id-card"></i> Biển số</span>
+                            <span class="confirm-value" id="confirm-plate">—</span>
+                        </div>
+                    </div>
+                    <div class="confirm-note">
+                        <i class="fa-solid fa-circle-info"></i>
+                        Sau khi xác nhận, chúng tôi sẽ liên hệ lại trong vòng 30 phút để xác nhận lịch hẹn.
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="booking-footer">
+                <button class="btn-back" id="btn-back" onclick="prevStep()">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại
+                </button>
+                <button class="btn-next" id="btn-next" onclick="nextStep()">
+                    Tiếp theo <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+        </div>
     </div>
+
+    <script src="js/booking.js"></script>
 
 </body>
 </html>
