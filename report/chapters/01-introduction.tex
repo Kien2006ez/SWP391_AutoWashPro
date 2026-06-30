@@ -1,0 +1,45 @@
+\chapter{Tổng Quan Về Dự Án Rửa Xe Thông Minh}
+
+\section{Lý do chọn đề tài}
+Trong bối cảnh công nghệ phát triển mạnh mẽ, việc tối ưu hóa dịch vụ chăm sóc xe thông qua các ứng dụng trực tuyến là xu hướng tất yếu. Dự án Hệ thống Quản lý Rửa xe Thông minh (\textbf{AutoWashPro}) được phát triển nhằm giải quyết triệt để các vấn đề về thời gian chờ đợi của khách hàng, tối ưu hóa quy trình quản lý vận hành cho các trung tâm dịch vụ, đồng thời ứng dụng các mô hình tích lũy điểm thưởng thành viên hiện đại nhằm nâng cao tỷ lệ giữ chân khách hàng (Customer Retention Rate Rate) phục vụ nghiên cứu khoa học.
+
+\section{Mục tiêu của dự án}
+Hệ thống hướng tới việc cung cấp một giải pháp toàn diện bao gồm:
+\begin{itemize}
+    \item Cho phép khách hàng chủ động quản lý phương tiện, đặt lịch rửa xe trực tuyến, chọn các gói dịch vụ và tham gia vào hệ sinh thái tích đổi điểm thưởng thành viên linh hoạt.
+    \item Cung cấp bảng điều khiển quản trị (Admin Dashboard) tối ưu cho nhân viên và quản lý trung tâm trong việc tiếp nhận xe, xuất hóa đơn nội bộ, điều phối lịch hẹn và theo dõi các chỉ số tăng trưởng doanh thu theo thời gian thực.
+\end{itemize}
+
+\section{Phạm vi hệ thống và Các phân hệ chức năng (KAN-45 đến KAN-95)}
+Dự án tập trung nghiên cứu, xây dựng và hiện thực hóa các khối chức năng chính được quản lý theo mô hình Agile/Scrum trên hệ thống Jira Board qua các dải thẻ công việc từ KAN-45 đến KAN-95, cụ thể bao gồm các phân hệ sau:
+
+\begin{enumerate}
+    \item \textbf{Phân hệ Xác thực \& Quản lý Tài khoản (Feature 1):} 
+    \begin{itemize}
+        \item Xây dựng cơ sở dữ liệu lưu trữ cấu hình bảo mật thông tin khách hàng, thực hiện mã hóa mật khẩu một chiều bằng thuật toán bcrypt.
+        \item Phát triển hệ thống sinh và xác thực mã OTP ngẫu nhiên gồm 6 chữ số qua Email/SMS với thời gian hết hạn cố định là 5 phút để kích hoạt tài khoản an toàn.
+        \item Thiết kế giao diện trực quan và API Endpoints cho các chức năng: Đăng ký tài khoản mới, Đăng nhập hệ thống bảo mật bằng cơ chế Token-based (Access Token và Refresh Token).
+    \end{itemize}
+    
+    \item \textbf{Phân hệ Đặt lịch dịch vụ \& Quản lý Hồ sơ xe (Feature 2):}
+    \begin{itemize}
+        \item Khách hàng thực hiện quản lý danh sách phương tiện cá nhân (Thêm mới, cập nhật biển số, hãng xe, dòng xe và màu sắc xe đặc trưng).
+        \item Hệ thống hiển thị công khai danh mục các gói dịch vụ chăm sóc xe tại trung tâm (Rửa nhanh, Rửa chi tiết, Phủ Nano bảo vệ, Vệ sinh khoang máy và nội thất sâu).
+        \item Tích hợp logic kiểm tra trạng thái trống của các khung giờ (Slot) theo thời gian thực, đối chiếu với phân hạng thành viên để áp quy tắc cửa sổ thời gian đặt lịch trước (\textit{Booking Window}) trước khi cho phép xác nhận đặt lịch hẹn (Booking).
+    \end{itemize}
+
+    \item \textbf{Phân hệ Hóa đơn nội bộ, Thành viên \& Điểm thưởng Loyalty (Feature 3):}
+    \begin{itemize}
+        \item Triển khai logic tính toán hóa đơn nội bộ tại quầy khi nhân viên xác nhận hoàn thành quy trình dịch vụ chăm sóc xe thực tế.
+        \item Hệ thống tự động ghi nhận tổng chi tiêu tích lũy và thực hiện cộng điểm thưởng (\textit{Wash Credits}) trực tiếp vào ví điểm của khách hàng. Số lượng điểm thưởng được nhân với hệ số tích điểm (\textit{Multiplier}) đặc quyền tương ứng với từng cấp hạng thành viên (Member, Silver, Gold, Platinum).
+        \item Cho phép khách hàng sử dụng số dư điểm thưởng khả dụng để thực hiện đổi lấy các mã giảm giá hệ thống (\textit{Promo Codes}), đồng thời thiết lập điều kiện áp dụng mã theo phân hạng mục tiêu (\textit{Target Tier}) khi tính toán khấu trừ hóa đơn.
+        \item Cấu hình bộ lập lịch tự động chạy ngầm (Cron Job) định kỳ vào lúc 00:00 ngày đầu tháng để tự động quét tổng chi tiêu 3 tháng gần nhất của toàn bộ khách hàng nhằm thực thi nâng/hạ hạng thành viên tự động.
+    \end{itemize}
+
+    \item \textbf{Phân hệ Quản trị \& Điều phối Trung tâm dành cho Admin/Staff (Feature 4):}
+    \begin{itemize}
+        \item Giao diện Dashboard hiển thị hệ thống các biểu đồ trực quan, đo lường các chỉ số kinh doanh cốt lõi như doanh thu tổng, số lượng lịch hẹn hoàn thành, và tần suất đặt lịch theo các mốc thời gian.
+        \item Màn hình điều phối danh sách lịch hẹn tập trung dành cho nhân viên tại quầy, hỗ trợ tìm kiếm theo biển số xe và cập nhật trạng thái vòng đời lịch hẹn (Pending, Confirmed, Completed, Cancelled).
+        \item Phân hệ quản lý danh mục cấu hình hệ thống bao gồm cập nhật đơn giá, thời gian thi công dự kiến của dịch vụ và theo dõi lịch sử biến động điểm số của khách hàng phục vụ công tác đối soát dữ liệu log hành vi.
+    \end{itemize}
+\end{enumerate}

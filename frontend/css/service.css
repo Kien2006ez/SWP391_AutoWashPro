@@ -1,0 +1,430 @@
+/* =============================================
+   SERVICES PAGE — services.css
+   Kế thừa style.css (header, footer, container)
+   ============================================= */
+
+/* ── HERO ────────────────────────────────── */
+.sv-hero {
+    position: relative;
+    background: linear-gradient(135deg, #0d0d0d 0%, #1c1c1c 60%, #2a1200 100%);
+    padding: 150px 0 80px;
+    overflow: hidden;
+    text-align: center;
+}
+
+.sv-hero::before {
+    content: '';
+    position: absolute;
+    top: -120px;
+    right: -120px;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,98,0,0.18) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.sv-hero-inner {
+    position: relative;
+    z-index: 2;
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.sv-hero-tag {
+    display: inline-block;
+    background: rgba(255,98,0,0.15);
+    border: 1px solid rgba(255,98,0,0.4);
+    color: #ff6200;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 30px;
+    margin-bottom: 22px;
+}
+
+.sv-hero h1 {
+    font-size: 52px;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #fff;
+    margin-bottom: 18px;
+}
+
+.sv-hero h1 span {
+    color: #ff6200;
+}
+
+.sv-hero > .sv-hero-inner > p {
+    font-size: 16px;
+    color: #999;
+    line-height: 1.8;
+    margin-bottom: 36px;
+}
+
+/* pill nav */
+.sv-hero-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.sv-hero-pills a {
+    padding: 9px 20px;
+    border-radius: 50px;
+    border: 1.5px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.75);
+    font-size: 13px;
+    font-weight: 600;
+    transition: .2s;
+    backdrop-filter: blur(4px);
+}
+
+.sv-hero-pills a:hover {
+    background: #ff6200;
+    border-color: #ff6200;
+    color: #fff;
+}
+
+/* ── SERVICE BLOCKS ──────────────────────── */
+.sv-block {
+    background: #fff;
+    padding: 90px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.sv-block.sv-alt {
+    background: #f7f7f7;
+}
+
+.sv-inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 70px;
+}
+
+.sv-inner.sv-reverse {
+    flex-direction: row-reverse;
+}
+
+/* ── LEFT: text col ──────────────────────── */
+.sv-text {
+    flex: 1;
+}
+
+.sv-label {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.sv-num {
+    font-size: 13px;
+    font-weight: 800;
+    color: #ccc;
+    letter-spacing: 1px;
+    font-variant-numeric: tabular-nums;
+}
+
+.sv-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+.sv-icon.purple { background: #ede9ff; color: #6c5ce7; }
+.sv-icon.orange { background: #fff1e8; color: #ff6200; }
+.sv-icon.teal   { background: #e0faf4; color: #00b894; }
+.sv-icon.green  { background: #e6f9ee; color: #00a854; }
+
+.sv-text h2 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #111;
+    margin-bottom: 14px;
+    line-height: 1.2;
+}
+
+.sv-text > p {
+    font-size: 15px;
+    color: #555;
+    line-height: 1.85;
+    margin-bottom: 28px;
+}
+
+/* price list */
+.sv-price-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1.5px solid #eee;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 22px;
+}
+
+.sv-price-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 13px 18px;
+    font-size: 14px;
+    color: #444;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background .15s;
+}
+
+.sv-price-item:last-child {
+    border-bottom: none;
+}
+
+.sv-price-item:hover {
+    background: #fff8f4;
+}
+
+.sv-price-item .price {
+    font-weight: 700;
+    color: #ff6200;
+    white-space: nowrap;
+}
+
+/* tags */
+.sv-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 28px;
+}
+
+.sv-tags span {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 14px;
+    border-radius: 20px;
+    background: #f0f0f0;
+    color: #555;
+}
+
+/* CTA button */
+.sv-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 28px;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 700;
+    transition: .2s;
+}
+
+.sv-btn.purple-btn { background: #6c5ce7; color: #fff; }
+.sv-btn.purple-btn:hover { background: #5a4bd1; }
+
+.sv-btn.orange-btn { background: #ff6200; color: #fff; }
+.sv-btn.orange-btn:hover { background: #e55500; }
+
+.sv-btn.teal-btn { background: #00b894; color: #fff; }
+.sv-btn.teal-btn:hover { background: #009d7d; }
+
+.sv-btn.green-btn { background: #00a854; color: #fff; }
+.sv-btn.green-btn:hover { background: #008f46; }
+
+/* ── RIGHT: steps col ────────────────────── */
+.sv-steps {
+    width: 360px;
+    flex-shrink: 0;
+    background: #111;
+    border-radius: 18px;
+    padding: 32px 30px;
+    color: #fff;
+    position: sticky;
+    top: 90px;
+}
+
+.sv-block.sv-alt .sv-steps {
+    background: #1a1a1a;
+}
+
+.sv-steps h3 {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #666;
+    margin-bottom: 24px;
+}
+
+.step-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.step-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+}
+
+.step-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.step-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.08);
+}
+
+.step-dot.purple { background: #6c5ce7; }
+.step-dot.orange { background: #ff6200; }
+.step-dot.teal   { background: #00b894; }
+.step-dot.green  { background: #00a854; }
+
+.step-item strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 3px;
+}
+
+.step-item p {
+    font-size: 13px;
+    color: #888;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ── CTA SECTION ─────────────────────────── */
+.sv-cta {
+    background: linear-gradient(135deg, #ff6200 0%, #c94400 100%);
+    padding: 90px 0;
+    text-align: center;
+}
+
+.sv-cta-inner h2 {
+    font-size: 38px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 12px;
+}
+
+.sv-cta-inner p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 36px;
+}
+
+.sv-cta-btns {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    align-items: center;
+}
+
+.sv-cta-btns .btn-primary {
+    background: #fff;
+    color: #ff6200;
+    padding: 14px 32px;
+    border-radius: 9px;
+    font-size: 15px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: .2s;
+}
+
+.sv-cta-btns .btn-primary:hover {
+    background: #111;
+    color: #fff;
+}
+
+.sv-cta-btns .btn-secondary {
+    border: 2px solid rgba(255,255,255,0.5);
+    color: #fff;
+    padding: 13px 28px;
+    border-radius: 9px;
+    font-size: 15px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: .2s;
+}
+
+.sv-cta-btns .btn-secondary:hover {
+    border-color: #fff;
+    background: rgba(255,255,255,0.1);
+}
+
+/* ── RESPONSIVE ──────────────────────────── */
+@media (max-width: 1100px) {
+    .sv-inner,
+    .sv-inner.sv-reverse {
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    .sv-steps {
+        width: 100%;
+        position: static;
+    }
+}
+
+@media (max-width: 768px) {
+    .sv-hero {
+        padding: 120px 0 60px;
+    }
+
+    .sv-hero h1 {
+        font-size: 34px;
+    }
+
+    .sv-block {
+        padding: 60px 0;
+    }
+
+    .sv-text h2 {
+        font-size: 26px;
+    }
+
+    .sv-cta-inner h2 {
+        font-size: 26px;
+    }
+
+    .sv-cta-btns {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .sv-cta-btns .btn-primary,
+    .sv-cta-btns .btn-secondary {
+        justify-content: center;
+    }
+
+    .sv-hero-pills {
+        gap: 8px;
+    }
+
+    .sv-hero-pills a {
+        font-size: 12px;
+        padding: 7px 14px;
+    }
+}

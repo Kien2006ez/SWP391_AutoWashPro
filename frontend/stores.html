@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Cửa Hàng - CarWash</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/stores.css">
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="images/logo.png" alt="CarWash">
+                </a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="aboutus.html">Về Chúng Tôi</a></li>
+                    <li class="dropdown">
+                        <a href="service.html">Chăm Sóc Xe <i class="fa-solid fa-chevron-down"></i></a>
+                        <div class="dropdown-menu">
+    <a href="service.html#ruaxe"><i class="fa-solid fa-car"></i> Rửa Xe</a>
+    <a href="service.html#noithat"><i class="fa-solid fa-couch"></i> Vệ Sinh Nội Thất</a>
+    <a href="service.html#khoangmay"><i class="fa-solid fa-gear"></i> Vệ Sinh Khoang Máy</a>
+    <a href="service.html#danhbong"><i class="fa-solid fa-spray-can-sparkles"></i> Đánh Bóng Xe Ô Tô</a>
+    <a href="service.html#ceramic"><i class="fa-solid fa-shield"></i> Phủ Ceramic Ô Tô</a>
+    <a href="service.html#kinhoto"><i class="fa-solid fa-eye"></i> Đánh Bóng Kính Ô Tô</a>
+    <a href="service.html#phuGam"><i class="fa-solid fa-car-side"></i> Phủ Gầm Ô Tô</a>
+    <a href="service.html#danlanh"><i class="fa-solid fa-wind"></i> Vệ Sinh Dàn Lạnh Ô Tô</a>
+</div>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#">Phụ Kiện Ô Tô <i class="fa-solid fa-chevron-down"></i></a>
+                    </li>
+                    <li><a href="#">Tin Tức</a></li>
+                    <li><a href="booking.html">Đặt Lịch Rửa Xe</a></li>
+                    <li><a href="stores.html">Hệ Thống Cửa Hàng</a></li>
+                </ul>
+            </nav>
+            <a href="booking.html" class="booking-btn">
+                Booking Online
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- PAGE HERO -->
+    <section class="page-hero">
+        <div class="container">
+            <div class="page-hero-inner">
+                <div class="page-hero-text">
+                    <h1>Hệ Thống Cửa Hàng<br><span>CarWash</span> Toàn Quốc</h1>
+                    <p>Tìm chi nhánh CarWash gần bạn nhất. Tất cả cơ sở đều áp dụng quy trình chuẩn quốc tế, thiết bị hiện đại và đội ngũ kỹ thuật viên được đào tạo bài bản.</p>
+                </div>
+                <div class="page-hero-stats">
+                    <div class="hero-stat">
+                        <h3>3+</h3>
+                        <p>Chi Nhánh</p>
+                    </div>
+                    <div class="hero-stat">
+                        <h3>79+</h3>
+                        <p>Dịch Vụ</p>
+                    </div>
+                    <div class="hero-stat">
+                        <h3>118K+</h3>
+                        <p>Khách Hàng</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+        <div class="container">
+            <div class="filter-inner">
+                <span class="filter-label">Lọc theo khu vực:</span>
+                <button class="filter-btn active">Tất Cả</button>
+                <button class="filter-btn">TP. Hồ Chí Minh</button>
+                <button class="filter-btn">Quận Tân Phú</button>
+                <button class="filter-btn">Quận 9</button>
+                <button class="filter-btn">Phú Nhuận</button>
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Tìm kiếm chi nhánh...">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- STORES SECTION -->
+    <section class="stores-section">
+        <div class="container">
+
+            <!-- Featured Banner -->
+            <div class="featured-banner">
+                <div class="featured-content">
+                    <p class="featured-eyebrow"><i class="fa-solid fa-star"></i> Chi Nhánh Nổi Bật</p>
+                    <h2>CarWash Tân Phú<br>– Cơ Sở Đầu Tiên</h2>
+                    <p>Cơ sở đầu tiên và lớn nhất của CarWash, nơi chúng tôi bắt đầu hành trình tiên phong quy trình rửa xe chuẩn quốc tế tại TP.HCM. Trang bị hệ thống máy móc hiện đại nhất và đội kỹ thuật viên nhiều kinh nghiệm nhất.</p>
+                    <div class="featured-meta">
+                        <span><i class="fa-solid fa-map-pin"></i> 87 Tân Thắng, Tân Sơn Nhì, Quận Tân Phú, TP.HCM</span>
+                        <span><i class="fa-solid fa-clock"></i> Mở cửa: 7:00 – 18:00 (Thứ 2 – Chủ Nhật)</span>
+                        <span><i class="fa-solid fa-phone"></i> 0909 000 001</span>
+                    </div>
+                    <div class="featured-btns">
+                        <a href="https://maps.google.com" target="_blank" class="btn-primary-dark">
+                            <i class="fa-solid fa-map"></i> Xem Bản Đồ
+                        </a>
+                        <a href="booking.html" class="btn-outline-light">Đặt Lịch Ngay</a>
+                    </div>
+                </div>
+                <div class="featured-visual">
+                    <div class="featured-stat">
+                        <h4>10+</h4>
+                        <p>Năm Kinh Nghiệm</p>
+                    </div>
+                    <div class="featured-divider"></div>
+                    <div class="featured-stat">
+                        <h4>50K+</h4>
+                        <p>Lượt Khách Phục Vụ</p>
+                    </div>
+                    <div class="featured-divider"></div>
+                    <div class="featured-stat">
+                        <h4>4.9<span class="featured-star">★</span></h4>
+                        <p>Đánh Giá Trung Bình</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TP. HCM Group -->
+            <div class="district-group">
+                <h2 class="district-title">
+                    <span class="district-tag">TP. HCM</span>
+                    Thành Phố Hồ Chí Minh
+                </h2>
+                <div class="stores-grid">
+
+                    <!-- Card 1 -->
+                    <div class="store-card">
+                        <div class="store-map">
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919!2d106.628!3d10.782!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTDCsDQ2JzU1LjIiTiAxMDbCsDM3JzQwLjgiRQ!5e0!3m2!1svi!2svn!4v1700000000000!5m2!1svi!2svn"
+                                allowfullscreen loading="lazy">
+                            </iframe>
+                            <span class="store-status">Đang Mở Cửa</span>
+                        </div>
+                        <div class="store-body">
+                            <h3>CarWash Tân Phú</h3>
+                            <div class="store-info">
+                                <p><i class="fa-solid fa-map-pin"></i> 87 Tân Thắng, Tân Sơn Nhì, Q. Tân Phú, TP.HCM</p>
+                                <p><i class="fa-solid fa-clock"></i> 7:00 – 18:00 (Thứ 2 – Chủ Nhật)</p>
+                                <p><i class="fa-solid fa-phone"></i> 0909 000 001</p>
+                                <p><i class="fa-solid fa-star" style="color:#f39c12;"></i> 4.9 / 5.0 &nbsp;(320 đánh giá)</p>
+                            </div>
+                            <div class="store-tags">
+                                <span class="store-tag">Rửa Xe</span>
+                                <span class="store-tag">Nội Thất</span>
+                                <span class="store-tag">Ceramic</span>
+                                <span class="store-tag">Đánh Bóng</span>
+                            </div>
+                            <div class="store-actions">
+                                <a href="https://maps.google.com" target="_blank" class="btn-map">
+                                    <i class="fa-solid fa-map"></i> Bản Đồ
+                                </a>
+                                <a href="booking.html" class="btn-book">Đặt Lịch</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="store-card">
+                        <div class="store-map">
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918!2d106.776!3d10.806!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTDCsDQ4JzIxLjYiTiAxMDbCsDQ2JzMzLjYiRQ!5e0!3m2!1svi!2svn!4v1700000000001!5m2!1svi!2svn"
+                                allowfullscreen loading="lazy">
+                            </iframe>
+                            <span class="store-status">Đang Mở Cửa</span>
+                        </div>
+                        <div class="store-body">
+                            <h3>CarWash Quận 9</h3>
+                            <div class="store-info">
+                                <p><i class="fa-solid fa-map-pin"></i> 77 Đ. Đỗ Xuân Hợp, Phước Long, Q. 9, TP.HCM</p>
+                                <p><i class="fa-solid fa-clock"></i> 7:00 – 18:00 (Thứ 2 – Chủ Nhật)</p>
+                                <p><i class="fa-solid fa-phone"></i> 0909 000 002</p>
+                                <p><i class="fa-solid fa-star" style="color:#f39c12;"></i> 4.8 / 5.0 &nbsp;(215 đánh giá)</p>
+                            </div>
+                            <div class="store-tags">
+                                <span class="store-tag">Rửa Xe</span>
+                                <span class="store-tag">Dàn Lạnh</span>
+                                <span class="store-tag">Khoang Máy</span>
+                            </div>
+                            <div class="store-actions">
+                                <a href="https://maps.google.com" target="_blank" class="btn-map">
+                                    <i class="fa-solid fa-map"></i> Bản Đồ
+                                </a>
+                                <a href="booking.html" class="btn-book">Đặt Lịch</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="store-card">
+                        <div class="store-map">
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919!2d106.677!3d10.800!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTDCsDQ4JzAwLjAiTiAxMDbCsDQwJzM3LjIiRQ!5e0!3m2!1svi!2svn!4v1700000000002!5m2!1svi!2svn"
+                                allowfullscreen loading="lazy">
+                            </iframe>
+                            <span class="store-status">Đang Mở Cửa</span>
+                        </div>
+                        <div class="store-body">
+                            <h3>CarWash Phú Nhuận</h3>
+                            <div class="store-info">
+                                <p><i class="fa-solid fa-map-pin"></i> 84 Cù Lao, Cầu Kiệu, Q. Phú Nhuận, TP.HCM</p>
+                                <p><i class="fa-solid fa-clock"></i> 7:00 – 18:00 (Thứ 2 – Chủ Nhật)</p>
+                                <p><i class="fa-solid fa-phone"></i> 0909 000 003</p>
+                                <p><i class="fa-solid fa-star" style="color:#f39c12;"></i> 4.8 / 5.0 &nbsp;(178 đánh giá)</p>
+                            </div>
+                            <div class="store-tags">
+                                <span class="store-tag">Rửa Xe</span>
+                                <span class="store-tag">Ceramic</span>
+                                <span class="store-tag">Đánh Bóng Kính</span>
+                            </div>
+                            <div class="store-actions">
+                                <a href="https://maps.google.com" target="_blank" class="btn-map">
+                                    <i class="fa-solid fa-map"></i> Bản Đồ
+                                </a>
+                                <a href="booking.html" class="btn-book">Đặt Lịch</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- End District Group -->
+
+        </div>
+    </section>
+
+    <!-- COMING SOON -->
+    <section class="coming-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Sắp Khai Trương</h2>
+                <p>CarWash đang mở rộng hệ thống – những chi nhánh mới sẽ sớm ra mắt</p>
+            </div>
+            <div class="coming-grid">
+                <div class="coming-card">
+                    <div class="coming-icon"><i class="fa-solid fa-location-dot"></i></div>
+                    <h3>CarWash Bình Thạnh</h3>
+                    <p>Dự kiến khai trương tại Quận Bình Thạnh, TP.HCM</p>
+                    <span class="coming-badge">Q3 / 2025</span>
+                </div>
+                <div class="coming-card">
+                    <div class="coming-icon"><i class="fa-solid fa-location-dot"></i></div>
+                    <h3>CarWash Gò Vấp</h3>
+                    <p>Dự kiến khai trương tại Quận Gò Vấp, TP.HCM</p>
+                    <span class="coming-badge">Q4 / 2025</span>
+                </div>
+                <div class="coming-card">
+                    <div class="coming-icon"><i class="fa-solid fa-location-dot"></i></div>
+                    <h3>CarWash Thủ Đức</h3>
+                    <p>Dự kiến khai trương tại TP. Thủ Đức, TP.HCM</p>
+                    <span class="coming-badge">Q4 / 2025</span>
+                </div>
+                <div class="coming-card">
+                    <div class="coming-icon"><i class="fa-solid fa-location-dot"></i></div>
+                    <h3>CarWash Bình Dương</h3>
+                    <p>Mở rộng ra tỉnh Bình Dương – cơ sở đầu tiên ngoài TP.HCM</p>
+                    <span class="coming-badge">2026</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>Hệ Thống Cửa Hàng CarWash</h4>
+                    <p><strong>CarWash Tân Phú:</strong> 87 Tân Thắng, Tân Sơn Nhì, Hồ Chí Minh</p>
+                    <p><strong>CarWash Quận 9:</strong> 77 Đ. Đỗ Xuân Hợp, Phước Long, Hồ Chí Minh</p>
+                    <p><strong>CarWash Phú Nhuận:</strong> 84 Cù Lao, Cầu Kiệu, Hồ Chí Minh</p>
+                    <p><strong>Giờ hoạt động:</strong> 7:00 – 18:00 (Thứ 2 – Chủ Nhật)</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Liên Kết Hữu Ích</h4>
+                    <ul>
+                        <li><a href="aboutus.html">Về Chúng Tôi</a></li>
+                        <li><a href="booking.html">Đặt Lịch Chăm Sóc Xe</a></li>
+                        <li><a href="#">Go Unlimited</a></li>
+                        <li><a href="#">Hệ Thống Cửa Hàng</a></li>
+                        <li><a href="#">Giá Xe Ô Tô 2025</a></li>
+                        <li><a href="#">Đăng Kiểm Xe Ô Tô</a></li>
+                        <li><a href="#">Sitemap</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Chính Sách</h4>
+                    <ul>
+                        <li><a href="#">Quy Chế Hoạt Động</a></li>
+                        <li><a href="#">Chính Sách Bảo Mật</a></li>
+                        <li><a href="#">Chính Sách Giao Hàng</a></li>
+                        <li><a href="#">Chính Sách Bảo Hành</a></li>
+                        <li><a href="#">Chính Sách Đổi Trả</a></li>
+                        <li><a href="#">Chính Sách Khui Hàng</a></li>
+                        <li><a href="#">Chính Sách Trả Góp</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Chăm Sóc Xe</h4>
+                    <ul>
+                        <li><a href="#">Rửa Xe</a></li>
+                        <li><a href="#">Vệ Sinh Nội Thất</a></li>
+                        <li><a href="#">Vệ Sinh Khoang Máy</a></li>
+                        <li><a href="#">Đánh Bóng Xe Ô Tô</a></li>
+                        <li><a href="#">Phủ Ceramic Ô Tô</a></li>
+                        <li><a href="#">Đánh Bóng Kính Ô Tô</a></li>
+                        <li><a href="#">Phủ Gầm Ô Tô</a></li>
+                        <li><a href="#">Vệ Sinh Dàn Lạnh Ô Tô</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Phụ Kiện Ô Tô</h4>
+                    <ul>
+                        <li><a href="#">Màn Hình Android Ô Tô</a></li>
+                        <li><a href="#">Android Box Cho Ô Tô</a></li>
+                        <li><a href="#">Camera Hành Trình Ô Tô</a></li>
+                        <li><a href="#">Camera 360 Ô Tô</a></li>
+                        <li><a href="#">Cảm Biến Áp Suất Lốp</a></li>
+                        <li><a href="#">Led Nội Thất Ô Tô</a></li>
+                        <li><a href="#">Độ Đèn Tăng Sáng</a></li>
+                        <li><a href="#">Dán Phim Cách Nhiệt Ô Tô</a></li>
+                        <li><a href="#">Cách Âm Chống Ồn Ô Tô</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 CarWash. All rights reserved.</p>
+                <div class="footer-socials">
+                    <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/stores.js"></script>
+
+</body>
+</html>

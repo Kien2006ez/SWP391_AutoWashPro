@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarWash - Hệ Thống Rửa Xe</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="images/logo.png" alt="CarWash">
+                </a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="aboutus.html">Về Chúng Tôi</a></li>
+                    <li class="dropdown">
+                        <a href="service.html">Chăm Sóc Xe <i class="fa-solid fa-chevron-down"></i></a>
+                        <div class="dropdown-menu">
+    <a href="service.html#ruaxe"><i class="fa-solid fa-car"></i> Rửa Xe</a>
+    <a href="service.html#noithat"><i class="fa-solid fa-couch"></i> Vệ Sinh Nội Thất</a>
+    <a href="service.html#khoangmay"><i class="fa-solid fa-gear"></i> Vệ Sinh Khoang Máy</a>
+    <a href="service.html#danhbong"><i class="fa-solid fa-spray-can-sparkles"></i> Đánh Bóng Xe Ô Tô</a>
+    <a href="service.html#ceramic"><i class="fa-solid fa-shield"></i> Phủ Ceramic Ô Tô</a>
+    <a href="service.html#kinhoto"><i class="fa-solid fa-eye"></i> Đánh Bóng Kính Ô Tô</a>
+    <a href="service.html#phuGam"><i class="fa-solid fa-car-side"></i> Phủ Gầm Ô Tô</a>
+    <a href="service.html#danlanh"><i class="fa-solid fa-wind"></i> Vệ Sinh Dàn Lạnh Ô Tô</a>
+</div>
+                    </li>
+                    <li class="dropdown">
+                        <a href="accessories.html">Phụ Kiện Ô Tô <i class="fa-solid fa-chevron-down"></i></a>
+                    </li>
+                    <li><a href="#">Tin Tức</a></li>
+                    <li><a href="booking.html">Đặt Lịch Rửa Xe</a></li>
+                    <li><a href="stores.html">Hệ Thống Cửa Hàng</a></li>
+                </ul>
+            </nav>
+            <a href="booking.html" class="booking-btn">
+                Booking Online
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="overlay"></div>
+        <div class="container hero-content">
+            <div class="hero-left">
+                <h1>
+                    CARWASH - HỆ THỐNG RỬA XE <br>
+                    & CHĂM SÓC XE <span>HÀNG ĐẦU</span> <br>
+                    VIỆT NAM
+                </h1>
+                <p>Quy trình rửa xe & chăm sóc xe ô tô đúng cách đầu tiên tại TP.HCM</p>
+                <div class="stats">
+                    <div class="item">
+                        <h2>118,000+</h2>
+                        <span>Khách Hàng</span>
+                    </div>
+                    <div class="item">
+                        <h2>3+</h2>
+                        <span>Chi Nhánh</span>
+                    </div>
+                    <div class="item">
+                        <h2>79+</h2>
+                        <span>Dịch Vụ</span>
+                    </div>
+                </div>
+                <div class="hero-buttons">
+                    <a href="booking.html" class="btn-primary">
+                        Đặt Hẹn Online
+                        <i class="fa-regular fa-calendar"></i>
+                    </a>
+                    <a href="#services" class="btn-secondary">Xem Dịch Vụ</a>
+                </div>
+            </div>
+            <div class="hero-right">
+                <img src="images/hero.png" alt="Car Wash">
+            </div>
+        </div>
+    </section>
+
+    <section class="services" id="services">
+        <div class="container">
+            <div class="section-header">
+                <h2>Dịch Vụ Của Chúng Tôi</h2>
+                <p>Đa dạng dịch vụ chăm sóc xe chuyên nghiệp, tận tâm</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card active">
+                    <div class="service-icon purple">
+                        <i class="fa-solid fa-car"></i>
+                    </div>
+                    <h3>Rửa Xe Ô Tô</h3>
+                    <p>Dịch vụ rửa xe cơ bản, rửa cao cấp và rửa bảo dưỡng định kỳ cho ô tô.</p>
+                    <a href="booking.html" class="service-btn active-btn">XEM THÊM</a>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon orange">
+                        <i class="fa-solid fa-couch"></i>
+                    </div>
+                    <h3>Vệ Sinh Nội Thất</h3>
+                    <p>Làm sạch ghế da/nỉ, sàn, taplo, cửa gió, khử mùi và chăm sóc khoang cabin.</p>
+                    <a href="booking.html" class="service-btn orange-btn">XEM THÊM</a>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon teal">
+                        <i class="fa-solid fa-gear"></i>
+                    </div>
+                    <h3>Vệ Sinh Khoang Máy</h3>
+                    <p>Làm sạch bụi bẩn, dầu mỡ, mùi lạ và chăm sóc chi tiết trong khoang động cơ.</p>
+                    <a href="booking.html" class="service-btn teal-btn">XEM THÊM</a>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon green">
+                        <i class="fa-solid fa-wind"></i>
+                    </div>
+                    <h3>Vệ Sinh Dàn Lạnh</h3>
+                    <p>Vệ sinh dàn lạnh nội soi, hỗ trợ khử mùi, khử khuẩn và làm sạch hệ thống điều hòa.</p>
+                    <a href="booking.html" class="service-btn green-btn">XEM THÊM</a>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon green">
+                        <i class="fa-solid fa-spray-can-sparkles"></i>
+                    </div>
+                    <h3>Đánh Bóng Xe Ô Tô</h3>
+                    <p>Đánh bóng xóa xước nhẹ, phục hồi độ sáng bóng và cải thiện bề mặt sơn xe.</p>
+                    <a href="booking.html" class="service-btn green-btn">XEM THÊM</a>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon purple">
+                        <i class="fa-solid fa-shield"></i>
+                    </div>
+                    <h3>Phủ Ceramic Ô Tô</h3>
+                    <p>Phủ bảo vệ sơn, tăng độ bóng, hạn chế bám bẩn và hỗ trợ bảo vệ bề mặt xe lâu dài.</p>
+                    <a href="booking.html" class="service-btn active-btn">XEM THÊM</a>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon orange">
+                        <i class="fa-solid fa-car-side"></i>
+                    </div>
+                    <h3>Sơn Phủ Gầm Ô Tô</h3>
+                    <p>Sơn phủ gầm chống rỉ sét, hạn chế đá văng và hỗ trợ bảo vệ gầm xe khi vận hành.</p>
+                    <a href="booking.html" class="service-btn orange-btn">XEM THÊM</a>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon teal">
+                        <i class="fa-solid fa-eye"></i>
+                    </div>
+                    <h3>Đánh Bóng Kính Ô Tô</h3>
+                    <p>Xử lý kính ố mốc, xước nhẹ, phục hồi độ trong và cải thiện tầm nhìn khi lái xe.</p>
+                    <a href="booking.html" class="service-btn teal-btn">XEM THÊM</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about">
+        <div class="container">
+            <div class="about-inner">
+                <div class="about-image">
+                    <img src="images/about.jpg" alt="Về CarWash">
+                    <div class="about-badge">
+                        <h3>10+</h3>
+                        <span>Năm Kinh Nghiệm</span>
+                    </div>
+                </div>
+                <div class="about-content">
+                    <p class="about-tag">Về Chúng Tôi</p>
+                    <h2>Hệ Thống Rửa Xe & Chăm Sóc Xe Hàng Đầu Việt Nam</h2>
+                    <p>CarWash tự hào là đơn vị tiên phong trong lĩnh vực rửa xe và chăm sóc xe ô tô chuyên nghiệp tại TP.HCM. Chúng tôi áp dụng quy trình chuẩn quốc tế, sử dụng hóa chất an toàn và thiết bị hiện đại để mang lại kết quả tốt nhất cho xe của bạn.</p>
+                    <div class="about-stats">
+                        <div class="about-stat">
+                            <h4>118,000+</h4>
+                            <span>Khách Hàng</span>
+                        </div>
+                        <div class="about-stat">
+                            <h4>3+</h4>
+                            <span>Chi Nhánh</span>
+                        </div>
+                        <div class="about-stat">
+                            <h4>79+</h4>
+                            <span>Dịch Vụ</span>
+                        </div>
+                    </div>
+                    <a href="aboutus.html" class="btn-primary">Tìm Hiểu Thêm <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="branches">
+        <div class="container">
+            <div class="section-header">
+                <h2>Hệ Thống Chi Nhánh</h2>
+                <p>Tìm chi nhánh CarWash gần bạn nhất</p>
+            </div>
+            <div class="branches-grid">
+                <div class="branch-card">
+                    <div class="branch-icon">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+                    <h3>CarWash Tân Phú</h3>
+                    <p><i class="fa-solid fa-map-pin"></i> 87 Tân Thắng, Tân Sơn Nhì, Hồ Chí Minh</p>
+                    <p><i class="fa-solid fa-clock"></i> 7:00 – 18:00 (Thứ 2 – Chủ Nhật)</p>
+                    <p><i class="fa-solid fa-phone"></i> 0909 000 001</p>
+                    <a href="#" class="branch-btn">Xem Bản Đồ</a>
+                </div>
+                <div class="branch-card">
+                    <div class="branch-icon">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+                    <h3>CarWash Quận 9</h3>
+                    <p><i class="fa-solid fa-map-pin"></i> 77 Đ. Đỗ Xuân Hợp, Phước Long, Hồ Chí Minh</p>
+                    <p><i class="fa-solid fa-clock"></i> 7:00 – 18:00 (Thứ 2 – Chủ Nhật)</p>
+                    <p><i class="fa-solid fa-phone"></i> 0909 000 002</p>
+                    <a href="#" class="branch-btn">Xem Bản Đồ</a>
+                </div>
+                <div class="branch-card">
+                    <div class="branch-icon">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+                    <h3>CarWash Phú Nhuận</h3>
+                    <p><i class="fa-solid fa-map-pin"></i> 84 Cù Lao, Cầu Kiệu, Hồ Chí Minh</p>
+                    <p><i class="fa-solid fa-clock"></i> 7:00 – 18:00 (Thứ 2 – Chủ Nhật)</p>
+                    <p><i class="fa-solid fa-phone"></i> 0909 000 003</p>
+                    <a href="#" class="branch-btn">Xem Bản Đồ</a>
+                </div>
+            </div>
+            <div class="contact-box">
+                <div class="contact-info">
+                    <h3>Liên Hệ Với Chúng Tôi</h3>
+                    <p><i class="fa-solid fa-phone"></i> Hotline: <strong>1800 000 000</strong></p>
+                    <p><i class="fa-brands fa-facebook"></i> Facebook: <strong>CarWash Vietnam</strong></p>
+                    <p><i class="fa-brands fa-tiktok"></i> TikTok: <strong>@carwash.vn</strong></p>
+                    <p><i class="fa-solid fa-envelope"></i> Email: <strong>contact@carwash.vn</strong></p>
+                </div>
+                <div class="contact-form">
+                    <h3>Đặt Lịch Ngay</h3>
+                    <input type="text" placeholder="Họ và tên">
+                    <input type="text" placeholder="Số điện thoại">
+                    <select>
+                        <option>Chọn dịch vụ</option>
+                        <option>Rửa Xe Ô Tô</option>
+                        <option>Vệ Sinh Nội Thất</option>
+                        <option>Đánh Bóng Xe</option>
+                        <option>Phủ Ceramic</option>
+                    </select>
+                    <input type="date">
+                    <button class="submit-btn">Đặt Lịch <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>Hệ Thống Cửa Hàng CarWash</h4>
+                    <p><strong>CarWash Tân Phú:</strong> 87 Tân Thắng, Tân Sơn Nhì, Hồ Chí Minh</p>
+                    <p><strong>CarWash Quận 9:</strong> 77 Đ. Đỗ Xuân Hợp, Phước Long, Hồ Chí Minh</p>
+                    <p><strong>CarWash Phú Nhuận:</strong> 84 Cù Lao, Cầu Kiệu, Hồ Chí Minh</p>
+                    <p><strong>Giờ hoạt động:</strong> 7:00 – 18:00 (Thứ 2 – Chủ Nhật)</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Liên Kết Hữu Ích</h4>
+                    <ul>
+                        <li><a href="aboutus.html">Về Chúng Tôi</a></li>
+                        <li><a href="booking.html">Đặt Lịch Chăm Sóc Xe</a></li>
+                        <li><a href="#">Go Unlimited</a></li>
+                        <li><a href="#">Hệ Thống Cửa Hàng</a></li>
+                        <li><a href="#">Giá Xe Ô Tô 2025</a></li>
+                        <li><a href="#">Đăng Kiểm Xe Ô Tô</a></li>
+                        <li><a href="#">Sitemap</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Chính Sách</h4>
+                    <ul>
+                        <li><a href="#">Quy Chế Hoạt Động</a></li>
+                        <li><a href="#">Chính Sách Bảo Mật</a></li>
+                        <li><a href="#">Chính Sách Giao Hàng</a></li>
+                        <li><a href="#">Chính Sách Bảo Hành</a></li>
+                        <li><a href="#">Chính Sách Đổi Trả</a></li>
+                        <li><a href="#">Chính Sách Khui Hàng</a></li>
+                        <li><a href="#">Chính Sách Trả Góp</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Chăm Sóc Xe</h4>
+                    <ul>
+                        <li><a href="#">Rửa Xe</a></li>
+                        <li><a href="#">Vệ Sinh Nội Thất</a></li>
+                        <li><a href="#">Vệ Sinh Khoang Máy</a></li>
+                        <li><a href="#">Đánh Bóng Xe Ô Tô</a></li>
+                        <li><a href="#">Phủ Ceramic Ô Tô</a></li>
+                        <li><a href="#">Đánh Bóng Kính Ô Tô</a></li>
+                        <li><a href="#">Phủ Gầm Ô Tô</a></li>
+                        <li><a href="#">Vệ Sinh Dàn Lạnh Ô Tô</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Phụ Kiện Ô Tô</h4>
+                    <ul>
+                        <li><a href="#">Màn Hình Android Ô Tô</a></li>
+                        <li><a href="#">Android Box Cho Ô Tô</a></li>
+                        <li><a href="#">Camera Hành Trình Ô Tô</a></li>
+                        <li><a href="#">Camera 360 Ô Tô</a></li>
+                        <li><a href="#">Cảm Biến Áp Suất Lốp</a></li>
+                        <li><a href="#">Led Nội Thất Ô Tô</a></li>
+                        <li><a href="#">Độ Đèn Tăng Sáng</a></li>
+                        <li><a href="#">Dán Phim Cách Nhiệt Ô Tô</a></li>
+                        <li><a href="#">Cách Âm Chống Ồn Ô Tô</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 CarWash. All rights reserved.</p>
+                <div class="footer-socials">
+                    <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

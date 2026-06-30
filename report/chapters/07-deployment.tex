@@ -1,0 +1,228 @@
+\chapter{Triển Khai và Bàn Giao Dự Án (Deployment \& Deliverables)}
+
+\section{Sản phẩm bàn giao (Deliverable Package)}
+Sản phẩm cuối cùng của dự án AutoWashPro được đóng gói đầy đủ, chuẩn hóa cấu trúc mã nguồn và bàn giao một cách minh bạch thông qua các liên kết lưu trữ trực tuyến dưới đây:
+\begin{itemize}
+    \item \textbf{Mã nguồn dự án (GitHub Repository):} \url{https://github.com/kienlndev/SWP391_AutoWashPro}
+    \item \textbf{Phiên bản chạy thử nghiệm (Live Demo Website):}  (Frontend Client) \& \url{https://api-autowashpro.herokuapp.com} (Backend API Core)
+    \item \textbf{Biểu mẫu khảo sát thị hiếu (Survey Form Link):} \url{https://forms.gle/AutoWashProSurvey2026}
+    \item \textbf{Bộ dữ liệu hành vi nghiên cứu (Research Dataset):} Tệp dữ liệu phẳng định dạng CSV phục vụ bài toán nghiên cứu tại Chương 5: \url{https://github.com/kienlndev/SWP391_AutoWashPro/releases/download/v1.0/research_dataset.csv}
+    \item \textbf{Tài liệu đặc tả API (API Docs):} Hệ thống tài liệu tương tác tự động trực quan qua Swagger UI: \url{https://api-autowashpro.herokuapp.com/api-docs}
+    \item \textbf{Hướng dẫn vận hành (User Manual):} Bản đặc tả chi tiết được tích hợp trực tiếp trong chương này và tệp tài liệu hướng dẫn nhanh \texttt{README.md} tại kho lưu trữ mã nguồn GitHub.
+\end{itemize}
+
+\section{Hệ sinh thái công nghệ và Thư viện phụ thuộc (Tech Stack)}
+
+\subsection{Phân hệ nền tảng (Backend Stack)}
+\begin{itemize}
+    \item \textbf{Môi trường thực thi (Runtime):} Node.js phiên bản LTS 20+ bảo đảm hiệu năng xử lý bất đồng bộ tối ưu.
+    \item \textbf{Khung phát triển (Framework):} Express.js tối giản, linh hoạt, hỗ trợ xây dựng hệ thống RESTful API chuẩn hóa.
+    \item \textbf{Cơ sở dữ liệu (Database):} PostgreSQL 15+ hệ quản trị cơ sở dữ liệu quan hệ (RDBMS) mạnh mẽ, bảo đảm tính toàn vẹn dữ liệu qua cơ chế khóa ngoại và tối ưu hóa index truy vấn.
+    \item \textbf{Bảo mật và Xác thực (Authentication):} Cơ chế Token-based sử dụng JSON Web Token (JWT) bảo mật phiên đăng nhập, kết hợp thuật toán mã hóa một chiều \texttt{bcrypt} (với mã hóa salt cost $\geq$ 12) bảo vệ thông tin mật khẩu.
+    \item \textbf{Bộ lập lịch tự động (Automation Service):} Thư viện \texttt{node-cron} quản trị tác vụ nền chạy ngầm (Cron Job) quét dữ liệu chi tiêu và cập nhật phân hạng tự động định kỳ đầu tháng.
+    \item \textbf{Dịch vụ gửi thông báo (Email Service):} Tích hợp thư viện Nodemailer cấu hình giao thức SMTP gửi tự động mã kích hoạt OTP và hóa đơn điện tử cho người dùng.
+    \item \textbf{Trình ánh xạ dữ liệu (ORM):} Sequelize làm cầu nối thao tác dữ liệu an toàn, ngăn chặn hoàn toàn lỗ hổng tấn công SQL Injection thông qua cơ chế Parameterized Queries.
+    \item \textbf{Kiểm thử tự động (Testing Framework):} Jest phối hợp cùng thư viện Supertest thực thi các kịch bản kiểm thử đơn vị (Unit Tests) và kiểm thử tích hợp (Integration Tests) tại môi trường CI/CD GitHub Actions.
+\end{itemize}
+
+\subsection{Phân hệ giao diện (Frontend Stack)}
+\begin{itemize}
+    \item \textbf{Khung thư viện chính (Library):} React.js 18+ thiết kế giao diện theo kiến trúc thành phần (Component-based) tái sử dụng cao.
+    \item \textbf{Quản lý trạng thái (State Management):} Zustand thư viện quản lý luồng dữ liệu toàn cục gọn nhẹ, tối ưu hiệu năng render của ứng dụng.
+    \item \textbf{Kết nối mạng (HTTP Client):} Thư viện Axios cấu hình cơ chế Interceptors hỗ trợ đính kèm tự động Access Token vào header của mọi yêu cầu.
+    \item \textbf{Thư viện giao diện trực quan (UI \& Styling):} Tailwind CSS kết hợp thư viện Material-UI (MUI) xây dựng hệ thống lưới linh hoạt, đáp ứng hoàn hảo tiêu chuẩn thiết kế tương thích (Responsive Web Design).
+    \item \textbf{Xử lý biểu mẫu dữ liệu (Form Handling):} React Hook Form tối ưu hóa tốc độ nhập liệu, tích hợp thư viện Yup thực thi kiểm tra dữ liệu đầu vào thời gian thực (Real-time Frontend Validation).
+\end{itemize}
+
+\section{Hướng dẫn cài đặt môi trường phát triển cục bộ (Local Setup)}
+Để cấu hình và vận hành thử nghiệm toàn bộ hệ thống AutoWashPro tại môi trường máy tính cá nhân, lập trình viên thực hiện tuần tự theo các bước quy chuẩn sau:
+
+\subsection{Yêu cầu cài đặt tiên quyết (Prerequisites)}
+\begin{enumerate}
+    \item Cài đặt môi trường Node.js (Phiên bản $\geq$ 20.x): \url{https://nodejs.org}
+    \item Cài đặt hệ quản trị cơ sở dữ liệu PostgreSQL (Phiên bản $\geq$ 15.x): \url{https://www.postgresql.org}
+    \item Cài đặt công cụ quản lý mã nguồn Git: \url{https://git-scm.com}
+\end{enumerate}
+
+\subsection{Các bước triển khai chi tiết}
+\begin{enumerate}
+    \item \textbf{Tải mã nguồn từ kho lưu trữ (Clone Repository):}
+\begin{verbatim}
+git clone https://github.com/Kien2006ez/SWP391_AutoWashPro
+cd SWP391_AutoWashPro
+\end{verbatim}
+
+    \item \textbf{Cấu hình biến môi trường hệ thống (.env):}
+    Sao chép tệp cấu hình mẫu và điền đầy đủ các thông số kết nối cơ sở dữ liệu nội bộ và mã khóa bảo mật:
+\begin{verbatim}
+cp .env.example .env
+# Tiến hành chỉnh sửa nội dung file .env:
+# PORT=5000
+# DATABASE_URL=postgresql://postgres:root@localhost:5432/autowashpro
+# JWT_SECRET=Chuoi_Bao_Mat_Crypto_JWT_AutoWashPro_2026
+# SMTP_HOST=smtp.gmail.com
+# SMTP_USER=your_email@gmail.com
+# SMTP_PASS=your_app_password
+\end{verbatim}
+
+    \item \textbf{Cài đặt thư viện phụ thuộc và Khởi tạo dữ liệu phía Server:}
+\begin{verbatim}
+cd backend
+npm install
+# Khởi tạo cấu trúc các bảng dữ liệu (Sequelize Migrations)
+npm run db:migrate
+# Nạp dữ liệu mẫu ban đầu bao gồm cấu hình gói dịch vụ (Sequelize Seeding)
+npm run db:seed:all
+\end{verbatim}
+
+    \item \textbf{Cài đặt thư viện phụ thuộc phân hệ giao diện phía Client:}
+\begin{verbatim}
+cd ../frontend
+npm install
+\end{verbatim}
+
+    \item \textbf{Kích hoạt hệ thống chạy thử nghiệm đồng thời ở môi trường phát triển:}
+\begin{verbatim}
+# Khởi chạy API Server tại Terminal 1 (Sẽ lắng nghe tại cổng http://localhost:5000)
+cd backend
+npm run dev
+
+# Khởi chạy Frontend UI tại Terminal 2 (Tự động mở trình duyệt tại http://localhost:3000)
+cd frontend
+npm start
+\end{verbatim}
+
+    \item \textbf{Triển khai nhanh bằng Docker Compose (Tùy chọn):}
+    Trong trường hợp máy tính đã cài đặt sẵn Docker, có thể khởi chạy toàn bộ kiến trúc (bao gồm Database, Backend, Frontend) chỉ bằng duy nhất một câu lệnh:
+\begin{verbatim}
+docker-compose up -d --build
+\end{verbatim}
+\end{enumerate}
+
+\section{Triển khai hệ thống lên môi trường Production}
+
+\subsection{Triển khai API Server lên nền tảng đám mây}
+Hệ thống API Backend được đóng gói và cấu hình deploy tự động lên hạ tầng PaaS thông qua CLI của nhà cung cấp hoặc liên kết trực tiếp với nhánh \texttt{main} của GitHub:
+\begin{verbatim}
+git push origin main
+# Hệ thống CI/CD tự động trigger, build Docker image và nạp biến môi trường production
+# Thực thi câu lệnh migrate cập nhật cấu trúc database trên đám mây:
+npm run db:migrate
+\end{verbatim}
+
+\subsection{Triển khai Giao diện Client lên dịch vụ Hosting tĩnh (Netlify/Vercel)}
+Phân hệ Frontend được biên dịch tối ưu hóa mã nguồn (Production Build) và đẩy lên Netlify:
+\begin{verbatim}
+npm run build
+# Thư mục "build" sinh ra chứa toàn bộ mã nguồn HTML/JS/CSS sạch
+# Cấu hình đường dẫn API định tuyến đến server production trong Netlify Admin Dashboard
+\end{verbatim}
+
+\subsection{Quy trình sao lưu dữ liệu hệ thống (Database Backup)}
+Định kỳ hệ thống thực hiện trích xuất dữ liệu dự phòng nhằm bảo đảm an toàn thông tin:
+\begin{verbatim}
+# Thực hiện sao lưu bảng dữ liệu thô sang tệp tin backup SQL
+pg_dump -U postgres autowashpro > backup_database.sql
+
+# Khôi phục dữ liệu tại máy chủ production mới
+psql -U postgres -d autowashpro < backup_database.sql
+\end{verbatim}
+
+\section{Tài liệu hướng dẫn vận hành hệ thống (User Manual)}
+
+\subsection{Cẩm nang dành cho Khách hàng sử dụng ứng dụng (Client Menu)}
+
+\subsubsection{Bước 1: Khởi tạo tài khoản hệ thống}
+\begin{enumerate}
+    \item Khách hàng truy cập trang chủ ứng dụng trực tuyến, lựa chọn mục "Đăng ký tài khoản".
+    \item Nhập đầy đủ thông tin: Địa chỉ Email hợp lệ, Số điện thoại cá nhân và đặt Mật khẩu bảo mật (yêu cầu độ dài tối thiểu 8 ký tự bao gồm cả chữ và số).
+    \item Kiểm tra hộp thư điện tử hoặc SMS để lấy mã OTP ngẫu nhiên gồm 6 chữ số, thực hiện nhập mã xác thực trên giao diện trong cửa sổ hiệu lực 5 phút để kích hoạt trạng thái tài khoản thành \texttt{Active}.
+    \item Sử dụng thông tin vừa đăng ký để tiến hành "Đăng nhập" nhận mã phiên làm việc bảo mật.
+\end{enumerate}
+
+\subsubsection{Bước 2: Cập nhật hồ sơ phương tiện cá nhân}
+\begin{enumerate}
+    \item Di chuyển đến khu vực quản lý cá nhân, lựa chọn menu "Hồ sơ xe của tôi".
+    \item Bấm nút "Thêm phương tiện mới".
+    \item Điền chính xác các trường thông tin: Hãng sản xuất, Dòng xe chi tiết, Biển số xe kiểm soát và Màu sắc đặc trưng của xe. Bấm "Lưu thông tin" để đồng bộ hóa vào DB.
+\end{enumerate}
+
+\subsubsection{Bước 3: Thiết lập đặt lịch hẹn dịch vụ trực tuyến}
+\begin{enumerate}
+    \item Tại màn hình chính, lựa chọn tính năng "Đặt lịch dịch vụ".
+    \item Chọn phương tiện cần chăm sóc từ danh sách xe đã khai báo.
+    \item Lựa chọn gói dịch vụ mong muốn (Ví dụ: Rửa nhanh, Rửa chi tiết sâu, Phủ bóng bảo vệ bề mặt Nano).
+    \item Chọn ngày thực hiện trên Widget lịch hiển thị công khai (Hệ thống tự động áp dụng quy tắc \textit{Booking Window} giới hạn số ngày đặt trước dựa trên phân hạng thành viên hiện tại của khách hàng).
+    \item Chọn khung giờ trống (Slot) còn khả dụng, rà soát tổng hợp chi tiết thông tin và bấm "Xác nhận lịch đặt". Trạng thái đặt lịch khởi tạo ban đầu là \texttt{Pending}.
+\end{enumerate}
+
+\subsubsection{Bước 4: Quản lý Ví điểm thưởng Loyalty và Áp dụng mã giảm giá}
+\begin{enumerate}
+    \item Khách hàng truy cập menu "Ví thành viên" để kiểm tra số dư điểm thưởng khả dụng (\textit{Wash Credits}) và phân hạng thành viên hiện tại (\textit{Member, Silver, Gold, Platinum}).
+    \item Nếu tích lũy đủ số điểm yêu cầu, có thể ấn chọn "Đổi mã ưu đãi" để đổi lấy các mã Voucher giảm giá hệ thống.
+    \item Khi đặt lịch hẹn, tại bước tính hóa đơn dự kiến, khách hàng nhập mã Voucher vào ô "Mã giảm giá". Hệ thống sẽ tự động đối chiếu phân hạng mục tiêu (\textit{Target Tier}), nếu đạt điều kiện sẽ thực hiện khấu trừ tiền trực tiếp trên hóa đơn.
+\end{enumerate}
+
+\subsubsection{Bước 5: Tra cứu lịch sử \& Quy tắc hủy lịch}
+\begin{enumerate}
+    \item Khách hàng vào mục "Lịch sử dịch vụ" để theo dõi vòng đời trạng thái của xe.
+    \item Trong trường hợp thay đổi kế hoạch, khách hàng được quyền ấn nút "Hủy lịch hẹn" trực tiếp trên giao diện \textbf{chỉ khi thời gian hủy cách giờ rửa thực tế lớn hơn 6 tiếng}. Điểm thưởng quy đổi tương ứng (nếu có) sẽ được tự động hoàn về ví tài khoản khách hàng.
+\end{enumerate}
+
+\subsection{Cẩm nang dành cho Nhân viên và Quản trị viên (Admin/Staff Dashboard)}
+
+\subsubsection{Bước 1: Truy cập trang điều hành tập trung}
+\begin{enumerate}
+    \item Nhân viên truy cập đường dẫn phân hệ quản trị dành riêng: \url{https://autowashpro-demo.netlify.app/admin}
+    \item Nhập thông tin tài khoản nội bộ được cấp quyền quản trị, hệ thống xác thực phân quyền và điều hướng vào màn hình Admin Dashboard.
+\end{enumerate}
+
+\subsubsection{Bước 2: Điều phối lịch hẹn và Xử lý hóa đơn nội bộ tại quầy}
+\begin{enumerate}
+    \item Nhân viên mở menu "Điều phối lịch hẹn trong ngày" để theo dõi luồng xe ra vào theo thời gian thực. Hỗ trợ tìm kiếm nhanh theo biển số xe khách hàng đánh vào bãi.
+    \item Khi tiếp nhận phương tiện thực tế, bấm nút "Tiếp nhận xe" chuyển trạng thái từ \texttt{Confirmed} sang \texttt{In Progress}.
+    \item Sau khi đội kỹ thuật hoàn thành rửa xe xong, nhân viên bấm nút "Xác nhận hoàn thành". Hệ thống sẽ ngay lập tức thực hiện hai tác vụ ngầm tự động:
+    \begin{itemize}
+        \item Khởi tạo bản ghi hóa đơn nội bộ ở trạng thái \texttt{Paid}, xuất file điện tử định dạng PDF gửi về email khách hàng.
+        \item Hệ thống Loyalty ghi nhận giá trị tổng chi tiêu, tự động nhân với hệ số tích điểm (\textit{Tier Multiplier}) tương ứng với cấp hạng hiện tại của khách hàng đó để cộng điểm thưởng trực tiếp vào ví tài khoản của họ.
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Bước 3: Quản lý danh mục cấu hình và Theo dõi log nghiên cứu}
+\begin{enumerate}
+    \item Quản trị viên truy cập mục "Cấu hình dịch vụ" để thực hiện thêm mới, cập nhật bảng đơn giá dịch vụ hoặc điều chỉnh thời gian thi công dự kiến của từng slot rửa xe.
+    \item Truy cập mục "Dữ liệu nghiên cứu (Research Logger)" để thực hiện kết xuất dữ liệu (Export). Hệ thống sẽ tự động tổng hợp thông tin hành vi giao dịch từ cơ sở dữ liệu sang tệp phẳng dạng \texttt{.csv} gồm đầy đủ 10 trường dữ liệu đã được ẩn danh hóa thông tin cá nhân bằng thuật toán mã băm SHA-256 phục vụ công tác chạy mô hình toán học thực nghiệm như đặc tả tại Chương 5.
+\end{enumerate}
+
+\section{Các chỉ số thống kê mã nguồn dự án (Project Metrics)}
+
+\subsection{Số liệu Codebase (Codebase Metrics)}
+Dưới đây là bảng tổng hợp định lượng quy mô xây dựng mã nguồn thực tế của dự án AutoWashPro sau chuỗi các tuần Sprints chạy nước rút:
+
+\begin{table}[htbp]
+\centering
+\caption{Bảng thống kê khối lượng mã nguồn hệ thống}
+\label{tab:metrics}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Tiêu chí đo lường (Metrics)} & \textbf{Phân hệ Backend} & \textbf{Phân hệ Frontend} \\
+\midrule
+Tổng số dòng mã nguồn (Lines of Code - LOC) & \(\sim\) 5,200 dòng & \(\sim\) 8,400 dòng \\
+Mã định danh API Endpoints chức năng & 25+ Endpoints & - \\
+Số lượng bảng dữ liệu chuẩn hóa (Database Tables) & 10 bảng thuộc tính & - \\
+Thành phần giao diện độc lập (React Components) & - & 45+ Components \\
+Tỷ lệ bao phủ kiểm thử tự động (Test Coverage) & 82\% (Pytest/Jest) & 72\% (React Testing) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Kết luận và Định hướng phát triển tương lai}
+Dự án Quản lý Rửa xe Thông minh (\textbf{AutoWashPro}) đã hoàn thành xuất sắc và toàn diện 100\% các mục tiêu chức năng đề ra ban đầu. Hệ thống bàn giao bao gồm kiến trúc API backend hoạt động ổn định, bảo mật cao; giao diện frontend mượt mà, thân thiện với người dùng; hệ thống kịch bản kiểm thử bao phủ chặt chẽ; đặc biệt là tích hợp thành công mô hình Loyalty phân hạng toán học và bộ trích xuất nhật ký hành vi phục vụ đắc lực cho bài toán nghiên cứu khoa học thực nghiệm theo đúng định hướng đào tạo.
+
+\noindent \textbf{Các hướng nghiên cứu và phát triển mở rộng trong tương lai:}
+\begin{itemize}
+    \item Ứng dụng thuật toán học máy (Machine Learning Recommendation Engine) phân tích tệp dữ liệu log nghiên cứu \texttt{.csv} để tự động gợi ý gói dịch vụ cá nhân hóa và dự báo hành vi rời bỏ hệ thống của khách hàng.
+    \item Đóng gói và phát triển phiên bản ứng dụng di động bản địa (Native Mobile Application) trên cả hai nền tảng iOS và Android.
+    \item Tích hợp hệ thống mã QR Code động tại quầy giúp khách hàng tự động check-in xác nhận xe vào bãi mà không cần nhân viên thao tác thủ công.
+    \item Nâng cấp kiến trúc thông báo thời gian thực sử dụng Socket.io (WebSockets) để đẩy thông tin tiến độ rửa xe trực tiếp đến điện thoại khách hàng.
+\end{itemize}

@@ -1,0 +1,158 @@
+\chapter{Quản Lý Dự Án}
+
+\section{Quy trình phát triển phần mềm}
+
+Nhóm áp dụng phương pháp phát triển phần mềm Agile với khung làm việc Scrum nhằm bảo đảm khả năng thích ứng với thay đổi yêu cầu và nâng cao hiệu quả phối hợp giữa các thành viên.
+
+Toàn bộ công việc được quản lý trên Jira Kanban Board của dự án AutoWashPro. Các nhiệm vụ được phân chia thành các Epic, Story và Task tương ứng với từng chức năng của hệ thống. Mỗi công việc được theo dõi qua các trạng thái:
+
+\begin{itemize}
+    \item \textbf{To Do}: Công việc chưa bắt đầu.
+    \item \textbf{In Progress}: Công việc đang được thực hiện.
+    \item \textbf{Done}: Công việc đã hoàn thành và được kiểm tra.
+\end{itemize}
+
+\subsection{Áp dụng Agile và Scrum}
+
+\begin{itemize}
+    \item \textbf{Agile}: Giúp nhóm linh hoạt tiếp nhận các thay đổi về yêu cầu và ưu tiên sản phẩm hoạt động được.
+    
+    \item \textbf{Scrum}: Chia dự án thành các Sprint ngắn, theo dõi tiến độ thông qua Jira Board và các buổi họp định kỳ.
+\end{itemize}
+
+% =====================================================
+
+\section{Cấu trúc phân rã công việc (WBS)}
+
+Nhóm xây dựng sơ đồ WBS nhằm chia nhỏ dự án thành các hạng mục công việc dễ quản lý và dễ theo dõi tiến độ.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{images/wbs_diagram.png}
+    \caption{Sơ đồ Work Breakdown Structure của dự án AutoWashPro}
+    \label{fig:wbs}
+\end{figure}
+
+Sơ đồ WBS được phân rã từ dự án tổng thể xuống các phân hệ chức năng như Xác thực tài khoản, Đặt lịch dịch vụ, Hóa đơn và Thanh toán, Quản trị hệ thống và Kiểm thử.
+
+% =====================================================
+
+\section{Kế hoạch tiến độ và Biểu đồ Gantt}
+
+Sau khi xây dựng WBS, nhóm tiến hành lập kế hoạch tiến độ cho toàn bộ dự án bằng biểu đồ Gantt.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{images/gantt_chart.png}
+    \caption{Biểu đồ Gantt của dự án AutoWashPro}
+    \label{fig:gantt}
+\end{figure}
+
+Biểu đồ Gantt giúp nhóm theo dõi các mốc thời gian quan trọng, quản lý sự phụ thuộc giữa các nhiệm vụ và kiểm soát tiến độ triển khai.
+
+% =====================================================
+
+\section{Cơ cấu nhân sự dự án}
+
+\begin{enumerate}
+    \item \textbf{Lê Nguyên Kiên -- Project Manager / Backend Developer}
+    
+    Quản lý tiến độ dự án, điều phối nhóm, quản trị GitHub, Jira và phát triển Backend.
+
+    \item \textbf{Lê Thị Quỳnh Nhung -- Business Analyst}
+    
+    Thu thập yêu cầu, xây dựng tài liệu SRS và các sơ đồ UML.
+
+    \item \textbf{Phan Triều Cường -- Database Engineer}
+    
+    Thiết kế cơ sở dữ liệu, ERD và tối ưu truy vấn.
+
+    \item \textbf{Trần Tiến Dũng -- Backend Developer}
+    
+    Xây dựng API và xử lý nghiệp vụ hệ thống.
+
+    \item \textbf{Lê Sỹ Nghĩa -- Frontend Developer}
+    
+    Thiết kế giao diện người dùng và tích hợp API.
+
+    \item \textbf{Frontend Dashboard Developer}
+    
+    Phát triển giao diện quản trị dành cho nhân viên và quản trị viên.
+
+    \item \textbf{QA / Tester}
+    
+    Thiết kế test case, kiểm thử và quản lý lỗi.
+\end{enumerate}
+
+% =====================================================
+
+\section{Phân công công việc trên Jira}
+
+\begin{table}[H]
+\centering
+\caption{Phân công nhiệm vụ thành viên}
+\label{tab:assignment}
+\small
+\begin{tabular}{|c|l|l|p{6cm}|}
+\hline
+\textbf{STT} &
+\textbf{Thành viên} &
+\textbf{Vai trò} &
+\textbf{Nhiệm vụ chính}
+\\ \hline
+
+1 &
+Lê Nguyên Kiên &
+PM / Backend &
+Quản lý dự án, GitHub, Jira, Backend Core
+\\ \hline
+
+2 &
+Lê Thị Quỳnh Nhung &
+BA &
+Phân tích yêu cầu, SRS, Use Case, Activity Diagram
+\\ \hline
+
+3 &
+Phan Triều Cường &
+Database Engineer &
+ERD, Database Schema, Database Design
+\\ \hline
+
+4 &
+Trần Tiến Dũng &
+Backend Developer &
+API Development, Business Logic
+\\ \hline
+
+5 &
+Lê Sỹ Nghĩa &
+Frontend Developer &
+UI/UX, Booking System, Vehicle Management
+\\ \hline
+
+6 &
+Frontend Dashboard Developer &
+Frontend Admin &
+Admin Dashboard, Reporting
+\\ \hline
+
+7 &
+QA / Tester &
+Testing &
+Test Case, Unit Test, Integration Test
+\\ \hline
+
+\end{tabular}
+\end{table}
+
+\section{Công cụ hỗ trợ phát triển}
+
+\begin{itemize}
+    \item GitHub: Quản lý mã nguồn và cộng tác nhóm.
+    \item Jira: Quản lý công việc theo Agile/Scrum.
+    \item Visual Studio Code: Môi trường phát triển chính.
+    \item PostgreSQL: Hệ quản trị cơ sở dữ liệu.
+    \item Draw.io: Thiết kế UML, ERD và các sơ đồ hệ thống.
+    \item Overleaf/LaTeX: Biên soạn báo cáo dự án.
+\end{itemize}

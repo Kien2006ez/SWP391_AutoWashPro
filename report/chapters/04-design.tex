@@ -1,0 +1,448 @@
+\chapter{Thiết Kế Kiến Trúc Và Hệ Thống}
+
+Nhóm tiến hành phân tích hệ thống dữ liệu cốt lõi, kiến trúc mã nguồn tổng quan và giao diện người dùng dựa trên các yêu cầu chức năng của hệ thống Quản lý Rửa xe Thông minh (\textbf{AutoWashPro}). Toàn bộ quy trình thiết kế được bám sát theo tiến độ phân rã các thẻ công việc trên bảng quản trị Jira.
+
+% =================================================================
+\section{Thiết kế Kiến trúc hệ thống (System Architecture Diagram)}
+Để đảm bảo hệ thống có khả năng mở rộng, bảo mật cao và vận hành ổn định, nhóm triển khai hệ thống theo mô hình kiến trúc 3 lớp tiêu chuẩn (3-Tier Architecture) kết hợp với các thành phần xử lý tác vụ tự động chạy ngầm.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{system_architecture.png}
+    \caption{Sơ đồ Kiến trúc hệ thống 3 lớp (3-Tier Architecture) - AutoWashPro}
+    \label{fig:system_architecture}
+\end{figure}
+
+Sơ đồ kiến trúc mô tả rõ ràng sự tách biệt giữa tầng hiển thị Client (giao diện Web Responsive hiện đại), tầng xử lý logic nghiệp vụ trung tâm Server API (Flask Framework) và tầng lưu trữ dữ liệu bền vững Database (MySQL). Đồng thời, hệ thống tích hợp bộ lập lịch Cron Job chạy ngầm để thực thi các tác vụ định kỳ tự động và phân tách riêng phân hệ log hành vi phục vụ nghiên cứu khoa học.
+
+% =================================================================
+\newpage
+\section{Thiết kế Cơ sở dữ liệu và Sơ đồ ERD (KAN-45 đến KAN-95)}
+Hệ thống sử dụng cơ sở dữ liệu quan hệ MySQL nhằm đảm bảo tính toàn vẹn dữ liệu, tính nhất quán trong các luồng nghiệp vụ phức tạp như xác thực tài khoản, đặt lịch hẹn và xử lý hóa đơn tích điểm.
+
+\subsection{Sơ đồ mối quan hệ thực thể (ERD Diagram)}
+Sơ đồ ERD dưới đây biểu diễn mối quan hệ logic, kiểu dữ liệu, các ràng buộc khóa chính (PK), khóa ngoại (FK) giữa các bảng thực thể đã được chuẩn hóa theo đúng mô hình đặc tả hệ thống.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{erd_diagram.png}
+    \caption{Sơ đồ mối quan hệ thực thể ERD - Phân hệ cốt lõi AutoWashPro}
+    \label{fig:erd_diagram}
+\end{figure}
+\subsection{Công nghệ ORM và Quản lý dữ liệu}
+
+Hệ thống dự kiến sử dụng Hibernate thông qua Spring Data JPA làm công cụ ORM (Object Relational Mapping). ORM cho phép ánh xạ trực tiếp các bảng dữ liệu MySQL thành các lớp Java Entity, giúp giảm thiểu việc thao tác SQL thủ công, tăng khả năng bảo trì mã nguồn và đảm bảo tính nhất quán dữ liệu.
+
+Các Repository trong hệ thống sẽ chịu trách nhiệm truy xuất dữ liệu thông qua Spring Data JPA, trong khi tầng Service xử lý các quy tắc nghiệp vụ trước khi trao đổi dữ liệu với tầng Controller.
+
+\subsection{Đặc tả cấu trúc chi tiết các bảng dữ liệu (Database Schema)}
+Dưới đây là chi tiết cấu trúc các bảng thuộc tính được chuẩn hóa đồng bộ phục vụ lưu trữ toàn bộ hệ thống.
+
+\subsubsection{Bảng dữ liệu Khách hàng (customers Table)}
+Lưu trữ thông tin tài khoản định danh, thông tin phân hạng và ví điểm thưởng của người dùng.
+\begin{table}[htbp]
+\centering
+\caption{Đặc tả chi tiết thuộc tính bảng customers}
+\label{tab:customers_schema}
+\small
+\begin{tabular}{llcl}
+\toprule
+\textbf{Tên Trường} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Mô Tả Chức Năng} \\
+\midrule
+id & INT (AUTO\_INCREMENT) & PK & Mã định danh duy nhất của người dùng \\
+email & VARCHAR(100) & Unique & Địa chỉ email dùng để đăng nhập hệ thống \\
+phone & VARCHAR(15) & Unique & Số điện thoại nhận mã xác thực OTP \\
+password\_hash & VARCHAR(255) & - & Mật khẩu mã hóa bảo mật bằng bcrypt \\
+fullname & VARCHAR(100) & - & Họ và tên đầy đủ của người dùng \\
+role & ENUM('Customer', 'Staff', 'Admin') & - & Vai trò phân quyền trong hệ thống \\
+tier & ENUM('Member', 'Silver', 'Gold', 'Platinum') & - & Phân hạng thành viên hiện tại \\
+accumulated\_spend & DECIMAL(10,2) & - & Tổng chi tiêu tích lũy phục vụ xét hạng \\
+status & ENUM('Pending', 'Active', 'Suspended') & - & Trạng thái hoạt động của tài khoản \\
+created\_at & TIMESTAMP & - & Thời gian khởi tạo tài khoản \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Bảng dữ liệu Xác thực OTP (otp\_verifications Table)}
+Lưu trữ tạm thời mã khóa OTP phục vụ luồng kích hoạt tài khoản an toàn với thời gian hết hạn 5 phút.
+\begin{table}[htbp]
+\centering
+\caption{Đặc tả chi tiết thuộc tính bảng otp\_verifications}
+\label{tab:otp_schema}
+\small
+\begin{tabular}{llcl}
+\toprule
+\textbf{Tên Trường} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Mô Tả Chức Năng} \\
+\midrule
+id & INT (AUTO\_INCREMENT) & PK & Mã định danh bản ghi xác thực \\
+user\_id & INT & FK & Liên kết tới bảng customers \\
+otp\_code & VARCHAR(6) & - & Mã số xác thực ngẫu nhiên gồm 6 số \\
+expires\_at & TIMESTAMP & - & Thời điểm mã số OTP hết hiệu lực \\
+is\_used & BOOLEAN & - & Đánh dấu mã đã được sử dụng \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Bảng dữ liệu Phương tiện (customer\_vehicles Table)}
+Lưu trữ thông tin hồ sơ phương tiện cá nhân thuộc sở hữu của khách hàng.
+\begin{table}[htbp]
+\centering
+\caption{Đặc tả chi tiết thuộc tính bảng customer\_vehicles}
+\label{tab:vehicles_schema}
+\small
+\begin{tabular}{llcl}
+\toprule
+\textbf{Tên Trường} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Mô Tả Chức Năng} \\
+\midrule
+id & INT (AUTO\_INCREMENT) & PK & Mã phương tiện duy nhất \\
+user\_id & INT & FK & Liên kết người sở hữu (customers) \\
+brand & VARCHAR(50) & - & Hãng sản xuất phương tiện \\
+model & VARCHAR(100) & - & Dòng xe chi tiết \\
+license\_plate & VARCHAR(20) & Unique & Biển số xe hệ thống kiểm soát \\
+color & VARCHAR(30) & - & Màu sắc xe \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Bảng danh mục Dịch vụ (services Table)}
+Lưu trữ danh mục thông tin các gói dịch vụ chăm sóc xe được cung cấp tại cửa hàng.
+\begin{table}[htbp]
+\centering
+\caption{Đặc tả chi tiết thuộc tính bảng services}
+\label{tab:services_schema}
+\small
+\begin{tabular}{llcl}
+\toprule
+\textbf{Tên Trường} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Mô Tả Chức Năng} \\
+\midrule
+id & INT (AUTO\_INCREMENT) & PK & Mã gói dịch vụ \\
+name & VARCHAR(100) & - & Tên gọi gói dịch vụ rửa xe \\
+price & DECIMAL(10,2) & - & Đơn giá gốc của dịch vụ (VNĐ) \\
+duration\_minutes & INT & - & Thời gian ước tính triển khai (phút) \\
+description & TEXT & - & Đặc tả chi tiết hạng mục thi công \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Bảng dữ liệu Đặt lịch hẹn (bookings Table)}
+Thành phần trung tâm quản lý toàn bộ vòng đời trạng thái đặt lịch hẹn dịch vụ của khách hàng.
+\begin{table}[htbp]
+\centering
+\caption{Đặc tả chi tiết thuộc tính bảng bookings}
+\label{tab:bookings_schema}
+\small
+\begin{tabular}{llcl}
+\toprule
+\textbf{Tên Trường} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Mô Tả Chức Năng} \\
+\midrule
+id & INT (AUTO\_INCREMENT) & PK & Mã lịch hẹn hệ thống sinh ra \\
+user\_id & INT & FK & Khách hàng thực hiện đặt lịch \\
+vehicle\_id & INT & FK & Phương tiện xe được lựa chọn thi công \\
+service\_id & INT & FK & Gói dịch vụ áp dụng \\
+booking\_date & DATE & - & Ngày hẹn khách đưa xe tới cửa hàng \\
+time\_slot & VARCHAR(20) & - & Khung giờ đăng ký (Ví dụ: 09:00-10:00) \\
+status & ENUM('pending', 'confirmed', 'completed', 'cancelled') & - & Trạng thái vòng đời lịch hẹn \\
+total\_amount & DECIMAL(10,2) & - & Tổng số tiền sau khi áp mã giảm giá (nếu có) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Bảng Quản lý ví điểm thành viên (customer\_points Table)}
+Lưu trữ số dư và nhật ký biến động điểm thưởng (\textit{Wash Credits}) tích lũy của khách hàng.
+\begin{table}[htbp]
+\centering
+\caption{Đặc tả chi tiết thuộc tính bảng customer\_points}
+\label{tab:points_schema}
+\small
+\begin{tabular}{llcl}
+\toprule
+\textbf{Tên Trường} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Mô Tả Chức Năng} \\
+\midrule
+id & INT (AUTO\_INCREMENT) & PK & Mã bản ghi giao dịch điểm \\
+user\_id & INT & FK & Thành viên sở hữu ví điểm \\
+points\_balance & INT & - & Số dư điểm Wash Credits khả dụng hiện tại \\
+points\_changed & INT & - & Số lượng điểm biến động (Cộng/Trừ) \\
+change\_type & ENUM('Earn', 'Redeem', 'Expired') & - & Lý do biến động điểm số \\
+updated\_at & TIMESTAMP & - & Thời điểm ghi nhận thay đổi \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Bảng Quản lý mã ưu đãi (system\_promotions Table)}
+Lưu trữ thông tin các mã giảm giá được sinh ra từ quy trình đổi điểm thưởng hoặc chiến dịch hệ thống.
+\begin{table}[htbp]
+\centering
+\caption{Đặc tả chi tiết thuộc tính bảng system\_promotions}
+\label{tab:promotions_schema}
+\small
+\begin{tabular}{llcl}
+\toprule
+\textbf{Tên Trường} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Mô Tả Chức Năng} \\
+\midrule
+id & INT (AUTO\_INCREMENT) & PK & Mã cấu hình ưu đãi \\
+promo\_code & VARCHAR(50) & Unique & Chuỗi ký tự mã giảm giá (Mã định danh) \\
+discount\_percent & INT & - & Tỷ lệ phần trăm giảm giá (Từ 1\% - 100\%) \\
+target\_tier & ENUM('All', 'Silver', 'Gold', 'Platinum') & - & Giới hạn phân hạng được áp dụng \\
+is\_used & BOOLEAN & - & Trạng thái mã đã sử dụng hay chưa \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =================================================================
+\newpage
+\section{Kiến trúc và Cấu trúc thư mục mã nguồn Backend (KAN-45 đến KAN-95)}
+Cấu trúc thư mục Backend ứng dụng Flask API được tổ chức chuẩn hóa theo mô hình phân lớp xử lý tách biệt, giúp nhóm dễ dàng bảo trì và quản lý mã nguồn tập trung trên kho lưu trữ GitHub.
+
+\begin{verbatim}
+SWP391_AutoWashPro/
+|-- src/                     # Thư mục mã nguồn chính của ứng dụng Flask API
+|   |-- database/            # Nơi lưu trữ cấu hình DB và script SQL khởi tạo
+|   |   |-- autowashpro.sql  # Script tạo Schema các bảng dữ liệu đã chuẩn hóa
+|   |   `-- db_config.py     # Cấu hình kết nối an toàn đến cơ sở dữ liệu MySQL
+|   |
+|   |-- models/             # Định nghĩa cấu trúc thực thể ánh xạ (ORM Models)
+|   |   |-- booking.py      # Lớp đối tượng ánh xạ bảng bookings
+|   |   |-- promotion.py    # Lớp đối tượng ánh xạ bảng system_promotions
+|   |   |-- service.py      # Lớp đối tượng ánh xạ bảng services
+|   |   |-- user.py         # Lớp đối tượng ánh xạ bảng customers
+|   |   `-- vehicle.py      # Lớp đối tượng ánh xạ bảng customer_vehicles
+|   |
+|   |-- routes/             # Xử lý các điều hướng API Endpoints nghiệp vụ
+|   |   |-- admin.py        # API quản trị và xử lý hóa đơn, xác nhận tại quầy
+|   |   |-- auth.py         # API Đăng ký, Đăng nhập, Gửi nhận mã OTP
+|   |   `-- booking.py      # API quản lý hồ sơ xe, kiểm tra slot trống và Đặt lịch
+|   |
+|   |-- cron/               # Các tác vụ chạy ngầm tự động định kỳ hệ thống
+|   |   `-- tier_job.py     # Script quét và cập nhật lại hạng thành viên đầu tháng
+|   |
+|   |-- static/             # Quản lý tài nguyên tĩnh hệ thống (Assets)
+|   `-- main.py             # Tệp tin khởi chạy toàn bộ máy chủ API ứng dụng
+|
+|-- templates/              # Chứa các biểu mẫu HTML giao diện hệ thống
+|-- tests/                  # Kịch bản kiểm thử tự động hệ thống (Unit Test)
+|-- .gitignore              # Cấu hình loại bỏ tệp rác khỏi kho Git
+`-- requirements.txt        # Thư viện phụ thuộc bắt buộc (Flask, PyMySQL, PyJWT)
+\end{verbatim}
+
+% =================================================================
+\newpage
+\section{Thiết kế sơ đồ tuần tự chi tiết (Sequence Diagrams)}
+Sơ đồ tuần tự mô tả chi tiết dòng chảy tương tác theo trục thời gian giữa Client, Server API, Hệ thống Cơ sở dữ liệu và Tác vụ chạy ngầm đối với 4 quy trình nghiệp vụ cốt lõi của hệ thống.
+
+\subsection{Luồng nghiệp vụ Đặt lịch rửa xe (Book Wash Sequence)}
+Mô tả trình tự tương tác khi Khách hàng chọn thông tin xe, dịch vụ, ngày giờ. Hệ thống Backend thực hiện kiểm tra phân hạng thành viên để áp quy tắc cửa sổ thời gian (\textit{Booking Window}) và kiểm tra trạng thái trống của slot trước khi lưu lịch hẹn.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{sequence_book_wash.png}
+    \caption{Sequence Diagram - Tiến trình tương tác nghiệp vụ Đặt lịch rửa xe}
+    \label{fig:seq_book_wash}
+\end{figure}
+
+\subsection{Luồng nghiệp vụ Hoàn thành dịch vụ \& Tích điểm (Complete Wash \& Earn Points)}
+Mô tả tiến trình khi nhân viên bấm xác nhận hoàn thành dịch vụ tại quầy. Hệ thống tự động tính toán hóa đơn nội bộ và căn cứ theo hệ số điểm (\textit{Multiplier}) của hạng thành viên hiện tại để cộng điểm \textit{Wash Credits} vào tài khoản khách hàng.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{sequence_complete_wash.png}
+    \caption{Sequence Diagram - Tiến trình Hoàn thành dịch vụ và Tích lũy điểm thưởng}
+    \label{fig:seq_earn_points}
+\end{figure}
+
+\subsection{Luồng Quét lại hạng thành viên tự động đầu tháng (Monthly Tier Review)}
+Mô tả quy trình kích hoạt tác vụ chạy ngầm (Cron Job) định kỳ vào lúc 00:00 ngày đầu tháng. Tiến trình tự động quét tổng chi tiêu 3 tháng gần nhất của toàn bộ khách hàng để thực thi nâng/hạ hạng và cập nhật đặc quyền.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{sequence_cron_job_tier.png}
+    \caption{Sequence Diagram - Tiến trình hệ thống chạy ngầm quét lại phân hạng định kỳ}
+    \label{fig:seq_tier_review}
+\end{figure}
+
+\subsection{Luồng Áp dụng và Kiểm tra điều kiện mã giảm giá (Verify Promotion Eligibility)}
+Mô tả tiến trình hệ thống đối chiếu điều kiện áp dụng của mã ưu đãi. Server API sẽ kiểm tra sự tồn tại của mã, trạng thái chưa sử dụng và ràng buộc phân hạng mục tiêu (\textit{Target Tier}) của khách hàng xem có hợp lệ hay không trước khi trừ tiền hóa đơn công khai.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{sequence_verify_promo.png}
+    \caption{Sequence Diagram - Tiến trình kiểm tra điều kiện áp dụng mã giảm giá}
+    \label{fig:seq_verify_promo}
+\end{figure}
+
+% =================================================================
+\newpage
+\section{Thiết kế giao diện người dùng UI/UX (KAN-45, KAN-46, KAN-47)}
+Nhóm thực hiện xây dựng wireframe chi tiết và các màn hình Mockup độ phân giải cao trên công cụ Figma nhằm đồng nhất trải nghiệm người dùng trước khi tiến hành viết mã lập trình Frontend.
+
+\subsection{Giao diện Màn hình Đăng ký tài khoản (KAN-45)}
+Màn hình cho phép người dùng mới nhập các trường thông tin bao gồm: Email, Số điện thoại và Mật khẩu. Hệ thống có cơ chế kiểm tra định dạng dữ liệu đầu vào thời gian thực để đưa ra cảnh báo trực quan cho người dùng.
+
+\begin{figure}[htbp]
+    \centering
+    %\includegraphics[width=0.45\textwidth]{register_screen.png}
+    %\caption{Thiết kế Mockup giao diện Màn hình Đăng ký tài khoản}
+    \label{fig:register_screen}
+\end{figure}
+
+\subsection{Giao diện Màn hình Xác thực OTP (KAN-46)}
+Ngay sau khi đăng ký thành công, hệ thống chuyển sang giao diện nhập mã OTP gồm 6 ô số. Giao diện tích hợp bộ đếm ngược thời gian 5 phút và liên kết "Gửi lại mã" hỗ trợ người dùng khi không nhận được tin nhắn xác thực.
+
+\begin{figure}[htbp]
+    \centering
+    %\includegraphics[width=0.45\textwidth]{otp_screen.png}
+    %\caption{Thiết kế Mockup giao diện Màn hình Xác thực mã OTP}
+    \label{fig:otp_screen}
+\end{figure}
+
+\subsection{Giao diện Màn hình Đăng nhập hệ thống (KAN-47)}
+Giao diện tối giản hỗ trợ khách hàng đăng nhập nhanh chóng bằng Email/Số điện thoại và Mật khẩu, cung cấp liên kết "Quên mật khẩu" và điều hướng nhanh sang màn hình Đăng ký dành cho tài khoản mới.
+
+\begin{figure}[htbp]
+    \centering
+    %\includegraphics[width=0.45\textwidth]{login_screen.png}
+    %\caption{Thiết kế Mockup giao diện Màn hình Đăng nhập hệ thống}
+    \label{fig:login_screen}
+\end{figure}
+
+% =================================================================
+\newpage
+\section{Thiết kế API REST Specification (KAN-45 đến KAN-95)}
+Hệ thống sử dụng kiến trúc RESTful API phía Backend tương tác với Frontend thông qua các endpoint HTTP chuẩn. Dưới đây là đặc tả chi tiết các API endpoints nghiệp vụ cốt lõi:
+
+\subsection{API Authentication Endpoints}
+
+\subsubsection{POST /api/auth/register - Đăng ký tài khoản mới}
+\begin{verbatim}
+Request Body:
+{
+  "email": "user@example.com",
+  "phone": "0987654321",
+  "password": "SecurePass123",
+  "fullname": "Nguyễn Văn A"
+}
+
+Response (201 Created):
+{
+  "status": "success",
+  "message": "OTP đã được gửi đến email/SMS",
+  "user_id": 123,
+  "expires_at": "2026-06-10T15:05:00Z"
+}
+
+Error Response (400 Bad Request):
+{
+  "status": "error",
+  "message": "Email đã tồn tại"
+}
+\end{verbatim}
+
+\subsubsection{POST /api/auth/verify-otp - Xác thực mã OTP}
+\begin{verbatim}
+Request Body:
+{
+  "email": "user@example.com",
+  "otp_code": "123456"
+}
+
+Response (200 OK):
+{
+  "status": "success",
+  "message": "Tài khoản đã được kích hoạt",
+  "user": { "id": 123, "email": "user@example.com", "status": "Active" }
+}
+\end{verbatim}
+
+\subsubsection{POST /api/auth/login - Đăng nhập hệ thống}
+\begin{verbatim}
+Request Body:
+{
+  "email": "user@example.com",
+  "password": "SecurePass123"
+}
+
+Response (200 OK):
+{
+  "status": "success",
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": { "id": 123, "fullname": "Nguyễn Văn A", "role": "Customer" }
+}
+\end{verbatim}
+
+\subsection{API Booking Endpoints (Feature 2)}
+
+\subsubsection{GET /api/services - Lấy danh sách gói dịch vụ}
+\begin{verbatim}
+Response (200 OK):
+{
+  "status": "success",
+  "data": [
+    {
+      "id": 1,
+      "name": "Rửa nhanh",
+      "price": 150000,
+      "duration_minutes": 30,
+      "description": "Rửa ngoài nhanh chóng"
+    }
+  ]
+}
+\end{verbatim}
+
+\subsubsection{POST /api/bookings - Khởi tạo đặt lịch hẹn mới}
+\begin{verbatim}
+Request Body:
+{
+  "vehicle_id": 10,
+  "service_id": 1,
+  "booking_date": "2026-06-15",
+  "time_slot": "09:00-10:00"
+}
+
+Response (201 Created):
+{
+  "status": "success",
+  "message": "Lịch hẹn đã được tạo thành công",
+  "booking_id": 456
+}
+\end{verbatim}
+
+\subsection{API Nội bộ tại Quầy \& Quản lý Hóa đơn (Feature 3)}
+
+\subsubsection{POST /api/admin/bookings/:id/complete - Nhân viên hoàn thành dịch vụ tại quầy}
+\begin{verbatim}
+Request Body:
+{
+  "promo_code": "SILVER5PCT"   % Có thể để trống nếu khách không áp mã giảm giá
+}
+
+Response (200 OK):
+{
+  "status": "success",
+  "message": "Đã hoàn thành dịch vụ và tích điểm thành công",
+  "invoice": {
+    "booking_id": 456,
+    "original_amount": 150000,
+    "discount_applied": 7500,
+    "tax_amount": 14250,
+    "total_final": 156750,
+    "points_earned": 180      % Ghi nhận cộng điểm theo hệ số hạng (ví dụ: Silver 1.2x)
+  }
+}
+\end{verbatim}
+
+\subsubsection{POST /api/auth/redeem-points - Khách hàng đổi điểm thưởng lấy mã ưu đãi}
+\begin{verbatim}
+Request Body:
+{
+  "reward_id": 2             % Mã ID phần thưởng quy đổi tương ứng trong hệ thống
+}
+
+Response (200 OK):
+{
+  "status": "success",
+  "message": "Đổi điểm thưởng thành công",
+  "generated_code": "PROMO_GOLD_10PCT",
+  "points_deducted": 500,
+  "remaining_balance": 1200
+}
+\end{verbatim}

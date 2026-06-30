@@ -1,0 +1,116 @@
+% ====================================================================
+% 1. TRANG BÌA BÁO CÁO CHUẨN QUY CÁCH (COVER PAGE)
+% ====================================================================
+\begin{titlepage}
+\begin{center}
+    \large \textbf{BỘ GIÁO DỤC VÀ ĐÀO TẠO} \\
+    \large \textbf{TRƯỜNG ĐẠI HỌC GIAO THÔNG VẬN TẢI TP. HỒ CHÍ MINH} \\
+    \large \textbf{KHOA CÔNG NGHỆ THÔNG TIN} \\
+    \noindent\rule{4cm}{0.4pt} \\
+    \vfill
+    
+    \begin{center}
+    % \includegraphics[width=3.5cm]{logo_ut.png}
+    \vspace{0.5cm}
+\end{center}
+    
+    \Large \textbf{BÁO CÁO ĐỒ ÁN MÔN HỌC} \\
+    \Large \textbf{CÔNG NGHỆ PHẦN MỀM} \\
+    \vfill
+    
+    \huge \textbf{HỆ THỐNG QUẢN LÝ VÀ ĐẶT LỊCH RỬA XE THÔNG MINH INTEGRATED LOYALTY ENGINE} \\
+    \vspace{0.3cm}
+    \Huge \textbf{AUTOWASHPRO} \\
+    \vfill
+    
+    \begin{flushright}
+    \large
+    \begin{tabular}{ll}
+        \textbf{Giảng viên hướng dẫn:} & ThS. Nguyễn Văn Chiến \\ 
+        \textbf{Nhóm thực hiện:}       & Nhóm 01 \\
+        \textbf{Thành viên nhóm:}      & \\
+        1. Lê Nguyên Kiên              & - MSV: 038206010272 (Project Manager) \\
+        2. Lê Thị Quỳnh Nhung          & - MSV: 075305018095 (Business Analyst) \\
+        3. Phan Triều Cường            & - MSV: 034205002849 (Database Engineer) \\
+        4. Trần Tiến Dũng              & - MSV: 051205006715 (Backend Developer) \\
+        5. Lê Sỹ Nghĩa                 & - MSV: 034206010688 (Frontend Developer) \\
+        6. Nguyễn Hoàng Gia Hồng Phúc  & - MSV: 079305010761 (Frontend/UI) \\
+        7. Trà Ngọc Lưu                & - MSV: 079305010762 (QA/Tester) \\
+    \end{tabular}
+    \end{flushright}
+    \vfill
+    
+    \noindent\rule{8cm}{0.4pt} \\
+    \large \textbf{Thành phố Hồ Chí Minh, Năm 2026}
+\end{center}
+\end{titlepage}
+
+\newpage
+\pagenumbering{roman}
+\setcounter{page}{1}
+
+% ====================================================================
+% 2. LỜI MỞ ĐẦU
+% ====================================================================
+\chapter*{Lời Mở Đầu}
+\addcontentsline{toc}{chapter}{Lời Mở Đầu}
+
+Trong bối cảnh nền kinh tế số phát triển vượt bậc năm 2026, chuyển đổi số không còn là xu hướng mà đã trở thành điều kiện tiên quyết giúp các doanh nghiệp dịch vụ tối ưu hóa quy trình vận hành và nâng cao năng lực cạnh tranh. Ngành dịch vụ chăm sóc, bảo dưỡng phương tiện giao thông cũng không nằm ngoài guồng quay đó. Nhận thức được tầm quan trọng này, nhóm thực hiện dự án đã tập trung nghiên cứu, thiết kế và xây dựng đề tài \textbf{"Hệ thống Quản lý và Đặt lịch Rửa xe Thông minh (AutoWashPro)"}.
+
+Sản phẩm \textbf{AutoWashPro} không đơn thuần dừng lại ở một ứng dụng đặt lịch hẹn trực tuyến thông thường, mà là một hệ thống quản trị hệ sinh thái dịch vụ khép kín. Điểm cốt lõi làm nên sự khác biệt của hệ thống là việc tích hợp mô hình phân hạng Loyalty toán học tính toán hệ số điểm thưởng nội bộ (\textit{Wash Credits}) kết hợp chặt chẽ với cấu phần \textit{Research Logger}. Phân hệ nghiên cứu này cho phép trích xuất tự động dữ liệu nhật ký hành vi giao dịch phẳng dưới dạng tệp tin ẩn danh \texttt{.csv}, tạo nền tảng vững chắc cho các mô hình hồi quy nghiên cứu khoa học về hành vi và lòng trung thành của khách hàng.
+
+Tài liệu báo cáo này phản ánh toàn diện chu trình vòng đời phát triển phần mềm (SDLC) của dự án trải qua 7 chương mục trọng tâm: từ phân tích yêu cầu nghiệp vụ chi tiết (SRS), thiết kế kiến trúc thực thể cơ sở dữ liệu quan hệ PostgreSQL cấu trúc cao, chuẩn hóa đặc tả luồng thông tin qua sơ đồ tuần tự hệ thống API RESTful Backend (Node.js/Express.js), triển khai giao diện Frontend Responsive (React.js), cho đến công tác xây dựng 51 kịch bản kiểm thử nghiêm ngặt (Unit/Integration/Security Tests) và vận hành thực tế tại môi trường Production đám mây.
+
+Nhóm thực hiện dự án xin gửi lời cảm ơn chân thành và sâu sắc nhất đến thầy \textbf{Nguyễn Văn Chiến}, giảng viên bộ môn Công nghệ Phần mềm tại Trường Đại học Giao thông vận tải Thành phố Hồ Chí Minh. Những chỉ dẫn chuyên môn nghiêm túc, định hướng cấu trúc học thuật kết hợp thực tiễn sâu sắc của thầy trong suốt học kỳ qua là kim chỉ nam giúp nhóm vượt qua các rào cản kỹ thuật để hoàn thành trọn vẹn sản phẩm. Dù đã nỗ lực hoàn thiện bằng tất cả sự nghiêm túc, báo cáo chắc chắn không tránh khỏi những thiếu sót nhất định. Nhóm rất mong nhận được những ý kiến đóng góp, nhận xét và phê bình từ Hội đồng quý thầy cô để sản phẩm ngày một hoàn thiện hơn.
+
+\begin{flushright}
+    \textit{Thành phố Hồ Chí Minh, ngày 17 tháng 06 năm 2026} \\
+    \textbf{Tập thể sinh viên Nhóm 01}
+\end{flushright}
+
+\newpage
+
+% ====================================================================
+% 3. MA TRẬN PHÂN CÔNG ĐÓNG GÓP (CONTRIBUTION MATRIX)
+% ====================================================================
+\chapter*{Bảng Phân Công Công Việc và Đánh Giá Đóng Góp}
+\addcontentsline{toc}{chapter}{Bảng Phân Công Công Việc và Đánh Giá Đóng Góp}
+
+Để đảm bảo tính minh bạch, công bằng trong mô hình quản trị dự án Agile/Scrum trên Jira Board, dưới đây là ma trận phân nhiệm vai trò chi tiết và tỷ lệ đóng góp hoàn thành khối lượng công việc của từng thành viên trong nhóm:
+
+\begin{table}[htbp]
+\centering
+\caption{Ma trận phân công công việc và tỷ lệ đóng góp thành viên}
+\label{tab:contribution_matrix}
+\small
+\begin{tabular}{|c|p{3.2cm}|p{6.8cm}|c|}
+\hline
+\textbf{STT} & \textbf{Thành viên \& Vai trò} & \textbf{Nhiệm vụ trọng tâm đảm nhiệm} & \textbf{Mức độ đóng góp} \\
+\hline
+1 & \textbf{Lê Nguyên Kiên} \newline (Project Manager / Lead) & Khởi tạo dự án, lập kế hoạch Sprint, quản trị Jira Board; Biên soạn Chương 1 \& 2; Thiết kế kiến trúc tổng thể hệ thống; Quản lý CI/CD và Deployment đám mây. & 100\% \\
+\hline
+2 & \textbf{Lê Thị Quỳnh Nhung} \newline (Business Analyst) & Khảo sát thị hiếu người dùng, thu thập yêu cầu; Biên soạn tài liệu SRS chi tiết tại Chương 3; Thiết kế Mockup giao diện sơ khởi. & 100\% \\
+\hline
+3 & \textbf{Phan Triều Cường} \newline (Database Engineer) & Phân tích cấu trúc thực thể, chuẩn hóa DB bảng quan hệ; Thiết kế sơ đồ ERD, quản lý Migration; Viết mã nguồn Chương 4; Tối ưu câu lệnh SQL. & 100\% \\
+\hline
+4 & \textbf{Trần Tiến Dũng} \newline (Backend Developer) & Lập trình hệ thống RESTful API Core; Cấu hình Cron Job quét hạng thành viên; Xây dựng module mã hóa Research Logger; Hoàn thiện Chương 5 \& Chương 6. & 100\% \\
+\hline
+5 & \textbf{Lê Sỹ Nghĩa} \newline (Frontend Developer) & Phát triển giao diện React UI Client \& Admin Dashboard; Cấu hình Responsive Grid, kết nối Axios API; Kiểm thử tương thích UI; Hoàn thiện Chương 7. & 100\% \\
+\hline
+\end{tabular}
+\end{table}
+
+\newpage
+
+% ====================================================================
+% 4. CÁC TRANG MỤC LỤC TỰ ĐỘNG
+% ====================================================================
+\tableofcontents 
+
+\newpage
+\listoffigures   
+
+\newpage
+\listoftables    
+
+\newpage
