@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quản lý xe</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+<style>
+  :root {
+    --page-bg: #EDECE6;
+    --surface-1: #F6F5F1;
+    --surface-2: #FFFFFF;
+    --text-primary: #1F1E1B;
+    --text-secondary: #5F5E5A;
+    --text-muted: #888780;
+    --border: rgba(31,30,27,0.12);
+    --border-strong: rgba(31,30,27,0.2);
+    --radius: 8px;
+
+    --fill-primary: #1F1E1B;
+    --on-primary: #FFFFFF;
+    --fill-danger: #E24B4A;
+    --on-danger: #FFFFFF;
+
+    --bg-accent: #E6F1FB;   --text-accent: #0C447C;
+    --bg-success: #EAF3DE;  --text-success: #27500A;
+    --bg-warning: #FAEEDA;  --text-warning: #633806;
+    --bg-danger: #FCEBEB;   --text-danger: #791F1F;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --page-bg: #161513;
+      --surface-1: #201F1C;
+      --surface-2: #292824;
+      --text-primary: #F1EFE8;
+      --text-secondary: #B4B2A9;
+      --text-muted: #888780;
+      --border: rgba(255,255,255,0.1);
+      --border-strong: rgba(255,255,255,0.18);
+
+      --fill-primary: #F1EFE8;
+      --on-primary: #1F1E1B;
+      --fill-danger: #E24B4A;
+      --on-danger: #FFFFFF;
+
+      --bg-accent: #0C447C;   --text-accent: #B5D4F4;
+      --bg-success: #27500A;  --text-success: #C0DD97;
+      --bg-warning: #633806;  --text-warning: #FAC775;
+      --bg-danger: #791F1F;   --text-danger: #F7C1C1;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--page-bg);
+    color: var(--text-primary);
+    padding: 2rem 1rem;
+    line-height: 1.5;
+  }
+  h1 { font-size: 22px; font-weight: 500; margin: 0; }
+  h3 { font-size: 16px; font-weight: 500; margin: 0; }
+  p { margin: 0; }
+
+  input, select, button {
+    font-family: inherit;
+    font-size: 13px;
+    height: 36px;
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border-strong);
+    background: var(--surface-2);
+    color: var(--text-primary);
+    padding: 0 10px;
+  }
+  input:focus, select:focus, button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--bg-accent);
+    border-color: var(--text-accent);
+  }
+  button {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.05s ease;
+  }
+  button:hover { background: var(--surface-1); }
+  button:active { transform: scale(0.98); }
+
+  table { border-collapse: collapse; width: 100%; table-layout: fixed; font-size: 13px; }
+  th, td { padding: 10px 12px; text-align: left; }
+  th { color: var(--text-secondary); font-weight: 500; border-bottom: 0.5px solid var(--border); background: var(--surface-1); }
+  tr td { border-bottom: 0.5px solid var(--border); }
+
+  .window {
+    max-width: 1040px;
+    margin: 0 auto;
+    background: var(--surface-1);
+    border-radius: 14px;
+    border: 0.5px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 2px 24px rgba(0,0,0,0.08);
+  }
+  .titlebar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-bottom: 0.5px solid var(--border);
+    background: var(--surface-2);
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .avatar {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--bg-accent); color: var(--text-accent);
+    font-size: 11px; font-weight: 500;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .stat-card {
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .stat-icon {
+    width: 26px; height: 26px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .icon-btn {
+    width: 30px; height: 30px; padding: 0;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px; border-radius: var(--radius);
+    color: var(--text-secondary); font-size: 13px;
+    cursor: pointer;
+  }
+  .nav-item.active {
+    background: var(--bg-accent); color: var(--text-accent); font-weight: 500;
+  }
+  .nav-item:hover:not(.active) { background: var(--surface-2); }
+
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45);
+    align-items: center; justify-content: center;
+    z-index: 10;
+  }
+  .modal-card {
+    background: var(--surface-2);
+    border-radius: 14px;
+    border: 0.5px solid var(--border);
+    width: 340px; max-width: 90%;
+    padding: 1.25rem;
+  }
+  label.field-label { font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 4px; }
+  input, select { width: 100%; }
+</style>
+</head>
+<body>
+
+<div class="window">
+  <div class="titlebar">
+    <div class="dot" style="background:#F09595;"></div>
+    <div class="dot" style="background:#EF9F27;"></div>
+    <div class="dot" style="background:#97C459;"></div>
+    <span style="margin-left:8px;font-size:12px;color:var(--text-muted);">fleet.app/vehicles</span>
+  </div>
+
+  <div style="display:flex;min-height:560px;">
+
+    <div style="width:180px;flex-shrink:0;border-right:0.5px solid var(--border);padding:16px 10px;display:flex;flex-direction:column;gap:2px;">
+      <div style="display:flex;align-items:center;gap:8px;padding:0 8px 16px;">
+        <div style="width:26px;height:26px;border-radius:8px;background:var(--fill-primary);display:flex;align-items:center;justify-content:center;">
+          <i class="ti ti-car" style="font-size:15px;color:var(--on-primary);"></i>
+        </div>
+        <span style="font-weight:500;font-size:14px;">Fleet manager</span>
+      </div>
+      <div class="nav-item active"><i class="ti ti-car" style="font-size:16px;"></i>Xe</div>
+      <div class="nav-item"><i class="ti ti-users" style="font-size:16px;"></i>Khách hàng</div>
+      <div class="nav-item"><i class="ti ti-tool" style="font-size:16px;"></i>Bảo dưỡng</div>
+      <div class="nav-item"><i class="ti ti-chart-bar" style="font-size:16px;"></i>Báo cáo</div>
+      <div class="nav-item" style="margin-top:auto;"><i class="ti ti-settings" style="font-size:16px;"></i>Cài đặt</div>
+    </div>
+
+    <div style="flex:1;padding:20px 24px;min-width:0;">
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;">
+        <div>
+          <h1>Quản lý xe</h1>
+          <p style="font-size:13px;color:var(--text-secondary);margin-top:4px;">Thêm, chỉnh sửa và xóa xe của khách hàng</p>
+        </div>
+        <button onclick="openAdd()" style="gap:6px;background:var(--fill-primary);color:var(--on-primary);border-color:transparent;padding:0 14px;">
+          <i class="ti ti-plus" style="font-size:16px;margin-right:6px;"></i>Thêm xe
+        </button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:18px;">
+        <div class="stat-card">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <div class="stat-icon" style="background:var(--bg-accent);"><i class="ti ti-car" style="font-size:14px;color:var(--text-accent);"></i></div>
+            <span style="font-size:12px;color:var(--text-secondary);">Tổng số xe</span>
+          </div>
+          <p style="font-size:24px;font-weight:500;" id="stat-total">4</p>
+        </div>
+        <div class="stat-card">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <div class="stat-icon" style="background:var(--bg-success);"><i class="ti ti-circle-check" style="font-size:14px;color:var(--text-success);"></i></div>
+            <span style="font-size:12px;color:var(--text-secondary);">Đang hoạt động</span>
+          </div>
+          <p style="font-size:24px;font-weight:500;" id="stat-active">3</p>
+        </div>
+        <div class="stat-card">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <div class="stat-icon" style="background:var(--bg-warning);"><i class="ti ti-tool" style="font-size:14px;color:var(--text-warning);"></i></div>
+            <span style="font-size:12px;color:var(--text-secondary);">Cần bảo dưỡng</span>
+          </div>
+          <p style="font-size:24px;font-weight:500;" id="stat-maint">1</p>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+        <div style="position:relative;flex:1;min-width:200px;">
+          <i class="ti ti-search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--text-muted);"></i>
+          <input id="search" type="text" placeholder="Tìm theo biển số hoặc chủ xe" style="padding-left:32px;" oninput="render()" />
+        </div>
+        <select id="filterStatus" onchange="render()" style="width:180px;flex-shrink:0;">
+          <option value="">Tất cả trạng thái</option>
+          <option value="active">Đang hoạt động</option>
+          <option value="maintenance">Bảo dưỡng</option>
+          <option value="inactive">Ngưng sử dụng</option>
+        </select>
+      </div>
+
+      <div style="background:var(--surface-2);border:0.5px solid var(--border);border-radius:12px;overflow:hidden;">
+        <table>
+          <colgroup>
+            <col style="width:15%;"><col style="width:16%;"><col style="width:13%;"><col style="width:17%;"><col style="width:15%;"><col style="width:14%;"><col style="width:10%;">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Biển số</th>
+              <th>Chủ xe</th>
+              <th>Hãng xe</th>
+              <th>Model</th>
+              <th>Trạng thái</th>
+              <th>Bảo dưỡng gần nhất</th>
+              <th style="text-align:right;">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <p id="empty" style="display:none;text-align:center;padding:24px;color:var(--text-muted);font-size:13px;">Không tìm thấy xe phù hợp.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="modalWrap" class="modal-overlay">
+  <div class="modal-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <h3 id="modalTitle">Thêm xe</h3>
+      <button onclick="closeModal()" aria-label="Đóng" style="width:28px;height:28px;padding:0;"><i class="ti ti-x" style="font-size:16px;"></i></button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div>
+        <label class="field-label">Biển số</label>
+        <input id="f-plate" type="text" placeholder="51H-123.45" />
+      </div>
+      <div>
+        <label class="field-label">Chủ xe</label>
+        <input id="f-owner" type="text" placeholder="Nguyễn Văn A" />
+      </div>
+      <div style="display:flex;gap:8px;">
+        <div style="flex:1;">
+          <label class="field-label">Hãng xe</label>
+          <input id="f-brand" type="text" placeholder="Toyota" />
+        </div>
+        <div style="flex:1;">
+          <label class="field-label">Model</label>
+          <input id="f-model" type="text" placeholder="Vios" />
+        </div>
+      </div>
+      <div>
+        <label class="field-label">Trạng thái</label>
+        <select id="f-status">
+          <option value="active">Đang hoạt động</option>
+          <option value="maintenance">Bảo dưỡng</option>
+          <option value="inactive">Ngưng sử dụng</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label">Ngày bảo dưỡng gần nhất</label>
+        <input id="f-date" type="date" />
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:1.25rem;">
+      <button onclick="closeModal()" style="flex:1;">Hủy</button>
+      <button onclick="saveVehicle()" style="flex:1;background:var(--fill-primary);color:var(--on-primary);border-color:transparent;">Lưu</button>
+    </div>
+  </div>
+</div>
+
+<div id="confirmWrap" class="modal-overlay">
+  <div class="modal-card" style="width:300px;">
+    <div style="width:36px;height:36px;border-radius:10px;background:var(--bg-danger);display:flex;align-items:center;justify-content:center;margin-bottom:12px;">
+      <i class="ti ti-trash" style="font-size:18px;color:var(--text-danger);"></i>
+    </div>
+    <h3 style="margin-bottom:8px;">Xóa xe</h3>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:1.25rem;" id="confirmText">Bạn có chắc muốn xóa xe này?</p>
+    <div style="display:flex;gap:8px;">
+      <button onclick="closeConfirm()" style="flex:1;">Hủy</button>
+      <button onclick="doDelete()" style="flex:1;background:var(--fill-danger);color:var(--on-danger);border-color:transparent;">Xóa</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let vehicles = [
+  {id:1, plate:'51H-123.45', owner:'Nguyễn Văn A', brand:'Toyota', model:'Vios', status:'active', date:'2026-05-12'},
+  {id:2, plate:'59F-678.90', owner:'Trần Thị B', brand:'Honda', model:'City', status:'active', date:'2026-06-02'},
+  {id:3, plate:'30A-111.22', owner:'Lê Văn C', brand:'Ford', model:'Ranger', status:'maintenance', date:'2026-04-20'},
+  {id:4, plate:'92B-333.44', owner:'Phạm Thị D', brand:'Mazda', model:'CX-5', status:'active', date:'2026-06-15'}
+];
+let nextId = 5;
+let editingId = null;
+let deletingId = null;
+
+const statusMeta = {
+  active: {label:'Đang hoạt động', role:'success'},
+  maintenance: {label:'Bảo dưỡng', role:'warning'},
+  inactive: {label:'Ngưng sử dụng', role:'accent'}
+};
+
+function fmtDate(d){
+  const dt = new Date(d);
+  return dt.toLocaleDateString('vi-VN');
+}
+
+function initials(name){
+  return name.split(' ').filter(Boolean).slice(-2).map(w=>w[0]).join('').toUpperCase();
+}
+
+function render(){
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const st = document.getElementById('filterStatus').value;
+  const filtered = vehicles.filter(v=>{
+    const matchQ = !q || v.plate.toLowerCase().includes(q) || v.owner.toLowerCase().includes(q);
+    const matchS = !st || v.status===st;
+    return matchQ && matchS;
+  });
+  const tbody = document.getElementById('tbody');
+  const empty = document.getElementById('empty');
+  tbody.innerHTML = '';
+  if(filtered.length===0){
+    empty.style.display='block';
+  } else {
+    empty.style.display='none';
+    filtered.forEach(v=>{
+      const meta = statusMeta[v.status];
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="font-weight:500;">${v.plate}</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="avatar">${initials(v.owner)}</div>
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${v.owner}</span>
+          </div>
+        </td>
+        <td style="color:var(--text-secondary);">${v.brand}</td>
+        <td style="color:var(--text-secondary);">${v.model}</td>
+        <td><span class="badge" style="background:var(--bg-${meta.role});color:var(--text-${meta.role});">${meta.label}</span></td>
+        <td style="color:var(--text-secondary);">${fmtDate(v.date)}</td>
+        <td style="text-align:right;white-space:nowrap;">
+          <button class="icon-btn" aria-label="Sửa" onclick="openEdit(${v.id})" style="margin-right:4px;"><i class="ti ti-edit" style="font-size:15px;"></i></button>
+          <button class="icon-btn" aria-label="Xóa" onclick="openConfirm(${v.id})"><i class="ti ti-trash" style="font-size:15px;"></i></button>
+        </td>`;
+      tbody.appendChild(tr);
+    });
+  }
+  document.getElementById('stat-total').textContent = vehicles.length;
+  document.getElementById('stat-active').textContent = vehicles.filter(v=>v.status==='active').length;
+  document.getElementById('stat-maint').textContent = vehicles.filter(v=>v.status==='maintenance').length;
+}
+
+function openAdd(){
+  editingId = null;
+  document.getElementById('modalTitle').textContent = 'Thêm xe';
+  document.getElementById('f-plate').value = '';
+  document.getElementById('f-owner').value = '';
+  document.getElementById('f-brand').value = '';
+  document.getElementById('f-model').value = '';
+  document.getElementById('f-status').value = 'active';
+  document.getElementById('f-date').value = '';
+  document.getElementById('modalWrap').style.display = 'flex';
+}
+
+function openEdit(id){
+  const v = vehicles.find(x=>x.id===id);
+  if(!v) return;
+  editingId = id;
+  document.getElementById('modalTitle').textContent = 'Sửa thông tin xe';
+  document.getElementById('f-plate').value = v.plate;
+  document.getElementById('f-owner').value = v.owner;
+  document.getElementById('f-brand').value = v.brand;
+  document.getElementById('f-model').value = v.model;
+  document.getElementById('f-status').value = v.status;
+  document.getElementById('f-date').value = v.date;
+  document.getElementById('modalWrap').style.display = 'flex';
+}
+
+function closeModal(){
+  document.getElementById('modalWrap').style.display = 'none';
+}
+
+function saveVehicle(){
+  const plate = document.getElementById('f-plate').value.trim();
+  const owner = document.getElementById('f-owner').value.trim();
+  if(!plate || !owner){ return; }
+  const data = {
+    plate, owner,
+    brand: document.getElementById('f-brand').value.trim(),
+    model: document.getElementById('f-model').value.trim(),
+    status: document.getElementById('f-status').value,
+    date: document.getElementById('f-date').value || new Date().toISOString().slice(0,10)
+  };
+  if(editingId){
+    const idx = vehicles.findIndex(x=>x.id===editingId);
+    vehicles[idx] = {...vehicles[idx], ...data};
+  } else {
+    vehicles.push({id: nextId++, ...data});
+  }
+  closeModal();
+  render();
+}
+
+function openConfirm(id){
+  deletingId = id;
+  const v = vehicles.find(x=>x.id===id);
+  document.getElementById('confirmText').textContent = `Bạn có chắc muốn xóa xe ${v.plate}?`;
+  document.getElementById('confirmWrap').style.display = 'flex';
+}
+
+function closeConfirm(){
+  document.getElementById('confirmWrap').style.display = 'none';
+}
+
+function doDelete(){
+  vehicles = vehicles.filter(v=>v.id!==deletingId);
+  closeConfirm();
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
