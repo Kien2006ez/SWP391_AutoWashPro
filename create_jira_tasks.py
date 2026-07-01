@@ -1,3 +1,4 @@
+import os
 import requests
 from requests.auth import HTTPBasicAuth
 import json
@@ -5,10 +6,10 @@ import json
 # ============================================================
 # CONFIGURATION: ĐIỀN THÔNG TIN TÀI KHOẢN CỦA BẠN TẠI ĐÂY
 # ============================================================
-DOMAIN_JIRA = "ut-team-washpro"         # Đã cấu hình theo link dự án của nhóm bạn
-EMAIL_JIRA = "kienln0272@ut.edu.vn"  # <- THAY EMAIL CỦA BẠN VÀO ĐÂY
-API_TOKEN = "YOUR_API_TOKEN_HERE"
-PROJECT_KEY = "KAN"                     # Mã dự án mặc định của nhóm bạn
+DOMAIN_JIRA = "ut-team-washpro"
+EMAIL_JIRA = "kienln0272@ut.edu.vn"
+API_TOKEN = "JIRA_API_TOKEN"
+PROJECT_KEY = "KAN"
 
 # ============================================================
 # SETUP ĐƯỜNG DẪN API VÀ THÔNG TIN XÁC THỰC
@@ -25,235 +26,218 @@ auth = HTTPBasicAuth(EMAIL_JIRA, API_TOKEN)
 # DANH SÁCH CÁC TASK CẦN TẠO TỰ ĐỘNG
 # ============================================================
 task_list = [
-    # ========== FEATURE 1: ĐĂNG NHẬP & ĐĂNG KÝ ==========
+    # ========== FEATURE 1: AUTHENTICATION ==========
     {
-        "summary": "[F1-DB] Thiết kế schema database cho xác thực người dùng",
-        "description": "Tạo bảng Users với các trường: id, email, phone, password_hash, fullname, role (Customer/Admin/Staff), status, created_at, updated_at. Thêm indexes cho email và phone. Tạo bảng OTP_Verification cho xác thực email/SMS.",
-        "label": "Database,Feature-1"
+        "summary": "[F1-DB] User Database Schema",
+        "description": "Design and implement database tables for users and OTP verification, including indexes for authentication queries.",
+        "label": "Database,Feature-1,M1"
     },
     {
-        "summary": "[F1-BE] Phát triển API Register (Đăng ký tài khoản)",
-        "description": "Xây dựng endpoint POST /api/auth/register nhận email/phone, password, fullname. Validate email format, password strength. Hash password bằng bcrypt. Gửi OTP qua email/SMS. Trả về success/error message.",
-        "label": "Backend,Feature-1"
+        "summary": "[F1-BE] Register API",
+        "description": "Implement POST /api/auth/register with input validation, password hashing, and OTP generation for account verification.",
+        "label": "Backend,Feature-1,M3"
     },
     {
-        "summary": "[F1-BE] Phát triển API Verify OTP và Kích hoạt tài khoản",
-        "description": "Xây dựng endpoint POST /api/auth/verify-otp nhận email/phone và OTP code. Kiểm tra OTP còn hiệu lực (5 phút), xác thực account trong database.",
-        "label": "Backend,Feature-1"
+        "summary": "[F1-BE] Login API",
+        "description": "Implement POST /api/auth/login with credential verification and authentication token issuance.",
+        "label": "Backend,Feature-1,M3"
     },
     {
-        "summary": "[F1-BE] Phát triển API Login và JWT Token generation",
-        "description": "Xây dựng endpoint POST /api/auth/login nhận email/phone và password. Verify password với password_hash. Tạo JWT token (access_token + refresh_token). Trả về user info và token.",
-        "label": "Backend,Feature-1"
+        "summary": "[F1-BE] JWT Authentication Middleware",
+        "description": "Add JWT-based authentication middleware to protect private API endpoints and validate token expiration.",
+        "label": "Backend,Feature-1,M3"
     },
     {
-        "summary": "[F1-BE] Phát triển API Refresh Token và Token validation",
-        "description": "Xây dựng endpoint POST /api/auth/refresh-token và middleware xác thực JWT. Kiểm tra token expiration, user status. Trả về new access_token khi hết hạn.",
-        "label": "Backend,Feature-1"
+        "summary": "[F1-FE] Register Page",
+        "description": "Create the registration UI with form validation, password confirmation, and OTP verification flow.",
+        "label": "Frontend,Feature-1,M2"
     },
     {
-        "summary": "[F1-FE] Thiết kế giao diện màn hình Đăng ký (Register Screen)",
-        "description": "Tạo form register với input: email/phone, password, confirm password, fullname. Validate client-side realtime. Gọi API register. Hiển thị status verification khi gửi OTP.",
-        "label": "Frontend,Feature-1"
-    },
-    {
-        "summary": "[F1-FE] Thiết kế giao diện màn hình Xác thực OTP (Verify OTP Screen)",
-        "description": "Tạo form input OTP 6 ký tự với countdown timer 5 phút. Button 'Resend OTP'. Gọi API verify-otp khi nhập đủ ký tự. Redirect sang Login khi thành công.",
-        "label": "Frontend,Feature-1"
-    },
-    {
-        "summary": "[F1-FE] Thiết kế giao diện màn hình Đăng nhập (Login Screen)",
-        "description": "Tạo form login với input: email/phone, password, remember me checkbox. Gọi API login. Lưu JWT token vào localStorage/sessionStorage. Redirect sang Dashboard.",
-        "label": "Frontend,Feature-1"
-    },
-    {
-        "summary": "[F1-TEST] Unit test cho Authentication Backend APIs",
-        "description": "Viết test cho register, verify-otp, login endpoints. Mock database. Test cases: valid/invalid email, weak password, expired OTP, wrong password.",
-        "label": "Testing,Feature-1"
-    },
-    {
-        "summary": "[F1-TEST] Integration test cho toàn bộ flow Đăng ký & Đăng nhập",
-        "description": "Test end-to-end flow: Register -> Verify OTP -> Login -> Receive Token. Kiểm tra state của database sau mỗi bước.",
-        "label": "Testing,Feature-1"
-    },
-    {
-        "summary": "[F1-TEST] Frontend UI test cho form Đăng ký & Đăng nhập",
-        "description": "Viết test UI kiểm tra validation messages, button states, redirect pages. Test trên nhiều độ phân giải.",
-        "label": "Testing,Feature-1"
+        "summary": "[F1-FE] Login Page",
+        "description": "Create the login UI with email/phone and password inputs, validation, and token storage handling.",
+        "label": "Frontend,Feature-1,M2"
     },
 
-    # ========== FEATURE 2: ĐẶT LỊCH RỬA XE ==========
+    # ========== FEATURE 2: VEHICLE MANAGEMENT ==========
     {
-        "summary": "[F2-DB] Thiết kế schema database cho Booking & Vehicles",
-        "description": "Tạo bảng Vehicles (id, user_id, brand, model, license_plate, color). Tạo bảng Services (id, name, price, duration_minutes, description). Tạo bảng Bookings (id, user_id, vehicle_id, service_id, booking_date, time_slot, status, notes). Thêm indexes cho queries thường xuyên.",
-        "label": "Database,Feature-2"
+        "summary": "[F2-DB] Vehicle Database Schema",
+        "description": "Design the database schema for vehicles and ensure the relationship with users is correctly modeled.",
+        "label": "Database,Feature-2,M5"
     },
     {
-        "summary": "[F2-DB] Thiết kế schema cho Time Slots & Availability",
-        "description": "Tạo bảng TimeSlots (id, start_time, end_time, is_available, booking_id). Tạo bảng ScheduleBlocks (id, date, max_bookings_per_slot). Tạo seed data cho 7 ngày tiếp theo.",
-        "label": "Database,Feature-2"
+        "summary": "[F2-BE] CRUD Vehicle API",
+        "description": "Implement create, read, update, and delete APIs for customer vehicle records.",
+        "label": "Backend,Feature-2,M5"
     },
     {
-        "summary": "[F2-BE] Phát triển API danh sách Services & Pricing",
-        "description": "Xây dựng endpoint GET /api/services trả về danh sách tất cả dịch vụ rửa xe với giá, thời gian, mô tả. Hỗ trợ filter, sort, pagination.",
-        "label": "Backend,Feature-2"
+        "summary": "[F2-BE] Vehicle Validation",
+        "description": "Validate vehicle ownership, required fields, and license plate format before persisting data.",
+        "label": "Backend,Feature-2,M5"
     },
     {
-        "summary": "[F2-BE] Phát triển API danh sách Vehicles của người dùng",
-        "description": "Xây dựng endpoint GET /api/vehicles (lấy danh sách xe) và POST /api/vehicles (thêm xe mới). Validate license_plate unique, required fields.",
-        "label": "Backend,Feature-2"
+        "summary": "[F2-FE] Vehicle Management Page",
+        "description": "Build the vehicle management screen for adding, editing, and deleting customer vehicles.",
+        "label": "Frontend,Feature-2,M2"
     },
     {
-        "summary": "[F2-BE] Phát triển API kiểm tra Time Slots trống",
-        "description": "Xây dựng endpoint GET /api/bookings/available-slots?date=YYYY-MM-DD trả về danh sách khung giờ trống. Tính toán dựa trên duration service và các booking hiện tại.",
-        "label": "Backend,Feature-2"
-    },
-    {
-        "summary": "[F2-BE] Phát triển API Tạo booking mới",
-        "description": "Xây dựng endpoint POST /api/bookings nhận vehicle_id, service_id, booking_date, time_slot. Validate: user logged in, vehicle exists, slot available. Tạo record booking với status='pending'.",
-        "label": "Backend,Feature-2"
-    },
-    {
-        "summary": "[F2-BE] Phát triển API lấy thông tin Booking chi tiết",
-        "description": "Xây dựng endpoint GET /api/bookings/:id trả về booking details + vehicle info + service info + staff assigned. Kiểm tra authorization (user can only view own booking).",
-        "label": "Backend,Feature-2"
-    },
-    {
-        "summary": "[F2-BE] Phát triển API hủy hoặc chỉnh sửa Booking",
-        "description": "Xây dựng endpoint PATCH /api/bookings/:id (chỉnh sửa date/time nếu >6 giờ trước) và DELETE /api/bookings/:id (hủy booking). Cập nhật status trong database.",
-        "label": "Backend,Feature-2"
-    },
-    {
-        "summary": "[F2-FE] Thiết kế màn hình Chọn Dịch vụ (Service Selection)",
-        "description": "Hiển thị danh sách dịch vụ dưới dạng cards: tên, giá, thời gian, mô tả. Cho phép click chọn. Lưu selection vào state.",
-        "label": "Frontend,Feature-2"
-    },
-    {
-        "summary": "[F2-FE] Thiết kế màn hình Quản lý Xe (Vehicle Management)",
-        "description": "Hiển thị danh sách xe của user. Cho phép add/edit/delete. Form add xe: brand, model, license_plate, color. Validate license_plate format.",
-        "label": "Frontend,Feature-2"
-    },
-    {
-        "summary": "[F2-FE] Thiết kế màn hình Calendar để chọn ngày & khung giờ",
-        "description": "Hiển thị calendar widget cho phép chọn ngày (min hôm nay, max 30 ngày). Khi chọn ngày, load available time slots. Hiển thị slots dưới dạng buttons, disable slots đã hết.",
-        "label": "Frontend,Feature-2"
-    },
-    {
-        "summary": "[F2-FE] Thiết kế màn hình Review & Confirm Booking",
-        "description": "Hiển thị summary: xe, dịch vụ, ngày, giờ, giá. Cho phép review lại. Button 'Confirm Booking' gọi API. Hiển thị success message hoặc lỗi.",
-        "label": "Frontend,Feature-2"
-    },
-    {
-        "summary": "[F2-FE] Thiết kế màn hình danh sách My Bookings",
-        "description": "Hiển thị danh sách booking của user dưới dạng list/cards. Phân tab: upcoming, completed, cancelled. Mỗi item show: ngày, giờ, xe, dịch vụ, giá, status. Cho phép click để view detail, hủy booking.",
-        "label": "Frontend,Feature-2"
-    },
-    {
-        "summary": "[F2-TEST] Unit test cho Booking Backend APIs",
-        "description": "Viết test cho available-slots, create booking, get booking, cancel booking. Mock database. Test cases: invalid date, no slots, double booking.",
-        "label": "Testing,Feature-2"
-    },
-    {
-        "summary": "[F2-TEST] Integration test cho toàn bộ flow Đặt lịch",
-        "description": "Test end-to-end: Select service -> Choose vehicle -> Pick date/time -> Review -> Confirm booking. Verify database state.",
-        "label": "Testing,Feature-2"
-    },
-    {
-        "summary": "[F2-TEST] UI test cho Calendar & Time Slot Selection",
-        "description": "Kiểm tra calendar widget, time slot button states, validation messages. Test interaction flow trên multiple devices.",
-        "label": "Testing,Feature-2"
+        "summary": "[F2-FE] Customer Profile Page",
+        "description": "Create a customer profile page that displays personal information and linked vehicle records.",
+        "label": "Frontend,Feature-2,M2"
     },
 
-    # ========== FEATURE 3: QUẢN LÝ HÓA ĐƠN & THANH TOÁN ==========
+    # ========== FEATURE 3: BOOKING SYSTEM ==========
     {
-        "summary": "[F3-DB] Thiết kế schema database cho Invoices & Payments",
-        "description": "Tạo bảng Invoices (id, booking_id, user_id, amount, tax, total, status, issued_date, due_date, paid_date). Tạo bảng Payments (id, invoice_id, amount, payment_method, transaction_id, status, paid_at).",
-        "label": "Database,Feature-3"
+        "summary": "[F3-DB] Booking Database Schema",
+        "description": "Design the database schema for bookings, services, and related booking metadata.",
+        "label": "Database,Feature-3,M3"
     },
     {
-        "summary": "[F3-DB] Thiết kế schema cho Payment Methods & Integration",
-        "description": "Tạo bảng PaymentMethods (id, user_id, type, account_number, is_default). Tạo bảng TransactionLogs (id, invoice_id, payment_id, status, gateway_response, created_at). Thêm seed data payment methods.",
-        "label": "Database,Feature-3"
+        "summary": "[F3-BE] Booking API",
+        "description": "Implement the core booking creation endpoint and store booking details in the database.",
+        "label": "Backend,Feature-3,M3"
     },
     {
-        "summary": "[F3-BE] Phát triển API tự động tạo Invoice khi booking hoàn thành",
-        "description": "Xây dựng service/function gọi khi booking status change thành 'completed'. Tính toán amount = service_price + tax. Tạo record Invoice. Gửi email invoice cho user.",
-        "label": "Backend,Feature-3"
+        "summary": "[F3-BE] Booking History API",
+        "description": "Expose an API to retrieve the booking history of a customer, including status and timestamps.",
+        "label": "Backend,Feature-3,M3"
     },
     {
-        "summary": "[F3-BE] Phát triển API lấy danh sách Invoices của user",
-        "description": "Xây dựng endpoint GET /api/invoices lấy danh sách hóa đơn của user. Hỗ trợ filter: status (paid/unpaid/overdue), date range. Hỗ trợ pagination, sort.",
-        "label": "Backend,Feature-3"
+        "summary": "[F3-BE] Cancel Booking API",
+        "description": "Implement the booking cancellation flow with status updates and authorization checks.",
+        "label": "Backend,Feature-3,M3"
     },
     {
-        "summary": "[F3-BE] Phát triển API chi tiết Invoice và tải PDF",
-        "description": "Xây dựng endpoint GET /api/invoices/:id trả về invoice details. Endpoint GET /api/invoices/:id/download-pdf để download hóa đơn PDF.",
-        "label": "Backend,Feature-3"
+        "summary": "[F3-BE] Booking Validation Logic",
+        "description": "Add validation rules for booking time, service availability, and required business constraints.",
+        "label": "Backend,Feature-3,M3"
     },
     {
-        "summary": "[F3-BE] Tích hợp Payment Gateway (VNPay/Stripe/Momo)",
-        "description": "Xây dựng service integrate với payment gateway. Hỗ trợ tạo payment URL, xác thực callback từ gateway. Cập nhật status Invoice/Payment khi thanh toán thành công.",
-        "label": "Backend,Feature-3"
+        "summary": "[F3-BE] Booking Priority Queue",
+        "description": "Design and implement the booking priority handling flow for urgent or high-priority appointments.",
+        "label": "Backend,Feature-3,M3"
     },
     {
-        "summary": "[F3-BE] Phát triển API Initiate Payment (bắt đầu thanh toán)",
-        "description": "Xây dựng endpoint POST /api/payments/initiate nhận invoice_id, payment_method. Tạo Payment record. Trả về payment URL hoặc payment info cho frontend.",
-        "label": "Backend,Feature-3"
+        "summary": "[F3-FE] Booking Page",
+        "description": "Build the booking form to select service, vehicle, date, and time slot for appointment creation.",
+        "label": "Frontend,Feature-3,M3"
     },
     {
-        "summary": "[F3-BE] Phát triển API Verify Payment Callback từ Gateway",
-        "description": "Xây dựng endpoint POST /api/payments/callback để nhận callback từ payment gateway. Verify signature, cập nhật Invoice/Payment status, gửi confirmation email.",
-        "label": "Backend,Feature-3"
+        "summary": "[F3-FE] Booking History Page",
+        "description": "Create a page to display customer booking history with filters and status badges.",
+        "label": "Frontend,Feature-3,M3"
     },
     {
-        "summary": "[F3-BE] Phát triển API refund/hoàn tiền khi hủy booking",
-        "description": "Xây dựng logic refund: khi user hủy booking <6 giờ. Tạo refund request, call payment gateway refund API, update Payment status, send notification.",
-        "label": "Backend,Feature-3"
+        "summary": "[F3-TEST] Booking Module Testing",
+        "description": "Write unit and integration tests for booking-related backend and UI behaviors.",
+        "label": "Testing,Feature-3,M3"
+    },
+
+    # ========== FEATURE 4: LOYALTY SYSTEM ==========
+    {
+        "summary": "[F4-DB] Loyalty Database Schema",
+        "description": "Design the loyalty schema including points, tiers, and reward-related entities.",
+        "label": "Database,Feature-4,M4"
     },
     {
-        "summary": "[F3-FE] Thiết kế màn hình danh sách Invoices (Invoice List)",
-        "description": "Hiển thị danh sách hóa đơn dưới dạng table/cards. Columns: Invoice#, Date, Amount, Status (badge), Actions. Hỗ trợ filter, sort, search. Button view detail, download PDF.",
-        "label": "Frontend,Feature-3"
+        "summary": "[F4-BE] Point Calculation Engine",
+        "description": "Implement the logic to calculate loyalty points from completed bookings and eligible actions.",
+        "label": "Backend,Feature-4,M4"
     },
     {
-        "summary": "[F3-FE] Thiết kế màn hình chi tiết Invoice (Invoice Detail)",
-        "description": "Hiển thị invoice details: invoice number, date, service details, amount breakdown (subtotal, tax, total), payment status. Button 'Pay Now', 'Download PDF', 'Email'. Back button.",
-        "label": "Frontend,Feature-3"
+        "summary": "[F4-BE] Tier Upgrade Engine",
+        "description": "Implement automatic tier progression based on accumulated points or completed services.",
+        "label": "Backend,Feature-4,M4"
     },
     {
-        "summary": "[F3-FE] Thiết kế màn hình chọn Payment Method",
-        "description": "Hiển thị danh sách payment methods (Credit Card, Bank Transfer, E-Wallet). Radio button để chọn. Option để add new payment method. Button 'Proceed to Payment'.",
-        "label": "Frontend,Feature-3"
+        "summary": "[F4-BE] Reward Redemption API",
+        "description": "Implement APIs for redeeming loyalty points for available rewards and updating balances.",
+        "label": "Backend,Feature-4,M4"
     },
     {
-        "summary": "[F3-FE] Thiết kế màn hình Payment Processing & Confirmation",
-        "description": "Redirect user đến payment gateway. Sau thanh toán, show success/error message. Hiển thị order summary + transaction details. Button back to invoices.",
-        "label": "Frontend,Feature-3"
+        "summary": "[F4-BE] Monthly Cron Job",
+        "description": "Create the scheduled job to process monthly loyalty updates and reset or recalculate points as needed.",
+        "label": "Backend,Feature-4,M4"
     },
     {
-        "summary": "[F3-FE] Thiết kế Dashboard analytics cho Admin (Revenue & Payments)",
-        "description": "Hiển thị stats: total revenue, pending invoices, completed payments, today's earnings. Charts: revenue trend, payment method breakdown. Danh sách recent transactions.",
-        "label": "Frontend,Feature-3"
+        "summary": "[F4-FE] Loyalty Dashboard",
+        "description": "Create a dashboard showing loyalty balance, tier status, and recent point activity.",
+        "label": "Frontend,Feature-4,M4"
     },
     {
-        "summary": "[F3-TEST] Unit test cho Invoice & Payment Backend APIs",
-        "description": "Viết test cho create invoice, get invoices, payment initiation. Mock payment gateway. Test cases: invalid invoice, duplicate payment, refund logic.",
-        "label": "Testing,Feature-3"
+        "summary": "[F4-FE] Reward Page",
+        "description": "Build the rewards catalog page so customers can browse and redeem loyalty rewards.",
+        "label": "Frontend,Feature-4,M4"
     },
     {
-        "summary": "[F3-TEST] Integration test cho Payment Flow",
-        "description": "Test end-to-end: Complete booking -> Auto create invoice -> Initiate payment -> Receive callback -> Update status. Verify email notifications.",
-        "label": "Testing,Feature-3"
+        "summary": "[F4-TEST] Loyalty Testing",
+        "description": "Write tests around point awarding, tier upgrades, and reward redemption flows.",
+        "label": "Testing,Feature-4,M4"
+    },
+
+    # ========== FEATURE 5: PROMOTION ==========
+    {
+        "summary": "[F5-DB] Promotion Database Schema",
+        "description": "Define tables and relationships for promotions, eligibility rules, and applied discounts.",
+        "label": "Database,Feature-5,M5"
     },
     {
-        "summary": "[F3-TEST] Security test cho Payment Integration",
-        "description": "Test HTTPS, signature verification, token validation. Test XSS/CSRF protection. Verify sensitive data not logged.",
-        "label": "Testing,Feature-3"
+        "summary": "[F5-BE] Promotion CRUD API",
+        "description": "Implement create, read, update, and delete APIs for promotions and discount campaigns.",
+        "label": "Backend,Feature-5,M5"
     },
     {
-        "summary": "[F3-TEST] UI test cho Payment & Invoice Screens",
-        "description": "Kiểm tra invoice list, detail view, payment methods, payment processing screens. Test responsive design, error messages.",
-        "label": "Testing,Feature-3"
+        "summary": "[F5-BE] Target Promotion Logic",
+        "description": "Implement promotion applicability logic based on customer segment, booking criteria, and time windows.",
+        "label": "Backend,Feature-5,M5"
+    },
+    {
+        "summary": "[F5-FE] Promotion Management Page",
+        "description": "Create the administration UI for managing promotional offers and their active periods.",
+        "label": "Frontend,Feature-5,M5"
+    },
+    {
+        "summary": "[F5-TEST] Promotion Testing",
+        "description": "Write tests for promotion creation, validation, and application rules.",
+        "label": "Testing,Feature-5,M5"
+    },
+
+    # ========== FEATURE 6: ADMIN DASHBOARD ==========
+    {
+        "summary": "[F6-BE] Dashboard Statistics API",
+        "description": "Expose an admin API for dashboard metrics such as revenue, booking counts, and customer activity.",
+        "label": "Backend,Feature-6,M6"
+    },
+    {
+        "summary": "[F6-BE] Customer Management",
+        "description": "Implement admin APIs to review, update, and manage customer accounts and statuses.",
+        "label": "Backend,Feature-6,M6"
+    },
+    {
+        "summary": "[F6-BE] Booking Management",
+        "description": "Implement admin-side booking management APIs for reviewing and updating booking states.",
+        "label": "Backend,Feature-6,M6"
+    },
+    {
+        "summary": "[F6-FE] Admin Dashboard UI",
+        "description": "Build the administrative dashboard UI with charts, statistics cards, and management sections.",
+        "label": "Frontend,Feature-6,M6"
+    },
+
+    # ========== FEATURE 7: SURVEY & RESEARCH ==========
+    {
+        "summary": "[F7-BE] Survey API",
+        "description": "Implement APIs to submit survey responses and store feedback for research purposes.",
+        "label": "Backend,Feature-7,M7"
+    },
+    {
+        "summary": "[F7-FE] Survey Form UI",
+        "description": "Create the customer-facing survey form with rating and comment inputs.",
+        "label": "Frontend,Feature-7,M7"
+    },
+    {
+        "summary": "[F7-BE] Analytics Dataset Export",
+        "description": "Provide a backend export flow for survey analytics data in a structured format for research use.",
+        "label": "Backend,Feature-7,M7"
     }
 ]
 
