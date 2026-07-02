@@ -11,7 +11,12 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from app.core.config import settings
 from app.db.session import Base
-from app.models import customer, booking, loyalty, promotion, research_log
+
+from app.models.customer import Customer, CustomerVehicle
+from app.models.booking import Booking
+from app.models.loyalty import CustomerPoint
+from app.models.promotion import SystemPromotion
+from app.models.research_log import TransactionLog, TierChangeLog, BookingLog
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
