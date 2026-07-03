@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khách Hàng Thân Thiết - CarWash</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/loyalty.css">
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="images/logo.png" alt="CarWash">
+                </a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="aboutus.html">Về Chúng Tôi</a></li>
+                    <li class="dropdown">
+                        <a href="service.html">Chăm Sóc Xe <i class="fa-solid fa-chevron-down"></i></a>
+                        <div class="dropdown-menu">
+                            <a href="service.html#ruaxe"><i class="fa-solid fa-car"></i> Rửa Xe</a>
+                            <a href="service.html#noithat"><i class="fa-solid fa-couch"></i> Vệ Sinh Nội Thất</a>
+                            <a href="service.html#ceramic"><i class="fa-solid fa-shield"></i> Phủ Ceramic Ô Tô</a>
+                        </div>
+                    </li>
+                    <li><a href="booking.html">Đặt Lịch Rửa Xe</a></li>
+                    <li><a href="stores.html">Hệ Thống Cửa Hàng</a></li>
+                    <li><a href="loyalty.html" style="color:#fff;">Thành Viên</a></li>
+                </ul>
+            </nav>
+            <a href="login.html" id="header-auth-btn" class="booking-btn">
+                Đăng Nhập
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- ================= HERO: TỔNG QUAN HẠNG & ĐIỂM ================= -->
+    <section class="loy-hero">
+        <div class="container loy-hero-inner">
+            <div class="loy-hero-left">
+                <span class="loy-eyebrow">Chương Trình Khách Hàng Thân Thiết</span>
+                <h1 id="loy-greeting">Xin chào, <span id="loy-username">Khách hàng</span> 👋</h1>
+                <p class="loy-sub">Rửa xe càng nhiều, quyền lợi càng lớn. Theo dõi điểm, hạng và ưu đãi dành riêng cho bạn ngay tại đây.</p>
+
+                <div class="loy-points-row">
+                    <div class="loy-points-box">
+                        <span class="loy-points-label">Điểm khả dụng</span>
+                        <span class="loy-points-value" id="loy-points-balance">0</span>
+                    </div>
+                    <div class="loy-points-box">
+                        <span class="loy-points-label">Tổng chi tiêu (3 tháng)</span>
+                        <span class="loy-points-value" id="loy-spent-3m">0đ</span>
+                    </div>
+                    <div class="loy-points-box">
+                        <span class="loy-points-label">Số lượt rửa xe</span>
+                        <span class="loy-points-value" id="loy-visit-count">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="loy-hero-right">
+                <div class="tier-badge-card" id="tier-badge-card">
+                    <div class="tier-badge-icon"><i class="fa-solid fa-crown"></i></div>
+                    <span class="tier-badge-label">Hạng hiện tại</span>
+                    <h2 class="tier-badge-name" id="tier-badge-name">Member</h2>
+
+                    <div class="tier-progress-wrap">
+                        <div class="tier-progress-bar">
+                            <div class="tier-progress-fill" id="tier-progress-fill"></div>
+                        </div>
+                        <p class="tier-progress-text" id="tier-progress-text">Đang tải dữ liệu hạng...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= BANNER ĐIỂM SẮP HẾT HẠN ================= -->
+    <div class="expiry-banner" id="expiry-banner" style="display:none;">
+        <div class="container expiry-banner-inner">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <p id="expiry-banner-text"></p>
+        </div>
+    </div>
+
+    <!-- ================= HẠNG THÀNH VIÊN & QUYỀN LỢI ================= -->
+    <section class="tiers-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Hạng Thành Viên &amp; Quyền Lợi</h2>
+                <p>Điểm được tính lại mỗi tháng dựa trên chi tiêu 3 tháng gần nhất — hạng có thể tăng hoặc giảm.</p>
+            </div>
+
+            <div class="tiers-grid" id="tiers-grid">
+                <!-- 4 tier card được render bằng JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= ĐỔI ĐIỂM THƯỞNG ================= -->
+    <section class="redeem-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Đổi Điểm Thưởng</h2>
+                <p>Dùng điểm tích lũy để nhận ưu đãi — ưu đãi sẽ được tự động áp dụng ở lần đặt lịch tiếp theo.</p>
+            </div>
+
+            <div class="redeem-grid" id="redeem-grid">
+                <!-- render bằng JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= LỊCH SỬ ================= -->
+    <section class="history-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Lịch Sử Của Bạn</h2>
+                <p>Theo dõi lịch sử rửa xe và biến động điểm thưởng.</p>
+            </div>
+
+            <div class="history-tabs">
+                <button class="history-tab active" data-tab="wash">Lịch sử rửa xe</button>
+                <button class="history-tab" data-tab="points">Lịch sử điểm</button>
+            </div>
+
+            <div class="history-panel active" id="panel-wash">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Ngày</th>
+                            <th>Biển số</th>
+                            <th>Dịch vụ</th>
+                            <th>Số tiền</th>
+                            <th>Điểm nhận</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody id="wash-history-body"></tbody>
+                </table>
+            </div>
+
+            <div class="history-panel" id="panel-points">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Ngày</th>
+                            <th>Loại giao dịch</th>
+                            <th>Điểm</th>
+                            <th>Số dư sau</th>
+                            <th>Hết hạn</th>
+                            <th>Ghi chú</th>
+                        </tr>
+                    </thead>
+                    <tbody id="points-history-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>Hệ Thống Cửa Hàng CarWash</h4>
+                    <p><strong>CarWash Tân Phú:</strong> 87 Tân Thắng, Tân Sơn Nhì, Hồ Chí Minh</p>
+                    <p><strong>CarWash Quận 9:</strong> 77 Đ. Đỗ Xuân Hợp, Phước Long, Hồ Chí Minh</p>
+                    <p><strong>CarWash Phú Nhuận:</strong> 84 Cù Lao, Cầu Kiệu, Hồ Chí Minh</p>
+                    <p><strong>Giờ hoạt động:</strong> 7:00 – 18:00 (Thứ 2 – Chủ Nhật)</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Liên Kết Hữu Ích</h4>
+                    <ul>
+                        <li><a href="aboutus.html">Về Chúng Tôi</a></li>
+                        <li><a href="booking.html">Đặt Lịch Chăm Sóc Xe</a></li>
+                        <li><a href="loyalty.html">Khách Hàng Thân Thiết</a></li>
+                        <li><a href="stores.html">Hệ Thống Cửa Hàng</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Chính Sách</h4>
+                    <ul>
+                        <li><a href="#">Quy Chế Hoạt Động</a></li>
+                        <li><a href="#">Chính Sách Bảo Mật</a></li>
+                        <li><a href="#">Chính Sách Đổi Trả</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 CarWash. All rights reserved.</p>
+                <div class="footer-socials">
+                    <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/loyalty.js"></script>
+</body>
+</html>
