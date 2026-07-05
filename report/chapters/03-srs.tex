@@ -60,45 +60,86 @@ Mô tả quy trình Khách hàng thực hiện quy đổi điểm tích lũy (\t
 % =================================================================
 \newpage
 \section{Yêu cầu chức năng chi tiết (Functional Requirements)}
-Các chức năng bắt buộc phải được triển khai chi tiết theo 3 Phân hệ cốt lõi (Features):
+Các chức năng bắt buộc phải được triển khai chi tiết theo 7 Phân hệ cốt lõi (Features), thống nhất với nhãn Jira (\textit{Feature-1} đến \textit{Feature-7}) và mã thành viên phụ trách (M1--M7). Toàn bộ endpoint API sử dụng tiền tố theo đúng router thực tế của FastAPI (không có tiền tố \texttt{/api}).
 
 \subsection{Feature 1: Đăng nhập \& Đăng ký tài khoản}
-\textit{Thành viên phụ trách: Lê Thị Quỳnh Nhung (NQ - BA), Trần Tiến Dũng (DT - Backend), Lê Sỹ Nghĩa (T - Frontend)}
+\textit{Thành viên phụ trách: M3 (Backend), M2 (Frontend)}
 
 Phân hệ này cung cấp cơ chế xác thực an toàn cho toàn bộ người dùng của hệ thống. Bao gồm các chức năng:
 \begin{enumerate}
-    \item \textbf{[F1-DB] Database Schema:} Thiết kế bảng \textit{customers} và bảng \textit{otp\_verifications} phục vụ lưu trữ thông tin định danh và lịch sử mã khóa an toàn với index tối ưu hóa.
-    \item \textbf{[F1-BE-1] API Register:} Endpoint \texttt{POST /api/auth/register} tiếp nhận thông tin người dùng. Thực hiện kiểm tra định dạng email và độ mạnh mật khẩu (tối thiểu 8 ký tự, có chữ hoa, chữ thường và số). Thực hiện mã hóa mật khẩu bằng thuật toán Bcrypt (cost factor \(\geq\) 12) trước khi gửi OTP xác thực.
-    \item \textbf{[F1-BE-2] API Verify OTP:} Endpoint \texttt{POST /api/auth/verify-otp} tiếp nhận mã kích hoạt 6 số. Kiểm tra thời hạn hiệu lực (5 phút) để kích hoạt tài khoản sang trạng thái \textit{Active}.
-    \item \textbf{[F1-BE-3] API Login:} Endpoint \texttt{POST /api/auth/login} xác thực thông tin đăng nhập, sinh chuỗi khóa JSON Web Token (bao gồm \textit{access\_token} và \textit{refresh\_token}).
-    \item \textbf{[F1-FE-1] Giao diện đăng ký và xác thực:} Xây dựng biểu mẫu đăng ký thời gian thực và màn hình đếm ngược 5 phút nhập mã OTP kèm tính năng gửi lại mã (\textit{Resend OTP}).
+    \item \textbf{[F1-DB] Database Schema:} Thiết kế bảng \textit{users} phục vụ lưu trữ thông tin định danh, mật khẩu đã băm và vai trò (\textit{role}) người dùng.
+    \item \textbf{[F1-BE-1] API Register:} Endpoint \texttt{POST /auth/register} tiếp nhận thông tin người dùng, kiểm tra trùng lặp tên đăng nhập và thực hiện mã hóa mật khẩu bằng thuật toán Bcrypt (cost factor \(\geq\) 12) trước khi lưu trữ.
+    \item \textbf{[F1-BE-2] API Login:} Endpoint \texttt{POST /auth/login} xác thực thông tin đăng nhập, sinh JSON Web Token (JWT) chứa \textit{username} và \textit{role}.
+    \item \textbf{[F1-BE-3] JWT Authentication Middleware:} Middleware giải mã và xác thực JWT từ header \texttt{Authorization: Bearer <token>} để bảo vệ các endpoint riêng tư (\textit{Dependency Injection} của FastAPI).
+    \item \textbf{[F1-FE-1] Giao diện đăng ký và đăng nhập:} Xây dựng biểu mẫu đăng ký, đăng nhập và lưu trữ token phía Client.
 \end{enumerate}
 
-\subsection{Feature 2: Quản lý phương tiện \& Đặt lịch rửa xe}
-\textit{Thành viên phụ trách: Phan Triều Cường (LK - Database), Trần Tiến Dũng (DT - Backend), Lê Sỹ Nghĩa (T - Frontend)}
+\subsection{Feature 2: Quản lý hồ sơ xe (Vehicle Management)}
+\textit{Thành viên phụ trách: M5 (Backend/Database), M2 (Frontend)}
 
-Phân hệ này cho phép khách hàng quản lý thông tin phương tiện cá nhân và đặt trước lịch hẹn dịch vụ:
+Phân hệ cho phép khách hàng quản lý danh sách phương tiện cá nhân liên kết với tài khoản:
 \begin{enumerate}
-    \item \textbf{[F2-DB-1] Schema thiết kế cấu trúc hình học:} Thiết lập mối quan hệ giữa các bảng \textit{customer\_vehicles}, \textit{bookings} và bảng danh mục gói dịch vụ \textit{services}.
-    \item \textbf{[F2-BE-1] API Lấy thông tin danh mục:} Endpoint \texttt{GET /api/services} cung cấp danh mục dịch vụ kèm bộ lọc và phân trang dữ liệu.
-    \item \textbf{[F2-BE-2] API Kiểm tra khung giờ trống:} Endpoint \texttt{GET /api/bookings/available-slots} tính toán thời gian khả dụng theo thời gian thực dựa trên thời lượng triển khai của gói dịch vụ đã chọn và các lịch đặt thành công trước đó.
-    \item \textbf{[F2-BE-3] API Khởi tạo lịch hẹn:} Endpoint \texttt{POST /api/bookings} ràng buộc điều kiện đăng nhập, kiểm tra quy tắc cửa sổ thời gian (\textit{Booking Window}) tương ứng với phân hạng thành viên của khách hàng hiện tại trước khi thiết lập trạng thái \textit{Pending}.
-    \item \textbf{[F2-FE-1] Giao diện thiết lập đặt lịch:} Triển khai Widget Lịch thông minh hỗ trợ hiển thị trực quan các khung giờ trống và màn hình quản lý hồ sơ xe (thêm, sửa, xóa biển số xe).
+    \item \textbf{[F2-DB] Vehicle Database Schema:} Thiết kế bảng \textit{vehicles} với khóa ngoại liên kết đến bảng \textit{users}.
+    \item \textbf{[F2-BE-1] CRUD Vehicle API:} Endpoint \texttt{GET/POST/PUT/DELETE /vehicles} quản lý hồ sơ xe.
+    \item \textbf{[F2-BE-2] Vehicle Validation:} Kiểm tra định dạng biển số và ràng buộc quyền sở hữu (chỉ chủ xe được sửa/xóa hồ sơ của mình).
+    \item \textbf{[F2-FE-1] Giao diện quản lý xe:} Màn hình thêm/sửa/xóa phương tiện và trang hồ sơ khách hàng.
 \end{enumerate}
 
-\subsection{Feature 3: Quản lý hóa đơn nội bộ \& Tích điểm thành viên}
-\textit{Thành viên phụ trách: Phan Triều Cường (LK - Database), Trần Tiến Dũng (DT - Backend)}
+\subsection{Feature 3: Đặt lịch dịch vụ (Booking)}
+\textit{Thành viên phụ trách: M3 (Backend), M2 (Frontend)}
 
-Phân hệ xử lý dữ liệu tài chính nội bộ, tính toán nâng hạng và ghi nhận đổi thưởng:
+Phân hệ xử lý toàn bộ vòng đời một lịch hẹn rửa xe:
 \begin{enumerate}
-    \item \textbf{[F3-DB-1] Schema bảng dữ liệu tài chính:} Thiết lập bảng \textit{bookings}, \textit{customer\_points} (quản lý ví Wash Credits) và bảng \textit{system\_promotions}.
-    \item \textbf{[F3-BE-1] Cơ chế tự động khởi tạo hóa đơn:} Khi nhân viên quầy kiểm tra xe và click chuyển trạng thái lịch hẹn thành \textit{Completed}, hệ thống tự động kết xuất dữ liệu tính toán tổng tiền bằng công thức cơ bản: \(\text{Total} = \text{Price} + \text{Tax (10\% Price)}\).
-    \item \textbf{[F3-BE-2] API Quản lý ví điểm và Đổi thưởng:} Ghi nhận cộng điểm thưởng vào ví của khách hàng theo đúng hệ số điểm (\textit{Multiplier}) của hạng thành viên hiện tại. Đồng thời xử lý trừ điểm khi gọi lệnh đổi mã ưu đãi.
-    \item \textbf{[F3-BE-3] API Quét hạng tự động (Cron Job):} Tác vụ chạy ngầm được lập lịch kích hoạt vào lúc 00:00 ngày đầu tháng, tự động quét tổng chi tiêu trong 3 tháng gần nhất để thực thi lệnh thăng/hạ hạng người dùng.
-    \item \textbf{[F3-FE-1] Bảng điều khiển quản trị (Admin Dashboard):} Giao diện hiển thị biểu đồ xu hướng doanh thu và danh sách hóa đơn chờ xử lý dành riêng cho người vận hành tại quầy dịch vụ.
+    \item \textbf{[F3-DB] Booking Database Schema:} Thiết lập bảng \textit{bookings} và bảng danh mục dịch vụ \textit{services}.
+    \item \textbf{[F3-BE-1] API Khởi tạo lịch hẹn:} Endpoint \texttt{POST /bookings} ràng buộc điều kiện đăng nhập, kiểm tra quy tắc cửa sổ thời gian (\textit{Booking Window}) tương ứng phân hạng thành viên trước khi thiết lập trạng thái \textit{Pending}.
+    \item \textbf{[F3-BE-2] API Lịch sử \& Chi tiết lịch hẹn:} Endpoint \texttt{GET /bookings} và \texttt{GET /bookings/\{id\}} trả về danh sách/chi tiết lịch hẹn.
+    \item \textbf{[F3-BE-3] API Hủy/Cập nhật lịch hẹn:} Endpoint \texttt{PUT /bookings/\{id\}} và \texttt{DELETE /bookings/\{id\}} cập nhật hoặc hủy lịch hẹn.
+    \item \textbf{[F3-BE-4] Booking Priority Queue:} Logic xếp hàng ưu tiên xử lý lịch hẹn theo phân hạng thành viên (hạng cao hơn được xác nhận trước).
+    \item \textbf{[F3-FE-1] Giao diện đặt lịch:} Widget chọn dịch vụ, chi nhánh, ngày giờ và biểu mẫu xác nhận thông tin khách hàng.
 \end{enumerate}
 
-\noindent \textbf{Tóm tắt số lượng công việc (Jira Tasks):} Phân hệ Feature 1 gồm 11 nhiệm vụ, Feature 2 gồm 16 nhiệm vụ, Phân hệ Feature 3 gồm 18 nhiệm vụ. Tổng cộng 51 đầu việc lập trình và đặc tả được kiểm soát chặt chẽ trên bảng quản trị Jira (mã thẻ công việc từ KAN-45 đến KAN-95).
+\subsection{Feature 4: Thành viên \& Điểm thưởng (Loyalty Engine)}
+\textit{Thành viên phụ trách: M4 (Backend), M2 (Frontend)}
+
+Phân hệ logic phức tạp nhất hệ thống, xử lý tính điểm, thăng/hạ hạng và đổi thưởng:
+\begin{enumerate}
+    \item \textbf{[F4-DB] Loyalty Database Schema:} Thiết lập bảng \textit{customer\_points} (ví Wash Credits) và lịch sử biến động điểm.
+    \item \textbf{[F4-BE-1] Point Calculation Engine:} Khi lịch hẹn chuyển trạng thái \textit{Completed}, hệ thống tự động cộng điểm thưởng nhân theo hệ số (\textit{Multiplier}) của hạng thành viên hiện tại.
+    \item \textbf{[F4-BE-2] Tier Upgrade Engine:} Cron Job chạy 00:00 ngày đầu tháng, quét tổng chi tiêu 3 tháng gần nhất để tự động nâng/hạ hạng thành viên.
+    \item \textbf{[F4-BE-3] Reward Redemption API:} Endpoint đổi điểm lấy discount/free wash/add-on, điểm tự động hết hạn sau 12 tháng.
+    \item \textbf{[F4-FE-1] Loyalty Dashboard:} Giao diện hiển thị số dư điểm, hạng hiện tại và lịch sử giao dịch điểm.
+\end{enumerate}
+
+\subsection{Feature 5: Khuyến mãi \& Mã giảm giá (Promotion)}
+\textit{Thành viên phụ trách: M5 (Backend/Database), M1 (Frontend Admin)}
+
+\begin{enumerate}
+    \item \textbf{[F5-DB] Promotion Database Schema:} Thiết lập bảng \textit{promotions} và quy tắc điều kiện áp dụng.
+    \item \textbf{[F5-BE-1] Promotion CRUD API:} Endpoint quản lý tạo/sửa/xóa chương trình khuyến mãi.
+    \item \textbf{[F5-BE-2] Target Promotion Logic:} Kiểm tra điều kiện áp dụng theo phân hạng mục tiêu (\textit{Target Tier}, ví dụ "chỉ gửi cho Silver trở lên") và khung thời gian hiệu lực.
+    \item \textbf{[F5-FE-1] Giao diện quản lý khuyến mãi:} Màn hình Admin cấu hình chương trình khuyến mãi.
+\end{enumerate}
+
+\subsection{Feature 6: Quản trị \& Điều phối trung tâm (Admin Dashboard)}
+\textit{Thành viên phụ trách: M3 (Backend), M1 (Frontend Admin)}
+
+\begin{enumerate}
+    \item \textbf{[F6-BE-1] Dashboard Statistics API:} Endpoint thống kê doanh thu, số lịch hẹn, hoạt động khách hàng theo thời gian thực.
+    \item \textbf{[F6-BE-2] Customer Management API:} Endpoint quản lý tài khoản khách hàng cho Admin.
+    \item \textbf{[F6-BE-3] Booking Management API:} Endpoint điều phối và cập nhật trạng thái lịch hẹn (Pending, Confirmed, Completed, Cancelled) cho nhân viên tại quầy.
+    \item \textbf{[F6-FE-1] Bảng điều khiển quản trị:} Giao diện biểu đồ, danh sách lịch hẹn chờ xử lý dành cho người vận hành.
+\end{enumerate}
+
+\subsection{Feature 7: Khảo sát \& Nghiên cứu dữ liệu (Survey \& Research)}
+\textit{Thành viên phụ trách: M7 (Backend Research API), M6 (Frontend Survey Form)}
+
+\begin{enumerate}
+    \item \textbf{[F7-BE-1] Survey API:} Endpoint tiếp nhận và lưu trữ phản hồi khảo sát khách hàng.
+    \item \textbf{[F7-FE-1] Giao diện biểu mẫu khảo sát:} Form khảo sát với thang đánh giá và trường nhận xét.
+    \item \textbf{[F7-BE-2] Analytics Dataset Export:} Trích xuất dữ liệu khảo sát/hành vi ra tệp phẳng \texttt{.csv} phục vụ phân tích bằng Python/Pandas hoặc Jupyter Notebook.
+\end{enumerate}
+
+\noindent \textbf{Tóm tắt số lượng công việc (Jira Tasks):} Feature 1 gồm 6 nhiệm vụ, Feature 2 gồm 5 nhiệm vụ, Feature 3 gồm 9 nhiệm vụ, Feature 4 gồm 8 nhiệm vụ, Feature 5 gồm 5 nhiệm vụ, Feature 6 gồm 4 nhiệm vụ, Feature 7 gồm 3 nhiệm vụ. Tổng cộng 40 đầu việc được kiểm soát chặt chẽ trên Jira Board dự án \textbf{KAN} thông qua hệ thống nhãn (\textit{Label}) Feature-1 đến Feature-7.
 
 % =================================================================
 \section{Yêu cầu phi chức năng (Non-Functional Requirements)}

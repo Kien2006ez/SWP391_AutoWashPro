@@ -10,36 +10,51 @@ Hệ thống hướng tới việc cung cấp một giải pháp toàn diện ba
     \item Cung cấp bảng điều khiển quản trị (Admin Dashboard) tối ưu cho nhân viên và quản lý trung tâm trong việc tiếp nhận xe, xuất hóa đơn nội bộ, điều phối lịch hẹn và theo dõi các chỉ số tăng trưởng doanh thu theo thời gian thực.
 \end{itemize}
 
-\section{Phạm vi hệ thống và Các phân hệ chức năng (KAN-45 đến KAN-95)}
-Dự án tập trung nghiên cứu, xây dựng và hiện thực hóa các khối chức năng chính được quản lý theo mô hình Agile/Scrum trên hệ thống Jira Board qua các dải thẻ công việc từ KAN-45 đến KAN-95, cụ thể bao gồm các phân hệ sau:
+\section{Phạm vi hệ thống và Các phân hệ chức năng (Jira Project: KAN)}
+Dự án tập trung nghiên cứu, xây dựng và hiện thực hóa các khối chức năng chính được quản lý theo mô hình Agile/Scrum trên Jira Board dự án \textbf{KAN}. Mỗi thẻ công việc (Task) được gắn nhãn (\textit{Label}) song song theo \textbf{Feature} (Feature-1 đến Feature-7) và theo \textbf{thành viên phụ trách} (M1 đến M7), cụ thể bao gồm 7 phân hệ sau:
 
 \begin{enumerate}
-    \item \textbf{Phân hệ Xác thực \& Quản lý Tài khoản (Feature 1):} 
+    \item \textbf{Xác thực \& Quản lý Tài khoản (Feature 1):}
     \begin{itemize}
-        \item Xây dựng cơ sở dữ liệu lưu trữ cấu hình bảo mật thông tin khách hàng, thực hiện mã hóa mật khẩu một chiều bằng thuật toán bcrypt.
-        \item Phát triển hệ thống sinh và xác thực mã OTP ngẫu nhiên gồm 6 chữ số qua Email/SMS với thời gian hết hạn cố định là 5 phút để kích hoạt tài khoản an toàn.
-        \item Thiết kế giao diện trực quan và API Endpoints cho các chức năng: Đăng ký tài khoản mới, Đăng nhập hệ thống bảo mật bằng cơ chế Token-based (Access Token và Refresh Token).
-    \end{itemize}
-    
-    \item \textbf{Phân hệ Đặt lịch dịch vụ \& Quản lý Hồ sơ xe (Feature 2):}
-    \begin{itemize}
-        \item Khách hàng thực hiện quản lý danh sách phương tiện cá nhân (Thêm mới, cập nhật biển số, hãng xe, dòng xe và màu sắc xe đặc trưng).
-        \item Hệ thống hiển thị công khai danh mục các gói dịch vụ chăm sóc xe tại trung tâm (Rửa nhanh, Rửa chi tiết, Phủ Nano bảo vệ, Vệ sinh khoang máy và nội thất sâu).
-        \item Tích hợp logic kiểm tra trạng thái trống của các khung giờ (Slot) theo thời gian thực, đối chiếu với phân hạng thành viên để áp quy tắc cửa sổ thời gian đặt lịch trước (\textit{Booking Window}) trước khi cho phép xác nhận đặt lịch hẹn (Booking).
+        \item Xây dựng cơ sở dữ liệu người dùng, thực hiện mã hóa mật khẩu một chiều bằng thuật toán bcrypt.
+        \item API \texttt{POST /auth/register} và \texttt{POST /auth/login} kèm middleware xác thực JWT (Access Token) bảo vệ các endpoint riêng tư.
+        \item Giao diện Đăng ký / Đăng nhập phía khách hàng và Admin.
     \end{itemize}
 
-    \item \textbf{Phân hệ Hóa đơn nội bộ, Thành viên \& Điểm thưởng Loyalty (Feature 3):}
+    \item \textbf{Quản lý Hồ sơ xe (Feature 2):}
     \begin{itemize}
-        \item Triển khai logic tính toán hóa đơn nội bộ tại quầy khi nhân viên xác nhận hoàn thành quy trình dịch vụ chăm sóc xe thực tế.
-        \item Hệ thống tự động ghi nhận tổng chi tiêu tích lũy và thực hiện cộng điểm thưởng (\textit{Wash Credits}) trực tiếp vào ví điểm của khách hàng. Số lượng điểm thưởng được nhân với hệ số tích điểm (\textit{Multiplier}) đặc quyền tương ứng với từng cấp hạng thành viên (Member, Silver, Gold, Platinum).
-        \item Cho phép khách hàng sử dụng số dư điểm thưởng khả dụng để thực hiện đổi lấy các mã giảm giá hệ thống (\textit{Promo Codes}), đồng thời thiết lập điều kiện áp dụng mã theo phân hạng mục tiêu (\textit{Target Tier}) khi tính toán khấu trừ hóa đơn.
-        \item Cấu hình bộ lập lịch tự động chạy ngầm (Cron Job) định kỳ vào lúc 00:00 ngày đầu tháng để tự động quét tổng chi tiêu 3 tháng gần nhất của toàn bộ khách hàng nhằm thực thi nâng/hạ hạng thành viên tự động.
+        \item Khách hàng quản lý danh sách phương tiện cá nhân (thêm mới, cập nhật biển số, hãng xe, dòng xe).
+        \item CRUD API cho phương tiện, ràng buộc quyền sở hữu (chỉ chủ xe mới sửa/xóa được hồ sơ xe của mình) và kiểm tra định dạng biển số.
     \end{itemize}
 
-    \item \textbf{Phân hệ Quản trị \& Điều phối Trung tâm dành cho Admin/Staff (Feature 4):}
+    \item \textbf{Đặt lịch dịch vụ (Booking) (Feature 3):}
     \begin{itemize}
-        \item Giao diện Dashboard hiển thị hệ thống các biểu đồ trực quan, đo lường các chỉ số kinh doanh cốt lõi như doanh thu tổng, số lượng lịch hẹn hoàn thành, và tần suất đặt lịch theo các mốc thời gian.
-        \item Màn hình điều phối danh sách lịch hẹn tập trung dành cho nhân viên tại quầy, hỗ trợ tìm kiếm theo biển số xe và cập nhật trạng thái vòng đời lịch hẹn (Pending, Confirmed, Completed, Cancelled).
-        \item Phân hệ quản lý danh mục cấu hình hệ thống bao gồm cập nhật đơn giá, thời gian thi công dự kiến của dịch vụ và theo dõi lịch sử biến động điểm số của khách hàng phục vụ công tác đối soát dữ liệu log hành vi.
+        \item API tạo lịch hẹn, tra cứu lịch sử đặt lịch và hủy lịch hẹn theo trạng thái.
+        \item Tích hợp logic kiểm tra khung giờ trống (Slot) theo thời gian thực, đối chiếu với phân hạng thành viên để áp quy tắc cửa sổ thời gian đặt lịch trước (\textit{Booking Window}: Member 7 ngày, Silver 10 ngày, Gold 12 ngày, Platinum 14 ngày) và hàng đợi ưu tiên theo hạng thành viên.
+    \end{itemize}
+
+    \item \textbf{Thành viên \& Điểm thưởng Loyalty (Feature 4):}
+    \begin{itemize}
+        \item Bộ máy tính điểm (\textit{Point Calculation Engine}) ghi nhận điểm thưởng (\textit{Wash Credits}) từ các lịch hẹn đã hoàn thành, nhân theo hệ số (\textit{Multiplier}) tương ứng cấp hạng (Member, Silver, Gold, Platinum).
+        \item Cơ chế đổi điểm (\textit{Redemption}) lấy discount/free wash/add-on và điểm tự động hết hạn sau 12 tháng.
+        \item Cron Job chạy định kỳ đầu tháng để tự động nâng/hạ hạng thành viên dựa trên chi tiêu tích lũy.
+    \end{itemize}
+
+    \item \textbf{Khuyến mãi \& Mã giảm giá (Promotion) (Feature 5):}
+    \begin{itemize}
+        \item CRUD API quản lý chương trình khuyến mãi và mã giảm giá.
+        \item Logic áp dụng khuyến mãi theo đối tượng mục tiêu (\textit{Target Tier}, ví dụ chỉ gửi cho "Silver trở lên") và theo khung thời gian hiệu lực.
+    \end{itemize}
+
+    \item \textbf{Quản trị \& Điều phối Trung tâm cho Admin/Staff (Feature 6):}
+    \begin{itemize}
+        \item Dashboard thống kê doanh thu, số lịch hẹn, hoạt động khách hàng theo thời gian thực.
+        \item API quản lý tài khoản khách hàng và quản lý/điều phối trạng thái lịch hẹn (Pending, Confirmed, Completed, Cancelled) tập trung cho nhân viên tại quầy.
+    \end{itemize}
+
+    \item \textbf{Khảo sát \& Nghiên cứu dữ liệu (Survey \& Research) (Feature 7):}
+    \begin{itemize}
+        \item API tiếp nhận và lưu trữ phản hồi khảo sát khách hàng phục vụ mục tiêu nghiên cứu (RQ).
+        \item Bộ trích xuất dữ liệu hành vi (\textit{Research Logger}) xuất ra tệp phẳng \texttt{.csv} phục vụ phân tích thống kê/huấn luyện mô hình.
     \end{itemize}
 \end{enumerate}
