@@ -1,10 +1,11 @@
 \chapter{Kiểm Thử Hệ Thống AutoWashPro}
 
 \section{Kế hoạch \& Chiến lược kiểm thử}
-Quá trình kiểm thử hệ thống AutoWashPro được thực hiện nghiêm ngặt theo các cấp độ kiến trúc: Unit Tests (kiểm thử đơn vị từng phân hệ API), Integration Tests (kiểm thử luồng liên kết nghiệp vụ), System Tests (kiểm thử toàn bộ hệ thống đầu cuối) và User Acceptance Tests (kiểm thử hộp đen với người dùng thực tế). Toàn bộ 51 kịch bản kiểm thử (Test Cases) được quản trị tập trung trên Jira board qua dải mã định danh từ KAN-92 đến KAN-95 vàđược quản lý tập trung trên Jira Kanban Board và được thực hiện
-xuyên suốt quá trình phát triển dự án.
+Quá trình kiểm thử hệ thống AutoWashPro được thực hiện nghiêm ngặt theo các cấp độ kiến trúc: Unit Tests (kiểm thử đơn vị từng phân hệ API), Integration Tests (kiểm thử luồng liên kết nghiệp vụ), System Tests (kiểm thử toàn bộ hệ thống đầu cuối) và User Acceptance Tests (kiểm thử hộp đen với người dùng thực tế). Toàn bộ kịch bản kiểm thử (Test Cases) được quản trị tập trung trên Jira Board dự án \textbf{KAN} qua nhãn (Label) \texttt{Testing} kết hợp \texttt{Feature-1} đến \texttt{Feature-7}.
 
-\section{Test Cases - Feature 1: Xác thực \& Quản lý Tài khoản}
+\textit{Ghi chú quan trọng: tại thời điểm biên soạn báo cáo, chỉ Feature 1 (Auth) và Feature 3 (Booking) đã có mã nguồn API để kiểm thử thực tế. Các Feature 2, 4, 5, 6, 7 hiện đang trong giai đoạn triển khai (router trống) -- test case tương ứng được thiết kế trước theo đặc tả Chương 3 và sẽ được thực thi khi mã nguồn hoàn thiện.}
+
+\section{Test Cases - Feature 1: Xác thực \& Quản lý Tài khoản (Đã triển khai)}
 
 \subsection{Authentication Unit Tests}
 
@@ -17,157 +18,215 @@ xuyên suốt quá trình phát triển dự án.
 \hline
 \textbf{TC ID} & \textbf{Tính năng} & \textbf{Dữ liệu đầu vào} & \textbf{Kết quả mong đợi} & \textbf{Trạng thái} \\
 \hline
-TC-1-01 & Register & email: valid@example.com, password: Pass123! & OTP được khởi tạo và gửi, status=Pending & Chờ \\
+TC-1-01 & Register & username: user01, password: Pass123 & Trả về \texttt{\{"message": "Register success"\}} & Chờ \\
 \hline
-TC-1-02 & Register & email: invalid-email, password: Pass123! & Hệ thống trả lỗi "Email không đúng định dạng" & Chờ \\
+TC-1-02 & Register & username: user01 (đã tồn tại) & Hệ thống trả lỗi 400 "Username already exists" & Chờ \\
 \hline
-TC-1-03 & Register & email: user@test.com, password: 123 & Hệ thống trả lỗi "Mật khẩu tối thiểu 8 ký tự" & Chờ \\
+TC-1-03 & Login & username: user01, password: Pass123 (đúng) & Trả về \texttt{token}, \texttt{username}, \texttt{role} & Chờ \\
 \hline
-TC-1-04 & Register & email: existing@test.com (đã tồn tại) & Hệ thống trả lỗi "Email đã được đăng ký" & Chờ \\
+TC-1-04 & Login & username: user01, password sai & Trả lỗi 401 "Invalid username or password" & Chờ \\
 \hline
-TC-1-05 & Verify OTP & otp\_code: 123456 (trong vòng 5 phút) & Trạng thái tài khoản đổi thành Active & Chờ \\
+TC-1-05 & Login & username không tồn tại trong hệ thống & Trả lỗi 401 "Invalid username or password" & Chờ \\
 \hline
-TC-1-06 & Verify OTP & otp\_code: 000000 (mã sai) & Hệ thống báo lỗi "Mã OTP không hợp lệ" & Chờ \\
+TC-1-06 & Truy cập Endpoint riêng tư & Không kèm header \texttt{Authorization} & Trả lỗi 401 Unauthorized & Chờ \\
 \hline
-TC-1-07 & Verify OTP & otp\_code: 123456 (sau 5 phút) & Hệ thống báo lỗi "Mã OTP đã hết hạn" & Chờ \\
-\hline
-TC-1-08 & Login & email: user@test.com, password: Pass123! & Cấp cặp mã JWT (Access \& Refresh Token) & Chờ \\
-\hline
-TC-1-09 & Login & email: user@test.com, password: WrongPass & Hệ thống báo lỗi "Thông tin không chính xác" & Chờ \\
-\hline
-TC-1-10 & Login & email: pending@test.com, password: Pass123! & Hệ thống báo lỗi "Tài khoản chưa kích hoạt" & Chờ \\
-\hline
-TC-1-11 & Login & Sai liên tiếp 5 lần cùng một tài khoản & Khóa quyền đăng nhập tài khoản trong 15 phút & Chờ \\
-\hline
-TC-1-12 & Refresh Token & refresh\_token: valid\_jwt & Khởi tạo và trả về Access Token mới & Chờ \\
-\hline
-TC-1-13 & Refresh Token & refresh\_token: expired\_jwt & Trả mã lỗi 401 "Phiên đăng nhập hết hạn" & Chờ \\
+TC-1-07 & Truy cập Endpoint riêng tư & Kèm JWT hết hạn/không hợp lệ & Trả lỗi 401 Unauthorized & Chờ \\
 \hline
 \end{tabular}
 \end{table}
 
-\section{Test Cases - Feature 2: Đặt lịch dịch vụ \& Quản lý xe}
+\textit{Lưu ý: TC-1-06 và TC-1-07 phụ thuộc vào \texttt{dependencies.py} (hiện đang trống) -- sẽ thực thi khi middleware xác thực JWT hoàn thiện.}
 
-\subsection{Booking Feature Tests}
+% =================================================================
+\section{Test Cases - Feature 2: Quản lý Hồ sơ xe (Kế hoạch triển khai)}
 
 \begin{table}[htbp]
 \centering
-\caption{Test Cases - Feature 2 (Booking)}
+\caption{Test Cases - Feature 2 (Vehicle Management)}
+\label{tab:test_vehicle}
+\small
+\begin{tabular}{|p{1.8cm}|p{2.5cm}|p{4.2cm}|p{3.8cm}|c|}
+\hline
+\textbf{TC ID} & \textbf{Tính năng} & \textbf{Dữ liệu đầu vào} & \textbf{Kết quả mong đợi} & \textbf{Trạng thái} \\
+\hline
+TC-2-01 & Add Vehicle & brand: Honda, model: SH, plate: 29A-12345 & Phương tiện được lưu, liên kết đúng \texttt{user\_id} & Kế hoạch \\
+\hline
+TC-2-02 & Add Vehicle & plate: 29A-12345 (đã đăng ký trước đó) & Hệ thống báo lỗi "Biển số xe đã tồn tại" & Kế hoạch \\
+\hline
+TC-2-03 & Get Vehicles & Tài khoản đã đăng nhập & Chỉ trả về danh sách xe thuộc tài khoản đó & Kế hoạch \\
+\hline
+TC-2-04 & Update/Delete Vehicle & Thao tác trên xe của tài khoản khác & Trả lỗi 403 "Không có quyền truy cập" & Kế hoạch \\
+\hline
+\end{tabular}
+\end{table}
+
+% =================================================================
+\section{Test Cases - Feature 3: Đặt lịch dịch vụ Booking (Đã triển khai một phần)}
+
+\begin{table}[htbp]
+\centering
+\caption{Test Cases - Feature 3 (Booking)}
 \label{tab:test_booking}
 \small
 \begin{tabular}{|p{1.8cm}|p{2.5cm}|p{4.2cm}|p{3.8cm}|c|}
 \hline
 \textbf{TC ID} & \textbf{Tính năng} & \textbf{Dữ liệu đầu vào} & \textbf{Kết quả mong đợi} & \textbf{Trạng thái} \\
 \hline
-TC-2-01 & Add Vehicle & brand: Honda, model: SH, plate: 29A-12345 & Phương tiện được lưu, status=Active & Chờ \\
+TC-3-01 & Create Booking & customer, service, booking\_date hợp lệ & Trả về \texttt{200 OK} kèm object booking, status=Pending & Chờ \\
 \hline
-TC-2-02 & Add Vehicle & plate: 29A-12345 (đã đăng ký trước đó) & Hệ thống báo lỗi "Biển số xe đã tồn tại" & Chờ \\
+TC-3-02 & Get All Bookings & Gọi \texttt{GET /bookings} & Trả về danh sách toàn bộ booking hiện có & Chờ \\
 \hline
-TC-2-03 & Get Services & Gọi API lấy danh mục dịch vụ công khai & Trả về danh sách gói và đơn giá chuẩn & Chờ \\
+TC-3-03 & Get Booking Detail & \texttt{GET /bookings/\{id\}} với id hợp lệ & Trả về đúng thông tin booking tương ứng & Chờ \\
 \hline
-TC-2-04 & Get Slots & date: 2026-06-15 & Trả về các slot thời gian trống (09:00-20:00) & Chờ \\
+TC-3-04 & Get Booking Detail & \texttt{GET /bookings/\{id\}} với id không tồn tại & Trả lỗi 404 Not Found & \textbf{Fail (Bug đã ghi nhận)} \\
 \hline
-TC-2-05 & Get Slots & date: 2026-09-01 (vượt giới hạn hạn hạng) & Hệ thống trả lỗi "Vượt cửa sổ đặt lịch trước" & Chờ \\
+TC-3-05 & Update Booking & \texttt{PUT /bookings/\{id\}} cập nhật trạng thái & Booking được cập nhật đúng dữ liệu mới & Chờ \\
 \hline
-TC-2-06 & Create Booking & vehicle\_id: 1, service\_id: 2, time: 09:00 & Tạo booking thành công, status=Pending & Chờ \\
+TC-3-06 & Cancel Booking & \texttt{DELETE /bookings/\{id\}} & Booking bị xóa/chuyển trạng thái Cancelled & Chờ \\
 \hline
-TC-2-07 & Create Booking & Khung giờ 09:00 ngày lựa chọn đã bị đầy & Hệ thống báo lỗi "Khung giờ đã được đặt kín" & Chờ \\
+TC-3-07 & Booking Window (Kế hoạch) & Đặt lịch vượt quá số ngày cho phép theo hạng & Hệ thống từ chối, báo lỗi vượt cửa sổ đặt lịch & Kế hoạch \\
 \hline
-TC-2-08 & Create Booking & vehicle\_id: 999 (id không tồn tại trong DB) & Hệ thống báo lỗi "Phương tiện không hợp lệ" & Chờ \\
-\hline
-TC-2-09 & Get Detail & booking\_id: 1 (thuộc chính chủ tài khoản) & Trả về toàn bộ thông tin chi tiết lịch đặt & Chờ \\
-\hline
-TC-2-10 & Get Detail & booking\_id: 2 (thuộc tài khoản khách khác) & Trả lỗi 403 "Không có quyền truy cập" & Chờ \\
-\hline
-TC-2-11 & Edit Booking & Thực hiện thay đổi lịch trước giờ rửa > 6 tiếng & Cập nhật slot mới, giải phóng slot cũ thành công & Chờ \\
-\hline
-TC-2-12 & Edit Booking & Thực hiện thay đổi lịch trước giờ rửa < 6 tiếng & Hệ thống chặn, trả lỗi quy tắc thời gian hạn định & Chờ \\
-\hline
-TC-2-13 & Cancel Booking & Chọn hủy lịch hẹn trước giờ rửa > 6 tiếng & Trạng thái chuyển thành Cancelled & Chờ \\
-\hline
-TC-2-14 & Cancel Booking & Chọn hủy lịch hẹn khi hóa đơn đã xử lý xong & Hệ thống chặn, trả lỗi "Không thể hủy lịch" & Chờ \\
+TC-3-08 & Priority Queue (Kế hoạch) & Hai khách hàng khác hạng đặt cùng khung giờ & Khách hạng cao hơn được xác nhận trước & Kế hoạch \\
 \hline
 \end{tabular}
 \end{table}
 
-\section{Test Cases - Feature 3: Hóa đơn nội bộ, Thành viên \& Điểm thưởng Loyalty}
+\textit{Ghi chú: TC-3-04 hiện đang \textbf{Fail} do lỗi thiếu import \texttt{get\_booking\_by\_id} trong \texttt{routers/bookings.py} (gây \texttt{NameError}, phản hồi 500 thay vì 404) -- đã được ghi nhận và có hướng khắc phục. TC-3-07, TC-3-08 phụ thuộc logic Booking Window/Priority Queue chưa được lập trình.}
 
-\subsection{Internal Billing \& Loyalty Multiplier Tests}
+% =================================================================
+\section{Test Cases - Feature 4: Thành viên \& Điểm thưởng Loyalty (Kế hoạch triển khai)}
 
 \begin{table}[htbp]
 \centering
-\caption{Test Cases - Feature 3 (Billing \& Loyalty)}
+\caption{Test Cases - Feature 4 (Loyalty Engine)}
 \label{tab:test_loyalty}
 \small
 \begin{tabular}{|p{1.8cm}|p{2.5cm}|p{4.2cm}|p{3.8cm}|c|}
 \hline
 \textbf{TC ID} & \textbf{Tính năng} & \textbf{Dữ liệu đầu vào} & \textbf{Kết quả mong đợi} & \textbf{Trạng thái} \\
 \hline
-TC-3-01 & Auto Invoice & Nhân viên quầy bấm kết thúc quy trình rửa xe & Tự động tạo bản ghi hóa đơn nội bộ, trạng thái=Paid & Chờ \\
+TC-4-01 & Point Earned & Booking chuyển trạng thái Completed, hạng Gold & Cộng điểm Wash Credits nhân hệ số 1.5x & Kế hoạch \\
 \hline
-TC-3-02 & Point Earned & Hóa đơn 300,000 VNĐ, tài khoản hạng Gold & Cộng vào ví điểm thưởng số điểm nhân hệ số hạng & Chờ \\
+TC-4-02 & Redeem Points & Đổi mã trị giá tương ứng 500 điểm & Trừ đúng 500 điểm, sinh mã ưu đãi mới & Kế hoạch \\
 \hline
-TC-3-03 & Redeem Points & Đổi mã giảm giá trị giá 50k tiêu tốn 500 điểm & Khấu trừ chính xác 500 điểm ví, sinh mã Promo mới & Chờ \\
+TC-4-03 & Redeem Points & Số dư điểm hiện có nhỏ hơn mức cần đổi & Hệ thống từ chối, báo lỗi "Không đủ số dư điểm" & Kế hoạch \\
 \hline
-TC-3-04 & Redeem Points & Đổi mã khi số dư ví điểm \textit{Wash Credits} < 500 & Hệ thống từ chối, trả lỗi "Không đủ số dư điểm" & Chờ \\
+TC-4-04 & Cron Job Tier Up & Chi tiêu 3 tháng đủ ngưỡng hạng kế tiếp & Tài khoản tự động thăng hạng khi Cron chạy & Kế hoạch \\
 \hline
-TC-3-05 & Promo Apply & Áp mã giảm giá hạng Platinum vào hóa đơn & Hệ thống kiểm tra hạng hợp lệ, khấu trừ tiền hóa đơn & Chờ \\
+TC-4-05 & Cron Job Tier Down & Chi tiêu 3 tháng dưới ngưỡng hạng hiện tại & Tài khoản tự động bị hạ hạng khi Cron chạy & Kế hoạch \\
 \hline
-TC-3-06 & Promo Apply & Áp mã Platinum nhưng tài khoản hiện là Member & Hệ thống từ chối, trả lỗi không đạt phân hạng mục tiêu & Chờ \\
-\hline
-TC-3-07 & Cron Job Tier & Trigger Cron Job đầu tháng quét chi tiêu 3 tháng & Tài khoản đủ chi tiêu tự động thăng lên hạng tương ứng & Chờ \\
-\hline
-TC-3-08 & Cron Job Tier & Trigger Cron Job đầu tháng quét tài khoản tụt hạn & Tài khoản không đủ chi tiêu tối thiểu bị hạ hạng tự động & Chờ \\
-\hline
-TC-3-09 & Export PDF & Yêu cầu xuất tệp hóa đơn của giao dịch đã đóng & Hệ thống sinh tệp PDF xuất hóa đơn nội bộ thành công & Chờ \\
-\hline
-TC-3-10 & Research Log & Thực thi một phiên giao dịch hóa đơn hoàn chỉnh & Hệ thống tự động ghi nhật ký định dạng chuẩn vào tệp log & Chờ \\
-\hline
-TC-3-11 & Research Log & Kiểm tra chuỗi \texttt{customer\_hash} trong file log & Dữ liệu cá nhân được băm mã hóa một chiều SHA-256 & Chờ \\
-\hline
-TC-3-12 & Reset Expiry & Điểm tích lũy vượt quá thời hạn chu kỳ cấu hình & Bộ quét tự động khấu trừ điểm hết hạn khỏi ví hệ thống & Chờ \\
+TC-4-06 & Point Expiry & Điểm phát sinh quá 12 tháng chưa sử dụng & Bộ quét tự động khấu trừ điểm hết hạn & Kế hoạch \\
 \hline
 \end{tabular}
 \end{table}
 
+% =================================================================
+\section{Test Cases - Feature 5: Khuyến mãi (Kế hoạch triển khai)}
+
+\begin{table}[htbp]
+\centering
+\caption{Test Cases - Feature 5 (Promotion)}
+\label{tab:test_promo}
+\small
+\begin{tabular}{|p{1.8cm}|p{2.5cm}|p{4.2cm}|p{3.8cm}|c|}
+\hline
+\textbf{TC ID} & \textbf{Tính năng} & \textbf{Dữ liệu đầu vào} & \textbf{Kết quả mong đợi} & \textbf{Trạng thái} \\
+\hline
+TC-5-01 & Promo Apply & Áp mã giới hạn hạng Platinum, tài khoản Platinum & Hệ thống chấp nhận, khấu trừ đúng hóa đơn & Kế hoạch \\
+\hline
+TC-5-02 & Promo Apply & Áp mã giới hạn hạng Platinum, tài khoản Member & Hệ thống từ chối, báo lỗi không đạt phân hạng mục tiêu & Kế hoạch \\
+\hline
+TC-5-03 & Promo CRUD & Admin tạo/sửa/xóa chương trình khuyến mãi & Dữ liệu \texttt{promotions} cập nhật chính xác & Kế hoạch \\
+\hline
+\end{tabular}
+\end{table}
+
+% =================================================================
+\section{Test Cases - Feature 6: Quản trị Trung tâm (Kế hoạch triển khai)}
+
+\begin{table}[htbp]
+\centering
+\caption{Test Cases - Feature 6 (Admin Dashboard)}
+\label{tab:test_admin}
+\small
+\begin{tabular}{|p{1.8cm}|p{2.5cm}|p{4.2cm}|p{3.8cm}|c|}
+\hline
+\textbf{TC ID} & \textbf{Tính năng} & \textbf{Dữ liệu đầu vào} & \textbf{Kết quả mong đợi} & \textbf{Trạng thái} \\
+\hline
+TC-6-01 & Dashboard Stats & Gọi API thống kê doanh thu theo tháng & Trả về đúng tổng doanh thu, số lịch hẹn & Kế hoạch \\
+\hline
+TC-6-02 & Booking Dispatch & Nhân viên cập nhật trạng thái lịch hẹn & Trạng thái booking chuyển đúng vòng đời & Kế hoạch \\
+\hline
+\end{tabular}
+\end{table}
+
+% =================================================================
+\section{Test Cases - Feature 7: Khảo sát \& Nghiên cứu (Kế hoạch triển khai)}
+
+\begin{table}[htbp]
+\centering
+\caption{Test Cases - Feature 7 (Survey \& Research)}
+\label{tab:test_research}
+\small
+\begin{tabular}{|p{1.8cm}|p{2.5cm}|p{4.2cm}|p{3.8cm}|c|}
+\hline
+\textbf{TC ID} & \textbf{Tính năng} & \textbf{Dữ liệu đầu vào} & \textbf{Kết quả mong đợi} & \textbf{Trạng thái} \\
+\hline
+TC-7-01 & Submit Survey & Gửi phản hồi khảo sát hợp lệ & Dữ liệu khảo sát được lưu trữ thành công & Kế hoạch \\
+\hline
+TC-7-02 & Research Log & Thực thi một giao dịch booking hoàn chỉnh & Hệ thống ghi log hành vi vào tệp \texttt{.csv} & Kế hoạch \\
+\hline
+TC-7-03 & Research Log & Kiểm tra trường \texttt{customer\_hash} trong log & Dữ liệu cá nhân được băm một chiều SHA-256 & Kế hoạch \\
+\hline
+\end{tabular}
+\end{table}
+
+% =================================================================
 \section{Integration Tests (Kiểm thử tích hợp chu trình đầu cuối)}
 
 \subsection{End-to-End Flow Tests}
 
 \begin{enumerate}
-    \item \textbf{TC-INT-01: Quy trình Xác thực \& Kích hoạt Tài khoản Toàn diện}
+    \item \textbf{TC-INT-01: Quy trình Đăng ký \& Đăng nhập Toàn diện (Đã triển khai)}
     \begin{itemize}
-        \item Khách hàng gửi yêu cầu đăng ký tài khoản mới $\rightarrow$ Kiểm tra bản ghi sinh ra trong Database ở trạng thái Pending $\rightarrow$ Nhập mã OTP chính xác gửi qua hệ thống $\rightarrow$ Đăng nhập bằng cặp tài khoản mật khẩu vừa tạo.
-        \item Kết quả mong đợi: Trạng thái tài khoản chuyển thành Active, hệ thống phản hồi JWT Token hợp lệ và điều hướng thành công vào màn hình Dashboard cá nhân.
-    \end{itemize}
-    
-    \item \textbf{TC-INT-02: Chu trình Đặt lịch dịch vụ thời gian thực}
-    \begin{itemize}
-        \item Khách hàng thêm mới phương tiện $\rightarrow$ Truy vấn danh mục gói dịch vụ $\rightarrow$ Chọn khung giờ slot trống $\rightarrow$ Xác nhận đặt lịch hẹn (Booking).
-        \item Kết quả mong đợi: Bản ghi Booking được lưu với trạng thái ban đầu là Pending, hệ thống tự động khóa giữ slot thời gian đã chọn để tránh ghi đè dữ liệu, gửi email xác nhận.
-    \end{itemize}
-    
-    \item \textbf{TC-INT-03: Luồng Hoàn thành dịch vụ, Tích điểm \& Trích xuất Nhật ký nghiên cứu}
-    \begin{itemize}
-        \item Nhân viên tại quầy xác nhận xe đã hoàn thành rửa thực tế $\rightarrow$ Hệ thống cập nhật trạng thái lịch hẹn thành Completed $\rightarrow$ Tự động sinh hóa đơn nội bộ $\rightarrow$ Hệ thống Loyalty tính toán điểm thưởng nhân theo hệ số hạng $\rightarrow$ Triển khai lưu log hành vi.
-        \item Kết quả mong đợi: Hóa đơn nội bộ chuyển trạng thái hoàn tất, số dư ví điểm \textit{Wash Credits} của khách hàng tăng lên chính xác theo tỷ lệ hạng, bộ \textit{Research Logger} xuất dữ liệu dạng phẳng (.csv) ghi nhận đầy đủ 10 trường thông tin ẩn danh phục vụ bài toán nghiên cứu khoa học ở Chương 5.
+        \item Khách hàng gửi yêu cầu đăng ký tài khoản mới $\rightarrow$ Đăng nhập bằng đúng cặp tài khoản/mật khẩu vừa tạo $\rightarrow$ Nhận JWT Token.
+        \item Kết quả mong đợi: Hệ thống phản hồi JWT Token hợp lệ, \texttt{username} và \texttt{role} chính xác.
     \end{itemize}
 
-    \item \textbf{TC-INT-04: Luồng Hủy lịch hẹn đổi mã ưu đãi hoàn điểm}
+    \item \textbf{TC-INT-02: Chu trình Đặt lịch dịch vụ cơ bản (Đã triển khai một phần)}
     \begin{itemize}
-        \item Khách hàng thực hiện hủy lịch đặt trước khung giờ thi công quy định > 6 tiếng.
-        \item Kết quả mong đợi: Trạng thái lịch hẹn chuyển sang Cancelled, hệ thống tự động giải phóng khung giờ trống trên lịch trực tuyến, hoàn trả lại số điểm thưởng tương ứng nếu lịch hẹn đó được đặt bằng hình thức quy đổi điểm trước đó.
+        \item Khách hàng gọi \texttt{POST /bookings} với thông tin dịch vụ và ngày hẹn $\rightarrow$ Tra cứu lại bằng \texttt{GET /bookings/\{id\}}.
+        \item Kết quả mong đợi: Bản ghi Booking được lưu với trạng thái ban đầu là Pending và có thể truy vấn lại chính xác.
+    \end{itemize}
+
+    \item \textbf{TC-INT-03: Luồng Hoàn thành dịch vụ, Tích điểm \& Trích xuất Nhật ký nghiên cứu (Kế hoạch)}
+    \begin{itemize}
+        \item Nhân viên tại quầy xác nhận booking chuyển trạng thái Completed $\rightarrow$ Hệ thống Loyalty tính toán điểm thưởng nhân theo hệ số hạng $\rightarrow$ Triển khai lưu log hành vi.
+        \item Kết quả mong đợi: Số dư ví điểm \textit{Wash Credits} của khách hàng tăng đúng theo tỷ lệ hạng, bộ \textit{Research Logger} xuất dữ liệu dạng phẳng (.csv) ghi nhận đầy đủ các trường thông tin ẩn danh phục vụ bài toán nghiên cứu khoa học ở Chương 5.
+    \end{itemize}
+
+    \item \textbf{TC-INT-04: Luồng Hủy lịch hẹn hoàn điểm (Kế hoạch)}
+    \begin{itemize}
+        \item Khách hàng thực hiện hủy lịch đã đặt bằng hình thức quy đổi điểm trước đó.
+        \item Kết quả mong đợi: Trạng thái lịch hẹn chuyển sang Cancelled, hệ thống hoàn trả lại số điểm thưởng tương ứng.
     \end{itemize}
 \end{enumerate}
 
+% =================================================================
 \section{UI/UX \& Frontend Interaction Tests}
 
 \subsection{Frontend Interface Testing}
 
 \begin{enumerate}
-    \item \textbf{TC-UI-01: Kiểm thử biểu mẫu Validation biểu mẫu nhập liệu}
+    \item \textbf{TC-UI-01: Kiểm thử Validation biểu mẫu Đăng ký/Đăng nhập}
     \begin{itemize}
-        \item Nhập email sai cú pháp hoặc mật khẩu không đủ độ dài bảo mật tại màn hình đăng ký trực quan.
+        \item Nhập tên đăng nhập bỏ trống hoặc mật khẩu không đủ độ dài tại màn hình đăng ký trực quan.
         \item Kết quả mong đợi: Hiển thị thông báo lỗi và không cho phép gửi biểu mẫu.
+    \end{itemize}
+
+    \item \textbf{TC-UI-02: Kiểm thử luồng đặt lịch nhiều bước (Booking Wizard)}
+    \begin{itemize}
+        \item Bỏ trống một trường bắt buộc ở bước hiện tại rồi bấm "Tiếp tục".
+        \item Kết quả mong đợi: Hệ thống chặn chuyển bước, hiển thị cảnh báo tại trường còn thiếu.
     \end{itemize}
 \end{enumerate}
