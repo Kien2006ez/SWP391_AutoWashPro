@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.utils import get_openapi
 
 from app.core.config import settings
 
@@ -14,11 +15,38 @@ app.add_middleware(
 )
 
 
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    schema = get_openapi(
+        title=settings.APP_NAME,
+        version="1.0.0",
+        routes=app.routes,
+    )
+    # Thêm HTTPBearer scheme để Swagger hiện ô nhập token
+    schema["components"]["securitySchemes"] = {
+        "HTTPBearer": {
+            "type": "http",
+            "scheme": "bearer",
+        }
+    }
+    # Áp dụng cho tất cả endpoint
+    for path in schema["paths"].values():
+        for method in path.values():
+            method["security"] = [{"HTTPBearer": []}]
+    app.openapi_schema = schema
+    return schema
+
+
+app.openapi = custom_openapi
+
+
 @app.get("/")
 def health_check():
     return {"status": "ok", "app": settings.APP_NAME}
 
 
+# ── Routers ──────────────────────────────────────────────────
 from app.routers import auth
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 
