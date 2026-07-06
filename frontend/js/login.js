@@ -126,78 +126,66 @@ document.addEventListener('DOMContentLoaded', () => {
     // ── API calls ──────────────────────────────────────────
     // Thay 2 hàm fake bên dưới bằng fetch thật khi có backend
 
-    async function apiLogin(phone, password) {
-        // ── Thật: bỏ comment dưới đây, xoá phần fake ──
-        // const res  = await fetch('https://api.autowashpro.vn/v1/auth/login', {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify({ phone, password })
-        // });
-        // const data = await res.json();
-        // if (!res.ok) throw new Error(data.message || 'Đăng nhập thất bại');
-        // return data;
-
-        // ── Fake (demo) ──
-        await new Promise(r => setTimeout(r, 900));
-        if (phone === '0000000000') throw new Error('Số điện thoại chưa được đăng ký.');
-        return {
-            token: 'demo_' + Date.now(),
-            expiresIn: 86400,
-            user: { fullName: 'Nguyễn Demo', phone, tier: 'gold', points: 1240, monthlySpend: 1800000 }
-        };
-    }
+    async function apiLogin(phone, otp_code) {
+    return await login(phone, otp_code); // gọi hàm từ api.js
+}
 
     async function apiRegister(payload) {
-        // ── Thật ──
-        // const res  = await fetch('https://api.autowashpro.vn/v1/auth/register', {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify(payload)
-        // });
-        // const data = await res.json();
-        // if (!res.ok) throw new Error(data.message || 'Đăng ký thất bại');
-        // return data;
+    return await register(
+        payload.phone,
+        payload.otp_code,
+        payload.fullName
+    );
+}
 
-        // ── Fake (demo) ──
-    await new Promise(r => setTimeout(r, 1100));
-        if (payload.phone === '0999999999') throw new Error('Số điện thoại đã được đăng ký.');
-        return {
-            token: 'demo_' + Date.now(),
-            expiresIn: 86400,
-            user: { fullName: payload.fullName, phone: payload.phone, tier: 'member', points: 0, monthlySpend: 0 }
-        };
-    }
+    // Thêm vào login.js — xử lý flow OTP thật
+    let otpRequested = false;
 
-    // ── ĐĂNG NHẬP ──────────────────────────────────────────
     btnLogin?.addEventListener('click', async () => {
         clearAlert();
         const phone = document.getElementById('l-phone').value.trim();
-        const pw    = document.getElementById('l-pw').value;
 
-        let ok = true;
-        if (!validPhone(phone)) { setErr('l-phone-err', true);  markInput('l-phone', false); ok = false; }
-        else                    { setErr('l-phone-err', false); markInput('l-phone', true); }
-        if (!validPw(pw))       { setErr('l-pw-err', true);    markInput('l-pw', false);    ok = false; }
-        else                    { setErr('l-pw-err', false);   markInput('l-pw', true); }
-        if (!ok) return;
+        if (!validPhone(phone)) {
+        setErr('l-phone-err', true);
+        return;
+        }
+
+        // Bước 1: Chưa gửi OTP → gửi OTP
+        if (!otpRequested) {
+            setLoading(btnLogin, spinLogin, true);
+            try {
+                await requestOtp(phone); // gọi API thật
+                otpRequested = true;
+                // Đổi input password thành input OTP
+                document.getElementById('l-pw').type = 'text';
+                document.getElementById('l-pw').placeholder = 'Nhập mã OTP 6 số';
+                btnLogin.querySelector('.btn-text').textContent = 'Xác nhận OTP';
+                showAlert('Đã gửi OTP về số ' + phone + '. Kiểm tra Terminal VS Code để xem mã (SMS mock).', 'ok');
+            } catch(e) {
+                showAlert(e.message);
+            }
+            setLoading(btnLogin, spinLogin, false, 'Đăng nhập');
+            return;
+        }
+
+        // Bước 2: Đã gửi OTP → login
+        const otp = document.getElementById('l-pw').value.trim();
+        if (otp.length !== 6) {
+            showAlert('Nhập đúng 6 chữ số OTP');
+            return;
+        }
 
         setLoading(btnLogin, spinLogin, true);
         try {
-            const data = await apiLogin(phone, pw);
-            saveSession(data);
-
-            if (document.getElementById('l-remember').checked)
-                localStorage.setItem('aw_remember', phone);
-            else
-                localStorage.removeItem('aw_remember');
-
-            showAlert(`Chào mừng trở lại, ${data.user.fullName}! 🎉`, 'ok');
-            setTimeout(() => {
-                const next = new URLSearchParams(location.search).get('next');
-                location.href = next ? decodeURIComponent(next) : 'index.html';
-            }, 900);
-        } catch (e) {
-            showAlert(e.message || 'Sai số điện thoại hoặc mật khẩu.');
+            const data = await login(phone, otp);
+            saveSession(data.access_token, { phone });
+            // Lấy thêm thông tin user
+            const me = await getMe();
+            saveSession(data.access_token, me);
+            showAlert('Đăng nhập thành công! 🎉', 'ok');
+            setTimeout(() => { location.href = 'loyalty.html'; }, 800);
+        } catch(e) {
+            showAlert(e.message || 'OTP sai hoặc đã hết hạn');
             setLoading(btnLogin, spinLogin, false, 'Đăng nhập');
         }
     });
