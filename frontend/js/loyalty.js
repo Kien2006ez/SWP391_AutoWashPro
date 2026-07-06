@@ -73,61 +73,79 @@ document.addEventListener('DOMContentLoaded', () => {
     // (loyalty router: GET /v1/loyalty/me, GET /v1/loyalty/history, POST /v1/loyalty/redeem)
 
     async function apiGetLoyaltyProfile() {
-        //const res = await fetch('https://api.autowashpro.vn/v1/loyalty/me', {
-        //     headers: { Authorization: `Bearer ${token}` }
-        // });
-        // return res.json();
+        const res = await fetch('http://localhost:8000/api/auth/me', {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!res.ok) { location.href = 'login.html'; return; }
+        const me = await res.json();
 
-        // ── Fake (demo) ──
-        await new Promise(r => setTimeout(r, 300));
-        return { ...user };
-    }
-
-    async function apiGetHistory() {
-        // const res = await fetch('https://api.autowashpro.vn/v1/loyalty/history', {
-        //     headers: { Authorization: `Bearer ${token}` }
-        // });
-        // return res.json();
-
-        // ── Fake (demo) — dữ liệu mẫu ──
-        await new Promise(r => setTimeout(r, 300));
-        const today = new Date();
-        const daysAgo = n => new Date(today.getTime() - n * 86400000).toISOString().split('T')[0];
-        const monthsFromNow = n => new Date(today.getFullYear(), today.getMonth() + n, today.getDate())
-            .toISOString().split('T')[0];
-
+     // Map field backend → field frontend dùng trong loyalty.js
         return {
-            washHistory: [
-                { date: daysAgo(3),  plate: '30A-123.45', service: 'Rửa Xe + Phủ Ceramic', amount: 450000, pointsEarned: 45, status: 'completed' },
-                { date: daysAgo(15), plate: '30A-123.45', service: 'Rửa Xe Tiêu Chuẩn',      amount: 150000, pointsEarned: 15, status: 'completed' },
-                { date: daysAgo(28), plate: '30A-123.45', service: 'Vệ Sinh Nội Thất',       amount: 250000, pointsEarned: 25, status: 'completed' },
-                { date: daysAgo(1),  plate: '30A-123.45', service: 'Rửa Xe + Hút Bụi',       amount: 200000, pointsEarned: 0,  status: 'pending' },
-            ],
-            pointsHistory: [
-                { date: daysAgo(3),  type: 'Earn',   delta: +45,  balanceAfter: user.points,        expiry: monthsFromNow(12), note: 'Rửa xe #AWP-118' },
-                { date: daysAgo(15), type: 'Earn',   delta: +15,  balanceAfter: user.points - 45,    expiry: monthsFromNow(11), note: 'Rửa xe #AWP-104' },
-                { date: daysAgo(28), type: 'Earn',   delta: +25,  balanceAfter: user.points - 60,    expiry: monthsFromNow(10), note: 'Rửa xe #AWP-091' },
-                { date: daysAgo(60), type: 'Bonus',  delta: +100, balanceAfter: user.points - 85,    expiry: monthsFromNow(8),  note: 'Chúc mừng lên hạng Silver' },
-                { date: daysAgo(90), type: 'Redeem', delta: -500, balanceAfter: user.points - 185,   expiry: null,              note: 'Đổi voucher giảm 50.000đ' },
-            ],
+            fullName:     me.full_name,
+            tier:         me.tier_level.toLowerCase(),   // "Gold" → "gold"
+            points:       me.total_points,
+            monthlySpend: parseFloat(me.total_spent_3m || 0) * 1000,
+            visitCount:   me.visit_count,
         };
     }
 
-    async function apiRedeemPoints(option) {
-        // const res = await fetch('https://api.autowashpro.vn/v1/loyalty/redeem', {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        //     body: JSON.stringify({ optionId: option.id })
-        // });
-        // if (!res.ok) throw new Error((await res.json()).message);
-        // return res.json();
+    async function apiGetHistory() {
+        const [washRes, pointsRes] = await Promise.all([
+            fetch('http://localhost:8000/api/bookings/history', {
+                headers: { Authorization: `Bearer ${token}` }
+            }),
+            fetch('http://localhost:8000/api/loyalty/points', {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+        ]);
 
-        // ── Fake (demo) ──
-        await new Promise(r => setTimeout(r, 500));
-        if (user.points < option.cost) throw new Error('Bạn không đủ điểm để đổi ưu đãi này.');
-        user.points -= option.cost;
+        const washData   = await washRes.json();
+        const pointsData = await pointsRes.json();
+
+        // Map booking history → format loyalty.js cần
+        const washHistory = (Array.isArray(washData) ? washData : []).map(b => ({
+            date:         b.completed_at ? b.completed_at.split('T')[0] : b.created_at.split('T')[0],
+            plate:        '—',   // backend không trả plate trong booking list
+            service:      b.service_type,
+            amount:       parseFloat(b.amount_charged || 0),
+            pointsEarned: b.points_earned || 0,
+            status:       b.status.toLowerCase(),
+        }));
+
+       // Map point history → format loyalty.js cần
+        const pointsHistory = (Array.isArray(pointsData) ? pointsData : []).map(p => ({
+            date:         p.created_at.split('T')[0],
+            type:         p.transaction_type,
+            delta:        p.points_delta,
+            balanceAfter: p.balance_after,
+            expiry:       p.expiry_date || null,
+            note:         p.notes || '—',
+        }));
+
+        return { washHistory, pointsHistory };
+    }
+
+    async function apiRedeemPoints(option) {
+        const res = await fetch('http://localhost:8000/api/loyalty/redeem', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                points_cost:        option.cost,
+                reward_description: option.title
+            })
+        });
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.detail || 'Đổi thưởng thất bại');
+        }
+        const data = await res.json();
+        // Cập nhật lại user trong localStorage
+        user.points = data.remaining_points;
         localStorage.setItem('aw_user', JSON.stringify(user));
-        return { success: true, newBalance: user.points };
+        return { success: true, newBalance: data.remaining_points };
     }
 
     // ── 3. Render: Hero / Tier badge / Progress ─────────────

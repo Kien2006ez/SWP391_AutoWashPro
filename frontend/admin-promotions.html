@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Khuyến mãi - AutoWash Pro</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; display: flex; background: #f4f7f6; }
+        .sidebar { width: 240px; background: #2c3e50; color: white; height: 100vh; position: fixed; padding-top: 20px; }
+        .sidebar h2 { text-align: center; margin-bottom: 30px; font-size: 16px; }
+        .sidebar a { display: block; color: white; padding: 14px 20px; text-decoration: none; border-bottom: 1px solid #34495e; font-size: 14px; }
+        .sidebar a:hover, .sidebar a.active { background: #34495e; border-left: 4px solid #3498db; }
+        .sidebar a.danger { color: #e74c3c; margin-top: 20px; }
+        .main-content { flex: 1; margin-left: 240px; padding: 24px; }
+        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 16px 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .btn-new { background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-radius: 8px; overflow: hidden; }
+        th, td { padding: 13px 15px; text-align: left; border-bottom: 1px solid #eee; font-size: 13px; }
+        th { background: #f8f9fa; color: #2c3e50; font-weight: 600; }
+        tr:hover { background: #f9f9f9; }
+        .badge { padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge.active   { background: #e8f8f0; color: #27ae60; }
+        .badge.inactive { background: #f0f0f0; color: #888; }
+        .btn-deactivate { background: #e74c3c; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; }
+        .loading { text-align: center; padding: 40px; color: #888; }
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-overlay.show { display: flex; }
+        .modal { background: white; border-radius: 12px; padding: 28px; width: 460px; max-height: 90vh; overflow-y: auto; }
+        .modal h3 { margin-bottom: 18px; font-size: 16px; }
+        .fg { margin-bottom: 14px; }
+        .fg label { display: block; font-size: 12px; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+        .fg input, .fg select { width: 100%; padding: 10px 12px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; font-family: inherit; }
+        .fg input:focus, .fg select:focus { border-color: #27ae60; }
+        .tier-checks { display: flex; gap: 12px; flex-wrap: wrap; }
+        .tier-checks label { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 400; text-transform: none; letter-spacing: 0; cursor: pointer; }
+        .modal-btns { display: flex; gap: 10px; margin-top: 4px; }
+        .modal-btns button { flex: 1; padding: 11px; border-radius: 8px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .btn-cancel-modal { background: #eee; color: #555; }
+        .btn-confirm { background: #27ae60; color: white; }
+        .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <h2>🚗 AutoWash Pro</h2>
+    <a href="dashboard.html">📊 Bảng điều khiển</a>
+    <a href="admin-bookings.html">📅 Quản lý đặt lịch</a>
+    <a href="admin-customers.html">👥 Khách hàng</a>
+    <a href="admin-promotions.html" class="active">🎁 Khuyến mãi</a>
+    <a href="admin-analytics.html">📈 Thống kê</a>
+    <a href="#" onclick="doLogout()" class="danger">🚪 Đăng xuất</a>
+</div>
+
+<div class="main-content">
+    <div class="header">
+        <h2>🎁 Quản lý khuyến mãi</h2>
+        <button class="btn-new" onclick="openNewModal()">+ Tạo khuyến mãi mới</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr><th>Tên</th><th>Loại</th><th>Giá trị</th><th>Target tier</th><th>Từ ngày</th><th>Đến ngày</th><th>Đã dùng</th><th>Trạng thái</th><th>Thao tác</th></tr>
+        </thead>
+        <tbody id="tbody">
+            <tr><td colspan="9" class="loading">Đang tải...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="modal-overlay" id="modal">
+    <div class="modal">
+        <h3>🎁 Tạo khuyến mãi mới</h3>
+        <div class="fg">
+            <label>Tên khuyến mãi</label>
+            <input type="text" id="p-title" placeholder="VD: Ưu đãi cuối tuần Silver+"/>
+        </div>
+        <div class="fg">
+            <label>Loại khuyến mãi</label>
+            <select id="p-type">
+                <option value="Discount">Giảm giá (%)</option>
+                <option value="BonusPoints">Nhân điểm</option>
+                <option value="FreeWash">Rửa xe miễn phí</option>
+            </select>
+        </div>
+        <div class="fg">
+            <label>Giá trị (% hoặc hệ số nhân)</label>
+            <input type="number" id="p-value" placeholder="VD: 10 (=10%)" min="0" step="0.1"/>
+        </div>
+        <div class="fg">
+            <label>Áp dụng cho hạng (chọn ít nhất 1)</label>
+            <div class="tier-checks">
+                <label><input type="checkbox" id="t-member" value="Member"/> Member</label>
+                <label><input type="checkbox" id="t-silver" value="Silver" checked/> Silver</label>
+                <label><input type="checkbox" id="t-gold"   value="Gold"   checked/> Gold</label>
+                <label><input type="checkbox" id="t-plat"   value="Platinum" checked/> Platinum</label>
+            </div>
+        </div>
+        <div class="row2">
+            <div class="fg">
+                <label>Từ ngày</label>
+                <input type="date" id="p-start"/>
+            </div>
+            <div class="fg">
+                <label>Đến ngày</label>
+                <input type="date" id="p-end"/>
+            </div>
+        </div>
+        <div class="fg">
+            <label>Giới hạn số lần dùng (để trống = không giới hạn)</label>
+            <input type="number" id="p-limit" placeholder="Không giới hạn" min="1"/>
+        </div>
+        <div class="modal-btns">
+            <button class="btn-cancel-modal" onclick="closeModal()">Hủy</button>
+            <button class="btn-confirm" onclick="createPromo()">Tạo khuyến mãi</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const API = 'http://localhost:8000';
+function getToken() { return localStorage.getItem('aw_admin_token'); }
+function authHdrs() { return { 'Content-Type':'application/json','Authorization':`Bearer ${getToken()}` }; }
+function doLogout() { localStorage.removeItem('aw_admin_token'); location.href='admin-login.html'; }
+function checkAuth() { if (!getToken()) location.href='admin-login.html'; }
+
+async function loadPromos() {
+    const tbody = document.getElementById('tbody');
+    try {
+        const res  = await fetch(`${API}/api/admin/promotions?active_only=false`, { headers: authHdrs() });
+        if (res.status===401) { doLogout(); return; }
+        const data = await res.json();
+
+        if (!data.length) {
+            tbody.innerHTML = '<tr><td colspan="9" class="loading">Chưa có khuyến mãi nào</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = data.map(p => `
+            <tr>
+                <td><strong>${p.title}</strong></td>
+                <td>${p.promo_type}</td>
+                <td>${p.value}</td>
+                <td>${(p.target_tier||[]).join(', ')}</td>
+                <td>${p.start_date}</td>
+                <td>${p.end_date}</td>
+                <td>${p.usage_count}${p.usage_limit ? '/'+p.usage_limit : ''}</td>
+                <td><span class="badge ${p.is_active ? 'active':'inactive'}">${p.is_active ? 'Đang chạy':'Đã tắt'}</span></td>
+                <td>${p.is_active
+                    ? `<button class="btn-deactivate" onclick="deactivate('${p.promotion_id}')">Tắt</button>`
+                    : '—'}</td>
+            </tr>
+        `).join('');
+    } catch(e) {
+        tbody.innerHTML = `<tr><td colspan="9" class="loading" style="color:red">Lỗi: ${e.message}</td></tr>`;
+    }
+}
+
+function openNewModal() {
+    document.getElementById('p-title').value = '';
+    document.getElementById('p-value').value = '';
+    document.getElementById('p-limit').value = '';
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('p-start').value = today;
+    document.getElementById('p-end').value   = '';
+    document.getElementById('modal').classList.add('show');
+}
+
+function closeModal() { document.getElementById('modal').classList.remove('show'); }
+
+async function createPromo() {
+    const title = document.getElementById('p-title').value.trim();
+    const type  = document.getElementById('p-type').value;
+    const value = parseFloat(document.getElementById('p-value').value);
+    const start = document.getElementById('p-start').value;
+    const end   = document.getElementById('p-end').value;
+    const limit = document.getElementById('p-limit').value;
+
+    const tiers = ['t-member','t-silver','t-gold','t-plat']
+        .filter(id => document.getElementById(id).checked)
+        .map(id => document.getElementById(id).value);
+
+    if (!title)           { alert('Nhập tên khuyến mãi'); return; }
+    if (isNaN(value)||value<=0) { alert('Nhập giá trị hợp lệ'); return; }
+    if (!start||!end)     { alert('Chọn ngày bắt đầu và kết thúc'); return; }
+    if (end < start)      { alert('Ngày kết thúc phải sau ngày bắt đầu'); return; }
+    if (!tiers.length)    { alert('Chọn ít nhất 1 hạng áp dụng'); return; }
+
+    try {
+        const res = await fetch(`${API}/api/admin/promotions`, {
+            method: 'POST', headers: authHdrs(),
+            body: JSON.stringify({
+                title, promo_type: type, value, target_tier: tiers,
+                start_date: start, end_date: end,
+                usage_limit: limit ? parseInt(limit) : null
+            })
+        });
+        if (!res.ok) { const e=await res.json(); alert('Lỗi: '+e.detail); return; }
+        closeModal();
+        alert('✅ Tạo khuyến mãi thành công!');
+        loadPromos();
+    } catch(e) { alert('Lỗi: '+e.message); }
+}
+
+async function deactivate(id) {
+    if (!confirm('Tắt khuyến mãi này?')) return;
+    try {
+        const res = await fetch(`${API}/api/admin/promotions/${id}/deactivate`, {
+            method:'PATCH', headers:authHdrs()
+        });
+        if (!res.ok) { const e=await res.json(); alert('Lỗi: '+e.detail); return; }
+        loadPromos();
+    } catch(e) { alert('Lỗi: '+e.message); }
+}
+
+checkAuth();
+loadPromos();
+</script>
+</body>
+</html>
