@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Khách hàng - AutoWash Pro</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; display: flex; background: #f4f7f6; }
+        .sidebar { width: 240px; background: #2c3e50; color: white; height: 100vh; position: fixed; padding-top: 20px; }
+        .sidebar h2 { text-align: center; margin-bottom: 30px; font-size: 16px; }
+        .sidebar a { display: block; color: white; padding: 14px 20px; text-decoration: none; border-bottom: 1px solid #34495e; font-size: 14px; }
+        .sidebar a:hover, .sidebar a.active { background: #34495e; border-left: 4px solid #3498db; }
+        .sidebar a.danger { color: #e74c3c; margin-top: 20px; }
+        .main-content { flex: 1; margin-left: 240px; padding: 24px; }
+        .header { background: white; padding: 16px 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .search-bar { display: flex; gap: 12px; margin-bottom: 16px; }
+        .search-bar input { flex: 1; padding: 10px 14px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; }
+        .search-bar input:focus { border-color: #3498db; }
+        .btn-search { padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-radius: 8px; overflow: hidden; }
+        th, td { padding: 13px 15px; text-align: left; border-bottom: 1px solid #eee; font-size: 13px; }
+        th { background: #f8f9fa; color: #2c3e50; font-weight: 600; }
+        tr:hover { background: #f9f9f9; }
+        .tier-badge { padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .tier-Member   { background: #f0f0f0; color: #666; }
+        .tier-Silver   { background: #f0f5ff; color: #4a6fa5; }
+        .tier-Gold     { background: #fffbea; color: #b7791f; }
+        .tier-Platinum { background: #f5f0ff; color: #6b46c1; }
+        .btn-adjust { background: #e67e22; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; }
+        .loading { text-align: center; padding: 40px; color: #888; }
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-overlay.show { display: flex; }
+        .modal { background: white; border-radius: 12px; padding: 28px; width: 380px; }
+        .modal h3 { margin-bottom: 14px; }
+        .modal label { display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; }
+        .modal input, .modal textarea { width: 100%; padding: 10px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 14px; margin-bottom: 14px; font-family: inherit; }
+        .modal-btns { display: flex; gap: 10px; }
+        .modal-btns button { flex: 1; padding: 10px; border-radius: 8px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .btn-cancel-modal { background: #eee; color: #555; }
+        .btn-confirm { background: #e67e22; color: white; }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <h2>🚗 AutoWash Pro</h2>
+    <a href="dashboard.html">📊 Bảng điều khiển</a>
+    <a href="admin-bookings.html">📅 Quản lý đặt lịch</a>
+    <a href="admin-customers.html" class="active">👥 Khách hàng</a>
+    <a href="admin-promotions.html">🎁 Khuyến mãi</a>
+    <a href="admin-analytics.html">📈 Thống kê</a>
+    <a href="#" onclick="doLogout()" class="danger">🚪 Đăng xuất</a>
+</div>
+
+<div class="main-content">
+    <div class="header"><h2>👥 Danh sách khách hàng</h2></div>
+
+    <div class="search-bar">
+        <input type="text" id="search-input" placeholder="Tìm theo tên hoặc số điện thoại..." onkeydown="if(event.key==='Enter')loadCustomers()"/>
+        <button class="btn-search" onclick="loadCustomers()">🔍 Tìm kiếm</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr><th>Họ tên</th><th>Số ĐT</th><th>Hạng</th><th>Điểm hiện tại</th><th>Điểm tích lũy</th><th>Lượt rửa</th><th>Thao tác</th></tr>
+        </thead>
+        <tbody id="tbody">
+            <tr><td colspan="7" class="loading">Đang tải...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="modal-overlay" id="modal">
+    <div class="modal">
+        <h3>🎯 Điều chỉnh điểm thủ công</h3>
+        <p style="font-size:13px;color:#888;margin-bottom:16px">Khách hàng: <strong id="modal-customer-name"></strong></p>
+        <label>Số điểm điều chỉnh (âm để trừ, dương để cộng)</label>
+        <input type="number" id="points-delta" placeholder="VD: 100 hoặc -50"/>
+        <label>Lý do bắt buộc (BR-27)</label>
+        <textarea id="adjust-reason" rows="3" placeholder="Nhập lý do điều chỉnh..."></textarea>
+        <div class="modal-btns">
+            <button class="btn-cancel-modal" onclick="closeModal()">Hủy</button>
+            <button class="btn-confirm" onclick="confirmAdjust()">Xác nhận</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const API = 'http://localhost:8000';
+let currentCustomerId = null;
+
+function getToken() { return localStorage.getItem('aw_admin_token'); }
+function authHdrs() { return { 'Content-Type':'application/json','Authorization':`Bearer ${getToken()}` }; }
+function doLogout() { localStorage.removeItem('aw_admin_token'); location.href='admin-login.html'; }
+function checkAuth() { if (!getToken()) location.href='admin-login.html'; }
+
+async function loadCustomers() {
+    const search = document.getElementById('search-input').value.trim();
+    let url = `${API}/api/admin/customers`;
+    if (search) url += `?search=${encodeURIComponent(search)}`;
+
+    const tbody = document.getElementById('tbody');
+    tbody.innerHTML = '<tr><td colspan="7" class="loading">Đang tải...</td></tr>';
+
+    try {
+        const res  = await fetch(url, { headers: authHdrs() });
+        if (res.status===401) { doLogout(); return; }
+        const data = await res.json();
+
+        if (!data.length) {
+            tbody.innerHTML = '<tr><td colspan="7" class="loading">Không tìm thấy khách hàng</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = data.map(c => `
+            <tr>
+                <td><strong>${c.full_name}</strong></td>
+                <td>${c.phone_number}</td>
+                <td><span class="tier-badge tier-${c.tier_level}">${c.tier_level}</span></td>
+                <td><strong>${Number(c.total_points).toLocaleString('vi-VN')}</strong></td>
+                <td>${Number(c.lifetime_points).toLocaleString('vi-VN')}</td>
+                <td>${c.visit_count}</td>
+                <td>
+                    <button class="btn-adjust" onclick="openModal('${c.customer_id}','${c.full_name}')">
+                        ✏️ Điều chỉnh điểm
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    } catch(e) {
+        tbody.innerHTML = `<tr><td colspan="7" class="loading" style="color:red">Lỗi: ${e.message}</td></tr>`;
+    }
+}
+
+function openModal(id, name) {
+    currentCustomerId = id;
+    document.getElementById('modal-customer-name').textContent = name;
+    document.getElementById('points-delta').value = '';
+    document.getElementById('adjust-reason').value = '';
+    document.getElementById('modal').classList.add('show');
+}
+
+function closeModal() {
+    document.getElementById('modal').classList.remove('show');
+    currentCustomerId = null;
+}
+
+async function confirmAdjust() {
+    const delta  = parseInt(document.getElementById('points-delta').value);
+    const reason = document.getElementById('adjust-reason').value.trim();
+    if (isNaN(delta) || delta===0) { alert('Nhập số điểm hợp lệ'); return; }
+    if (!reason) { alert('Lý do điều chỉnh là bắt buộc (BR-27)'); return; }
+
+    try {
+        const res = await fetch(
+            `${API}/api/admin/customers/${currentCustomerId}/points?points_delta=${delta}&reason=${encodeURIComponent(reason)}`,
+            { method:'PATCH', headers:authHdrs() }
+        );
+        if (!res.ok) { const e=await res.json(); alert('Lỗi: '+e.detail); return; }
+        const data = await res.json();
+        closeModal();
+        alert(`✅ Điều chỉnh thành công! Số dư mới: ${Number(data.new_balance).toLocaleString('vi-VN')} điểm`);
+        loadCustomers();
+    } catch(e) { alert('Lỗi: '+e.message); }
+}
+
+checkAuth();
+loadCustomers();
+</script>
+</body>
+</html>

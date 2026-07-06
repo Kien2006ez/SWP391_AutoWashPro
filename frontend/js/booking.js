@@ -177,8 +177,7 @@ function nextStep() {
     if (currentStep < totalSteps) {
         goToStep(currentStep + 1);
     } else {
-        // Gửi dữ liệu — hiện tại chỉ alert, sau gắn backend vào đây
-        alert('Đặt lịch thành công! Chúng tôi sẽ liên hệ bạn trong vòng 30 phút.');
+    await submitBooking();
     }
 }
 
@@ -189,3 +188,38 @@ function prevStep() {
 
 // INIT
 goToStep(1);
+
+async function submitBooking() {
+    // Mapping service type sang enum backend
+    const serviceMap = {
+        'ruaxe': 'Basic',
+        'noithat': 'Premium',
+        'ceramic': 'Deluxe',
+        // nếu chọn nhiều service → lấy cái đầu tiên (backend chỉ nhận 1)
+    };
+
+    try {
+        // Lấy vehicle_id từ user đã đăng nhập
+        const vehicles = await getVehicles();
+        if (!vehicles.length) {
+            alert('Bạn chưa liên kết biển số xe. Vui lòng cập nhật trong hồ sơ.');
+            return;
+        }
+        const vehicle_id = vehicles[0].vehicle_id;
+
+        const service_type = serviceMap[bookingData.services[0]] || 'Basic';
+
+        await createBooking(
+            vehicle_id,
+            bookingData.date,
+            bookingData.time + ':00', // format HH:MM:SS
+            service_type
+        );
+
+        alert('🎉 Đặt lịch thành công! SMS xác nhận đã được gửi.');
+        window.location.href = 'loyalty.html';
+
+    } catch(e) {
+        alert('Lỗi đặt lịch: ' + e.message);
+    }
+}

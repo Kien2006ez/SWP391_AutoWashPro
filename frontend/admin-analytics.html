@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thống kê - AutoWash Pro</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; display: flex; background: #f4f7f6; }
+        .sidebar { width: 240px; background: #2c3e50; color: white; height: 100vh; position: fixed; padding-top: 20px; }
+        .sidebar h2 { text-align: center; margin-bottom: 30px; font-size: 16px; }
+        .sidebar a { display: block; color: white; padding: 14px 20px; text-decoration: none; border-bottom: 1px solid #34495e; font-size: 14px; }
+        .sidebar a:hover, .sidebar a.active { background: #34495e; border-left: 4px solid #3498db; }
+        .sidebar a.danger { color: #e74c3c; margin-top: 20px; }
+        .main-content { flex: 1; margin-left: 240px; padding: 24px; }
+        .header { background: white; padding: 16px 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .filters { display: flex; gap: 12px; margin-bottom: 20px; align-items: center; }
+        .filters input { padding: 9px 14px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; }
+        .btn-load { padding: 9px 20px; background: #3498db; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .btn-export { padding: 9px 20px; background: #27ae60; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; margin-left: auto; }
+        .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-top: 4px solid #3498db; text-align: center; }
+        .card.green { border-top-color: #27ae60; }
+        .card.purple { border-top-color: #8e44ad; }
+        .card h3 { font-size: 13px; color: #7f8c8d; margin-bottom: 10px; }
+        .card p { font-size: 24px; font-weight: bold; color: #2c3e50; }
+        .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .box h3 { font-size: 15px; color: #2c3e50; margin-bottom: 16px; }
+        .tier-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; font-size: 14px; }
+        .tier-row:last-child { border-bottom: none; }
+        .tier-dot { width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; display: inline-block; }
+        .service-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; font-size: 14px; }
+        .service-row:last-child { border-bottom: none; }
+        .loading { text-align: center; padding: 40px; color: #888; font-size: 14px; }
+        .export-section { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-top: 20px; }
+        .export-section h3 { font-size: 15px; color: #2c3e50; margin-bottom: 14px; }
+        .export-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn-dl { padding: 9px 18px; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; color: white; }
+        .btn-dl.tx { background: #3498db; }
+        .btn-dl.tc { background: #e67e22; }
+        .btn-dl.bk { background: #8e44ad; }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <h2>🚗 AutoWash Pro</h2>
+    <a href="dashboard.html">📊 Bảng điều khiển</a>
+    <a href="admin-bookings.html">📅 Quản lý đặt lịch</a>
+    <a href="admin-customers.html">👥 Khách hàng</a>
+    <a href="admin-promotions.html">🎁 Khuyến mãi</a>
+    <a href="admin-analytics.html" class="active">📈 Thống kê</a>
+    <a href="#" onclick="doLogout()" class="danger">🚪 Đăng xuất</a>
+</div>
+
+<div class="main-content">
+    <div class="header"><h2>📈 Thống kê & Analytics</h2></div>
+
+    <div class="filters">
+        <label style="font-size:13px;font-weight:600;color:#555">Từ:</label>
+        <input type="date" id="from-date"/>
+        <label style="font-size:13px;font-weight:600;color:#555">Đến:</label>
+        <input type="date" id="to-date"/>
+        <button class="btn-load" onclick="loadAnalytics()">📊 Xem thống kê</button>
+    </div>
+
+    <div class="cards">
+        <div class="card">
+            <h3>Tổng doanh thu</h3>
+            <p id="stat-revenue">—</p>
+        </div>
+        <div class="card green">
+            <h3>Số lượt rửa hoàn thành</h3>
+            <p id="stat-bookings">—</p>
+        </div>
+        <div class="card purple">
+            <h3>Doanh thu trung bình/lượt</h3>
+            <p id="stat-avg">—</p>
+        </div>
+    </div>
+
+    <div class="row2">
+        <div class="box">
+            <h3>Phân bố hạng khách hàng</h3>
+            <div id="tier-dist"><div class="loading">Chưa có dữ liệu</div></div>
+        </div>
+        <div class="box">
+            <h3>Doanh thu theo dịch vụ</h3>
+            <div id="service-rev"><div class="loading">Chưa có dữ liệu</div></div>
+        </div>
+    </div>
+
+    <div class="export-section">
+        <h3>📥 Export dữ liệu nghiên cứu (CSV)</h3>
+        <p style="font-size:13px;color:#888;margin-bottom:14px">Tải dữ liệu ẩn danh từ khoảng thời gian đã chọn ở trên</p>
+        <div class="export-btns">
+            <button class="btn-dl tx" onclick="exportCSV('transaction')">📊 Transaction Log</button>
+            <button class="btn-dl tc" onclick="exportCSV('tier_change')">🏆 Tier Change Log</button>
+            <button class="btn-dl bk" onclick="exportCSV('booking')">📅 Booking Log</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const API = 'http://localhost:8000';
+function getToken() { return localStorage.getItem('aw_admin_token'); }
+function authHdrs() { return { 'Content-Type':'application/json','Authorization':`Bearer ${getToken()}` }; }
+function doLogout() { localStorage.removeItem('aw_admin_token'); location.href='admin-login.html'; }
+function checkAuth() { if (!getToken()) location.href='admin-login.html'; }
+
+// Set ngày mặc định: 1 tháng trước đến hôm nay
+const today     = new Date();
+const lastMonth = new Date(today.getFullYear(), today.getMonth()-1, today.getDate());
+document.getElementById('to-date').value   = today.toISOString().split('T')[0];
+document.getElementById('from-date').value = lastMonth.toISOString().split('T')[0];
+
+async function loadAnalytics() {
+    const from = document.getElementById('from-date').value;
+    const to   = document.getElementById('to-date').value;
+    if (!from||!to) { alert('Chọn khoảng thời gian'); return; }
+
+    try {
+        const res  = await fetch(`${API}/api/admin/analytics?from_date=${from}&to_date=${to}`, {
+            headers: authHdrs()
+        });
+        if (res.status===401) { doLogout(); return; }
+        const data = await res.json();
+
+        document.getElementById('stat-revenue').textContent  =
+            Number(data.total_revenue_vnd||0).toLocaleString('vi-VN') + 'đ';
+        document.getElementById('stat-bookings').textContent =
+            data.total_completed_bookings || 0;
+        document.getElementById('stat-avg').textContent      =
+            Number(data.average_order_value_vnd||0).toLocaleString('vi-VN') + 'đ';
+
+        // Tier distribution
+        const tierColors = { Member:'#94a3b8', Silver:'#60a5fa', Gold:'#fbbf24', Platinum:'#a78bfa' };
+        const tierDist   = data.tier_distribution || {};
+        document.getElementById('tier-dist').innerHTML =
+            Object.entries(tierDist).map(([tier, count]) => `
+                <div class="tier-row">
+                    <span><span class="tier-dot" style="background:${tierColors[tier]||'#ccc'}"></span>${tier}</span>
+                    <strong>${count} khách hàng</strong>
+                </div>
+            `).join('') || '<div class="loading">Không có dữ liệu</div>';
+
+        // Revenue by service
+        const svcRev = data.revenue_by_service_type || {};
+        document.getElementById('service-rev').innerHTML =
+            Object.entries(svcRev).map(([svc, rev]) => `
+                <div class="service-row">
+                    <span>${svc}</span>
+                    <strong>${Number(rev).toLocaleString('vi-VN')}đ</strong>
+                </div>
+            `).join('') || '<div class="loading">Không có dữ liệu</div>';
+
+    } catch(e) {
+        alert('Lỗi tải thống kê: ' + e.message);
+    }
+}
+
+async function exportCSV(type) {
+    const from = document.getElementById('from-date').value;
+    const to   = document.getElementById('to-date').value;
+    if (!from||!to) { alert('Chọn khoảng thời gian trước'); return; }
+
+    const url = `${API}/api/admin/export/csv?from_date=${from}&to_date=${to}&log_type=${type}`;
+    try {
+        const res = await fetch(url, { headers: authHdrs() });
+        if (!res.ok) { alert('Không có dữ liệu để export'); return; }
+        const blob = await res.blob();
+        const a    = document.createElement('a');
+        a.href     = URL.createObjectURL(blob);
+        a.download = `${type}_log_${from}_${to}.csv`;
+        a.click();
+    } catch(e) { alert('Lỗi export: '+e.message); }
+}
+
+checkAuth();
+loadAnalytics();
+</script>
+</body>
+</html>
