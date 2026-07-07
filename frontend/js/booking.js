@@ -1,3 +1,17 @@
+// ════════════════════════════════════════════════════════════
+// BOOKING FLOW — đã sửa lỗi:
+// 1. SyntaxError: await trong function không async (nextStep)
+// 2. Không kiểm tra đăng nhập trước khi cho làm form
+// 3. Khung giờ tĩnh (07:00 sai, thiếu 12:00) → giờ lấy động từ backend
+// 4. serviceMap chỉ map 3/6 dịch vụ, chỉ gửi dịch vụ đầu tiên
+// 5. Luôn lấy vehicles[0] thay vì xe đúng theo biển số khách nhập,
+//    và bỏ phí thông tin "size xe" đã thu ở bước 1
+// ════════════════════════════════════════════════════════════
+
+// Bắt buộc đăng nhập mới cho đặt lịch (trước đây thiếu, khiến khách
+// điền hết 6 bước mới biết chưa đăng nhập)
+requireLogin();
+
 let currentStep = 1;
 const totalSteps = 6;
 const bookingData = {
@@ -32,6 +46,23 @@ const serviceLabels = {
     danlanh: 'Vệ Sinh Dàn Lạnh'
 };
 
+// Backend (ServiceType enum) chỉ có 3 mức: Basic / Premium / Deluxe.
+// Map đủ cả 6 dịch vụ hiển thị sang 1 trong 3 mức đó (trước đây thiếu
+// 3 dịch vụ, bị âm thầm rơi về "Basic").
+const serviceTierMap = {
+    ruaxe: 'Basic',
+    noithat: 'Premium',
+    khoangmay: 'Premium',
+    danlanh: 'Premium',
+    danhbong: 'Deluxe',
+    ceramic: 'Deluxe'
+};
+const TIER_RANK = { Basic: 0, Premium: 1, Deluxe: 2 };
+
+// Giờ hoạt động phải khớp với backend (DAILY_TIME_SLOTS = 8h → 17h).
+// Không còn hardcode danh sách giờ trong HTML nữa — nếu backend đổi
+// giờ hoạt động, frontend tự cập nhật theo vì lấy trực tiếp từ API.
+
 // SIZE CARDS
 document.querySelectorAll('.size-card').forEach(card => {
     card.addEventListener('click', () => {
@@ -42,6 +73,10 @@ document.querySelectorAll('.size-card').forEach(card => {
 });
 
 // BRANCH OPTIONS
+// Lưu ý: backend hiện KHÔNG có cột lưu chi nhánh (branch) trong bảng
+// bookings, nên giá trị này mới chỉ dùng để hiển thị lại cho khách xem
+// ở bước xác nhận, chưa được gửi lên/lưu ở server. Muốn lưu thật cần
+// bổ sung cột "branch" ở model Booking + schema + migration phía backend.
 document.querySelectorAll('.branch-option').forEach(opt => {
     opt.addEventListener('click', () => {
         document.querySelectorAll('.branch-option').forEach(o => o.classList.remove('selected'));
@@ -63,14 +98,50 @@ document.querySelectorAll('.service-option').forEach(opt => {
     });
 });
 
-// TIME SLOTS
-document.querySelectorAll('.time-slot').forEach(slot => {
-    slot.addEventListener('click', () => {
-        document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
-        slot.classList.add('selected');
-        bookingData.time = slot.dataset.time;
-    });
-});
+// TIME SLOTS — giờ được render động, xem renderTimeSlots()
+const timeGrid = document.getElementById('time-grid');
+
+function timeToLabel(hhmmss) {
+    // "08:00:00" -> "08:00"
+    return hhmmss.slice(0, 5);
+}
+
+async function renderTimeSlots() {
+    if (!bookingData.date) return;
+    timeGrid.innerHTML = '<p class="slot-loading">Đang tải khung giờ còn trống...</p>';
+    bookingData.time = '';
+
+    try {
+        const slots = await getAvailableSlots(bookingData.date);
+        timeGrid.innerHTML = '';
+
+        if (!slots.length) {
+            timeGrid.innerHTML = '<p class="slot-empty">Không có khung giờ nào cho ngày này.</p>';
+            return;
+        }
+
+        slots.forEach(slot => {
+            const label = timeToLabel(slot.time_slot);
+            const full = slot.capacity_remaining <= 0;
+
+            const el = document.createElement('div');
+            el.className = 'time-slot' + (full ? ' full' : '');
+            el.dataset.time = label;
+            el.textContent = full ? `${label} (Hết chỗ)` : label;
+
+            if (!full) {
+                el.addEventListener('click', () => {
+                    document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+                    el.classList.add('selected');
+                    bookingData.time = label;
+                });
+            }
+            timeGrid.appendChild(el);
+        });
+    } catch (e) {
+        timeGrid.innerHTML = '<p class="slot-empty">Không tải được khung giờ. Vui lòng thử lại.</p>';
+    }
+}
 
 // QUICK DATE
 function setDate(daysAhead) {
@@ -79,10 +150,12 @@ function setDate(daysAhead) {
     const formatted = d.toISOString().split('T')[0];
     document.getElementById('booking-date').value = formatted;
     bookingData.date = formatted;
+    renderTimeSlots();
 }
 
 document.getElementById('booking-date').addEventListener('change', function () {
     bookingData.date = this.value;
+    renderTimeSlots();
 });
 
 // VALIDATE từng bước
@@ -171,13 +244,16 @@ function goToStep(step) {
     document.querySelector('.booking-wrapper').scrollIntoView({ behavior: 'smooth' });
 }
 
-// NEXT
-function nextStep() {
+// NEXT — sửa lỗi: phải khai báo async vì có dùng await bên trong
+async function nextStep() {
     if (!validate(currentStep)) return;
     if (currentStep < totalSteps) {
         goToStep(currentStep + 1);
     } else {
-    await submitBooking();
+        const btnNext = document.getElementById('btn-next');
+        btnNext.disabled = true;
+        await submitBooking();
+        btnNext.disabled = false;
     }
 }
 
@@ -189,25 +265,35 @@ function prevStep() {
 // INIT
 goToStep(1);
 
+// Tìm xe theo biển số khách vừa nhập; nếu khách chưa có xe này trong
+// hồ sơ thì tự thêm mới bằng size đã chọn ở bước 1 (trước đây "size"
+// thu xong rồi bỏ luôn, không dùng vào việc gì).
+async function resolveVehicleId() {
+    const normalizedPlate = bookingData.plate.replace(/\s|-/g, '').toUpperCase();
+    const vehicles = await getVehicles();
+    const matched = vehicles.find(
+        v => v.license_plate.replace(/\s|-/g, '').toUpperCase() === normalizedPlate
+    );
+    if (matched) return matched.vehicle_id;
+
+    // Chưa có xe này trong hồ sơ -> tự liên kết xe mới với size đã chọn
+    const created = await addVehicle(bookingData.plate, bookingData.size, null);
+    return created.vehicle_id;
+}
+
 async function submitBooking() {
-    // Mapping service type sang enum backend
-    const serviceMap = {
-        'ruaxe': 'Basic',
-        'noithat': 'Premium',
-        'ceramic': 'Deluxe',
-        // nếu chọn nhiều service → lấy cái đầu tiên (backend chỉ nhận 1)
-    };
-
     try {
-        // Lấy vehicle_id từ user đã đăng nhập
-        const vehicles = await getVehicles();
-        if (!vehicles.length) {
-            alert('Bạn chưa liên kết biển số xe. Vui lòng cập nhật trong hồ sơ.');
-            return;
-        }
-        const vehicle_id = vehicles[0].vehicle_id;
+        const vehicle_id = await resolveVehicleId();
 
-        const service_type = serviceMap[bookingData.services[0]] || 'Basic';
+        // Nhiều dịch vụ có thể được chọn cùng lúc, nhưng backend chỉ
+        // nhận 1 ServiceType — lấy mức cao nhất trong các dịch vụ đã
+        // chọn thay vì chỉ lấy dịch vụ đầu tiên (tránh tính thiếu tiền/
+        // ghi sai loại dịch vụ khi khách chọn dịch vụ cao cấp không
+        // phải là dịch vụ đầu tiên được bấm).
+        const service_type = bookingData.services.reduce((best, s) => {
+            const tier = serviceTierMap[s] || 'Basic';
+            return TIER_RANK[tier] > TIER_RANK[best] ? tier : best;
+        }, 'Basic');
 
         await createBooking(
             vehicle_id,
@@ -219,7 +305,7 @@ async function submitBooking() {
         alert('🎉 Đặt lịch thành công! SMS xác nhận đã được gửi.');
         window.location.href = 'loyalty.html';
 
-    } catch(e) {
+    } catch (e) {
         alert('Lỗi đặt lịch: ' + e.message);
     }
 }

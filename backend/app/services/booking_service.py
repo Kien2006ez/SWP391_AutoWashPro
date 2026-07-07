@@ -96,6 +96,15 @@ def create_booking(
             f"Bạn chỉ được đặt đến ngày {max_date}."
         )
 
+    # Trước đây thiếu bước này: chỉ kiểm tra "còn chỗ trống" mà không
+    # kiểm tra giờ gửi lên có nằm trong khung giờ hoạt động hay không,
+    # nên có thể tạo booking vào giờ bất kỳ (vd 03:00, 23:00...).
+    if time_slot not in DAILY_TIME_SLOTS:
+        raise ValueError(
+            "Giờ đặt không hợp lệ. Chỉ nhận đặt lịch trong khung giờ hoạt động "
+            f"({DAILY_TIME_SLOTS[0].strftime('%H:%M')} - {DAILY_TIME_SLOTS[-1].strftime('%H:%M')})."
+        )
+
     if not is_slot_available(db, booking_date, time_slot):
         raise ValueError("Slot này đã đầy. Vui lòng chọn giờ khác.")
 

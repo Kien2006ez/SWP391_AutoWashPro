@@ -260,17 +260,11 @@
                         </div>
                         <div class="datetime-col">
                             <label>Chọn giờ</label>
-                            <div class="time-grid">
-                                <div class="time-slot" data-time="07:00">07:00</div>
-                                <div class="time-slot" data-time="08:00">08:00</div>
-                                <div class="time-slot" data-time="09:00">09:00</div>
-                                <div class="time-slot" data-time="10:00">10:00</div>
-                                <div class="time-slot" data-time="11:00">11:00</div>
-                                <div class="time-slot" data-time="13:00">13:00</div>
-                                <div class="time-slot" data-time="14:00">14:00</div>
-                                <div class="time-slot" data-time="15:00">15:00</div>
-                                <div class="time-slot" data-time="16:00">16:00</div>
-                                <div class="time-slot" data-time="17:00">17:00</div>
+                            <!-- Giờ trước đây hardcode cứng (có 07:00 sai giờ hoạt động,
+                                 thiếu 12:00) -> giờ lấy động từ API /bookings/available-slots
+                                 để luôn khớp với giờ hoạt động thật + số chỗ còn trống bên backend. -->
+                            <div class="time-grid" id="time-grid">
+                                <p class="slot-empty">Vui lòng chọn ngày trước.</p>
                             </div>
                         </div>
                     </div>

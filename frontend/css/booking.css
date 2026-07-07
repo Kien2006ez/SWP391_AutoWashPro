@@ -454,6 +454,23 @@
     color: #fff;
 }
 
+.time-slot.full {
+    background: #f5f5f5;
+    border-color: #eee;
+    color: #bbb;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+.slot-loading,
+.slot-empty {
+    grid-column: 1 / -1;
+    font-size: 13px;
+    color: #888;
+    text-align: center;
+    padding: 12px 0;
+}
+
 /* INFO FORM */
 .info-form {
     display: flex;
