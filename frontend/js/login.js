@@ -1,266 +1,265 @@
 // ============================================================
-// AutoWash Pro — js/login.js
+// login.js — AutoWash Pro
+// Flow: Phone → Gửi OTP → Nhập OTP → Đăng nhập / Đăng ký
 // ============================================================
 
-document.addEventListener('DOMContentLoaded', () => {
+const API = 'http://localhost:8000';
 
-    // Nếu đã đăng nhập → về trang chủ
-    if (localStorage.getItem('aw_token')) {
-        const next = new URLSearchParams(location.search).get('next');
-        location.href = next ? decodeURIComponent(next) : 'index.html';
-        return;
-    }
-
-    // Đọc ?tab=register từ URL
-    const urlTab = new URLSearchParams(location.search).get('tab');
-    if (urlTab === 'register') switchTab('register');
-
-    // ── Elements ───────────────────────────────────────────
-    const alertBox  = document.getElementById('alert-box');
-    const btnLogin  = document.getElementById('btn-login');
-    const btnReg    = document.getElementById('btn-reg');
-    const spinLogin = document.getElementById('spin-login');
-    const spinReg   = document.getElementById('spin-reg');
-
-    // ── Tab switch ─────────────────────────────────────────
-    window.switchTab = function (tab) {
-        const isLogin = tab === 'login';
-        document.getElementById('tab-login').classList.toggle('active',  isLogin);
-        document.getElementById('tab-reg').classList.toggle('active',   !isLogin);
-        document.getElementById('panel-login').classList.toggle('active', isLogin);
-        document.getElementById('panel-reg').classList.toggle('active', !isLogin);
-        clearAlert();
-    };
-
-    document.getElementById('tab-login').addEventListener('click', () => switchTab('login'));
-    document.getElementById('tab-reg').addEventListener('click',   () => switchTab('register'));
-
-    // ── Alert ──────────────────────────────────────────────
-    function showAlert(msg, type = 'err') {
-        alertBox.textContent = msg;
-        alertBox.className   = `alert-box show ${type}`;
-    }
-    function clearAlert() {
-        alertBox.className   = 'alert-box';
-        alertBox.textContent = '';
-    }
-
-    // ── Field helpers ──────────────────────────────────────
-    function setErr(id, show) {
-        const el = document.getElementById(id);
-        if (el) el.className = 'ferr' + (show ? ' show' : '');
-    }
-    function markInput(id, valid) {
-        const el = document.getElementById(id);
-        if (!el) return;
-        el.classList.toggle('err', !valid);
-        el.classList.toggle('ok',   valid && el.value.length > 0);
-    }
-
-    // ── Validators ─────────────────────────────────────────
-    const validPhone = v => /^0[3-9][0-9]{8}$/.test(v.replace(/\s/g, ''));
-    const validPw    = v => v.length >= 6;
-    const validName  = v => v.trim().length >= 2;
-
-    // ── Eye toggle ─────────────────────────────────────────
-    document.querySelectorAll('.eye-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const inp = document.getElementById(btn.dataset.target);
-            if (!inp) return;
-            inp.type        = inp.type === 'password' ? 'text' : 'password';
-            btn.textContent = inp.type === 'password' ? '👁' : '🙈';
-        });
-    });
-
-    // ── Password strength ──────────────────────────────────
-    document.getElementById('r-pw')?.addEventListener('input', e => {
-        const pw = e.target.value;
-        let score = 0;
-        if (pw.length >= 8)           score++;
-        if (/[A-Z]/.test(pw))        score++;
-        if (/[0-9]/.test(pw))        score++;
-        if (/[^A-Za-z0-9]/.test(pw)) score++;
-        const cfg = [
-            { w: '0%',   bg: 'transparent', label: '' },
-            { w: '25%',  bg: '#EF4444',     label: 'Yếu' },
-            { w: '55%',  bg: '#F97316',     label: 'Trung bình' },
-            { w: '80%',  bg: '#3B82F6',     label: 'Khá mạnh' },
-            { w: '100%', bg: '#16A34A',     label: 'Mạnh' },
-        ][score];
-        const bar  = document.getElementById('pw-bar');
-        const hint = document.getElementById('pw-hint');
-        if (bar)  { bar.style.width = cfg.w; bar.style.background = cfg.bg; }
-        if (hint) hint.textContent = cfg.label;
-    });
-
-    // ── Live blur validation ───────────────────────────────
-    [
-        ['l-phone', 'l-phone-err', validPhone],
-        ['l-pw',    'l-pw-err',    validPw],
-        ['r-name',  'r-name-err',  validName],
-        ['r-phone', 'r-phone-err', validPhone],
-        ['r-pw',    'r-pw-err',    validPw],
-    ].forEach(([id, errId, fn]) => {
-        document.getElementById(id)?.addEventListener('blur', () => {
-            const el = document.getElementById(id);
-            const v  = fn(el.value);
-            setErr(errId, !v);
-            markInput(id, v);
-        });
-    });
-
-    // ── Loading state ──────────────────────────────────────
-    function setLoading(btnEl, spinEl, on, label = '') {
-        btnEl.disabled = on;
-        btnEl.querySelector('.btn-text').textContent = on ? 'Đang xử lý...' : label;
-        spinEl.className = on ? 'btn-spin show' : 'btn-spin';
-    }
-
-    // ── Save session ───────────────────────────────────────
-    function saveSession(data) {
-        localStorage.setItem('aw_token',  data.token);
-        localStorage.setItem('aw_user',   JSON.stringify(data.user));
-        localStorage.setItem('aw_expire', (Date.now() + (data.expiresIn || 86400) * 1000).toString());
-    }
-
-    // ── API calls ──────────────────────────────────────────
-    // Thay 2 hàm fake bên dưới bằng fetch thật khi có backend
-
-    async function apiLogin(phone, otp_code) {
-    return await login(phone, otp_code); // gọi hàm từ api.js
+// ── Helpers ──────────────────────────────────────────────────
+function validPhone(p) {
+    return /^0[0-9]{9}$/.test(p.replace(/\s/g, ''));
 }
 
-    async function apiRegister(payload) {
-    return await register(
-        payload.phone,
-        payload.otp_code,
-        payload.fullName
-    );
+function showAlert(msg, type = 'error') {
+    const el = document.getElementById('alert-box');
+    el.textContent = msg;
+    el.className = 'alert-box ' + (type === 'ok' ? 'alert-ok' : 'alert-err');
+    el.style.display = 'block';
+    setTimeout(() => { el.style.display = 'none'; }, 4000);
 }
 
-    // Thêm vào login.js — xử lý flow OTP thật
-    let otpRequested = false;
+function clearAlert() {
+    const el = document.getElementById('alert-box');
+    if (el) { el.style.display = 'none'; el.textContent = ''; }
+}
 
-    btnLogin?.addEventListener('click', async () => {
-        clearAlert();
-        const phone = document.getElementById('l-phone').value.trim();
+function setLoading(btnId, spinId, loading) {
+    const btn  = document.getElementById(btnId);
+    const spin = document.getElementById(spinId);
+    if (!btn) return;
+    btn.disabled = loading;
+    if (spin) spin.style.display = loading ? 'inline-block' : 'none';
+}
 
-        if (!validPhone(phone)) {
+function setErr(id, show) {
+    const el = document.getElementById(id);
+    if (el) el.style.display = show ? 'block' : 'none';
+}
+
+// ── Tab switching ─────────────────────────────────────────────
+function switchTab(tab) {
+    clearAlert();
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + (tab === 'login' ? 'login' : 'reg')).classList.add('active');
+    document.getElementById('panel-' + (tab === 'login' ? 'login' : 'reg')).classList.add('active');
+}
+
+// ============================================================
+// ĐĂNG NHẬP — Bước 1: Gửi OTP
+// ============================================================
+document.getElementById('btn-send-otp')?.addEventListener('click', async () => {
+    clearAlert();
+    const phone = document.getElementById('l-phone').value.replace(/\s/g, '');
+    if (!validPhone(phone)) {
         setErr('l-phone-err', true);
         return;
-        }
+    }
+    setErr('l-phone-err', false);
+    setLoading('btn-send-otp', 'spin-otp', true);
 
-        // Bước 1: Chưa gửi OTP → gửi OTP
-        if (!otpRequested) {
-            setLoading(btnLogin, spinLogin, true);
-            try {
-                await requestOtp(phone); // gọi API thật
-                otpRequested = true;
-                // Đổi input password thành input OTP
-                document.getElementById('l-pw').type = 'text';
-                document.getElementById('l-pw').placeholder = 'Nhập mã OTP 6 số';
-                btnLogin.querySelector('.btn-text').textContent = 'Xác nhận OTP';
-                showAlert('Đã gửi OTP về số ' + phone + '. Kiểm tra Terminal VS Code để xem mã (SMS mock).', 'ok');
-            } catch(e) {
-                showAlert(e.message);
-            }
-            setLoading(btnLogin, spinLogin, false, 'Đăng nhập');
-            return;
-        }
+    try {
+        const res = await fetch(`${API}/api/auth/otp/request`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone_number: phone })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Gửi OTP thất bại');
 
-        // Bước 2: Đã gửi OTP → login
-        const otp = document.getElementById('l-pw').value.trim();
-        if (otp.length !== 6) {
-            showAlert('Nhập đúng 6 chữ số OTP');
-            return;
-        }
+        // Hiện bước 2
+        document.getElementById('otp-section').style.display = 'block';
+        document.getElementById('btn-login').style.display   = 'block';
+        document.getElementById('btn-send-otp').style.display = 'none';
+        document.getElementById('l-phone').disabled = true;
+        showAlert(`Đã gửi OTP về ${phone}. Kiểm tra Terminal VS Code để lấy mã.`, 'ok');
 
-        setLoading(btnLogin, spinLogin, true);
-        try {
-            const data = await login(phone, otp);
-            saveSession(data.access_token, { phone });
-            // Lấy thêm thông tin user
-            const me = await getMe();
-            saveSession(data.access_token, me);
-            showAlert('Đăng nhập thành công! 🎉', 'ok');
-            setTimeout(() => { location.href = 'loyalty.html'; }, 800);
-        } catch(e) {
-            showAlert(e.message || 'OTP sai hoặc đã hết hạn');
-            setLoading(btnLogin, spinLogin, false, 'Đăng nhập');
-        }
-    });
-
-    // Điền lại số điện thoại đã ghi nhớ
-    const remembered = localStorage.getItem('aw_remember');
-    if (remembered) {
-        const el = document.getElementById('l-phone');
-        if (el) el.value = remembered;
-        const rm = document.getElementById('l-remember');
-        if (rm) rm.checked = true;
+    } catch(e) {
+        showAlert(e.message);
     }
 
-// ── ĐĂNG KÝ ────────────────────────────────────────────
-    btnReg?.addEventListener('click', async () => {
-        clearAlert();
-        const name  = document.getElementById('r-name').value.trim();
-        const phone = document.getElementById('r-phone').value.trim();
-        const pw    = document.getElementById('r-pw').value;
-        const pw2   = document.getElementById('r-pw2').value;
-        const plate = document.getElementById('r-plate').value.trim().toUpperCase();
-        const vtype = document.getElementById('r-vtype').value;
-        const terms = document.getElementById('r-terms').checked;
+    setLoading('btn-send-otp', 'spin-otp', false);
+});
 
-        let ok = true;
+// ── Reset về bước 1 (gửi lại OTP)
+function resetOtpStep() {
+    document.getElementById('otp-section').style.display  = 'none';
+    document.getElementById('btn-login').style.display    = 'none';
+    document.getElementById('btn-send-otp').style.display = 'block';
+    document.getElementById('l-phone').disabled = false;
+    document.getElementById('l-otp').value = '';
+    clearAlert();
+}
 
-        // Validate từng field
-        [
-            [name,  validName,  'r-name',  'r-name-err'],
-            [phone, validPhone, 'r-phone', 'r-phone-err'],
-            [pw,    validPw,    'r-pw',    'r-pw-err'],
-        ].forEach(([val, fn, inputId, errId]) => {
-            const v = fn(val);
-            setErr(errId, !v);
-            markInput(inputId, v);
-            if (!v) ok = false;
+// ── Bước 2: Nhập OTP → Đăng nhập
+document.getElementById('btn-login')?.addEventListener('click', async () => {
+    clearAlert();
+    const phone = document.getElementById('l-phone').value.replace(/\s/g, '');
+    const otp   = document.getElementById('l-otp').value.trim();
+
+    if (otp.length !== 6) {
+        setErr('l-otp-err', true);
+        return;
+    }
+    setErr('l-otp-err', false);
+    setLoading('btn-login', 'spin-login', true);
+
+    try {
+        // Bước 1: Login lấy token
+        const loginRes = await fetch(`${API}/api/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone_number: phone, otp_code: otp })
+        });
+        const loginData = await loginRes.json();
+        if (!loginRes.ok) throw new Error(loginData.detail || 'OTP sai hoặc đã hết hạn');
+
+        const token = loginData.access_token;
+
+        // Bước 2: Lấy thông tin customer bằng token vừa nhận
+        const meRes = await fetch(`${API}/api/auth/me`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        const meData = await meRes.json();
+        if (!meRes.ok) throw new Error('Không lấy được thông tin tài khoản');
+
+        // Lưu vào localStorage
+        localStorage.setItem('aw_token', token);
+        localStorage.setItem('aw_user', JSON.stringify(meData));
+
+        showAlert(`Chào mừng ${meData.full_name}! 🎉`, 'ok');
+        setTimeout(() => { location.href = 'loyalty.html'; }, 800);
+
+    } catch(e) {
+        showAlert(e.message);
+        setLoading('btn-login', 'spin-login', false);
+    }
+});
+
+// ============================================================
+// ĐĂNG KÝ — Bước 1: Gửi OTP
+// ============================================================
+document.getElementById('btn-send-otp-reg')?.addEventListener('click', async () => {
+    clearAlert();
+    const name  = document.getElementById('r-name').value.trim();
+    const phone = document.getElementById('r-phone').value.replace(/\s/g, '');
+
+    if (name.length < 2)  { setErr('r-name-err', true);  return; }
+    if (!validPhone(phone)) { setErr('r-phone-err', true); return; }
+    setErr('r-name-err', false);
+    setErr('r-phone-err', false);
+
+    setLoading('btn-send-otp-reg', 'spin-otp-reg', true);
+
+    try {
+        const res = await fetch(`${API}/api/auth/otp/request`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone_number: phone })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Gửi OTP thất bại');
+
+        document.getElementById('otp-section-reg').style.display = 'block';
+        document.getElementById('btn-reg').style.display         = 'block';
+        document.getElementById('btn-send-otp-reg').style.display = 'none';
+        document.getElementById('r-phone').disabled = true;
+        document.getElementById('r-name').disabled  = true;
+        showAlert(`Đã gửi OTP về ${phone}. Kiểm tra Terminal VS Code.`, 'ok');
+
+    } catch(e) {
+        showAlert(e.message);
+    }
+
+    setLoading('btn-send-otp-reg', 'spin-otp-reg', false);
+});
+
+// ── Bước 2: Nhập OTP → Tạo tài khoản
+document.getElementById('btn-reg')?.addEventListener('click', async () => {
+    clearAlert();
+    const name  = document.getElementById('r-name').value.trim();
+    const phone = document.getElementById('r-phone').value.replace(/\s/g, '');
+    const otp   = document.getElementById('r-otp').value.trim();
+    const plate = document.getElementById('r-plate').value.trim();
+    const vtype = document.getElementById('r-vtype').value;
+
+    if (otp.length !== 6) { setErr('r-otp-err', true); return; }
+    setErr('r-otp-err', false);
+
+    setLoading('btn-reg', 'spin-reg', true);
+
+    try {
+        // Đăng ký tài khoản
+        const regRes = await fetch(`${API}/api/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                phone_number: phone,
+                otp_code:     otp,
+                full_name:    name
+            })
+        });
+        const regData = await regRes.json();
+        if (!regRes.ok) throw new Error(regData.detail || 'Đăng ký thất bại');
+
+        // Tự động login sau khi đăng ký
+        // Request OTP mới để login
+        await fetch(`${API}/api/auth/otp/request`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone_number: phone })
         });
 
-        // Confirm password
-        const pwMatch = pw === pw2 && pw.length > 0;
-        setErr('r-pw2-err', !pwMatch);
-        markInput('r-pw2', pwMatch);
-        if (!pwMatch) ok = false;
+        showAlert('Đăng ký thành công! Đang chuyển sang đăng nhập...', 'ok');
 
-        // Biển số (nếu có nhập)
-        if (plate) {
-            const plateOk = /^[0-9]{2}[A-Z]-?[0-9]{3}\.?[0-9]{2}$/i.test(plate)
-                         || /^[0-9]{2}[A-Z][0-9]-?[0-9]{4,5}$/i.test(plate);
-            setErr('r-plate-err', !plateOk);
-            markInput('r-plate', plateOk);
-            if (!plateOk) ok = false;
-        }
+        // Chuyển sang tab login với số điện thoại đã điền sẵn
+        setTimeout(() => {
+            switchTab('login');
+            document.getElementById('l-phone').value = phone;
+            showAlert('Vui lòng nhập OTP mới để đăng nhập. Kiểm tra Terminal VS Code.', 'ok');
+            // Hiện bước 2 luôn
+            document.getElementById('otp-section').style.display = 'block';
+            document.getElementById('btn-login').style.display   = 'block';
+            document.getElementById('btn-send-otp').style.display = 'none';
+            document.getElementById('l-phone').disabled = true;
+        }, 1500);
 
-        if (!terms) { showAlert('Vui lòng đồng ý với điều khoản sử dụng.'); return; }
-        if (!ok)    return;
+    } catch(e) {
+        showAlert(e.message);
+        setLoading('btn-reg', 'spin-reg', false);
+    }
+});
 
-        setLoading(btnReg, spinReg, true);
-        try {
-            const payload = { fullName: name, phone, password: pw, vehicleType: vtype };
-            if (plate) payload.licensePlate = plate;
+// ── Thêm biển số xe sau khi đăng ký (nếu có điền)
+async function addVehicleAfterRegister(token, plate, vtype) {
+    if (!plate) return;
+    try {
+        await fetch(`${API}/api/customers/me/vehicles`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                license_plate: plate,
+                vehicle_type:  vtype || 'scooter',
+                is_primary:    true
+            })
+        });
+    } catch(e) {
+        console.log('Thêm xe thất bại (không ảnh hưởng đăng ký):', e);
+    }
+}
 
-            const data = await apiRegister(payload);
-            saveSession(data);
-            showAlert(`Đăng ký thành công! Chào mừng ${data.user.fullName} 🎉`, 'ok');
-            setTimeout(() => { location.href = 'booking.html'; }, 1200);
-        } catch (e) {
-            showAlert(e.message || 'Đăng ký thất bại. Vui lòng thử lại.');
-            setLoading(btnReg, spinReg, false, 'Tạo tài khoản');
-        }
-    });
-
-    // ── Enter key ──────────────────────────────────────────
-    document.addEventListener('keydown', e => {
-        if (e.key !== 'Enter') return;
-        if (document.getElementById('panel-login').classList.contains('active')) btnLogin?.click();
-        else btnReg?.click();
+// ── Eye button toggle password (giữ lại nếu có)
+document.querySelectorAll('.eye-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const target = document.getElementById(btn.dataset.target);
+        if (!target) return;
+        target.type = target.type === 'password' ? 'text' : 'password';
+        btn.textContent = target.type === 'password' ? '👁' : '🙈';
     });
 });
