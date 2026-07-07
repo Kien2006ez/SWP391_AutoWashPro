@@ -5,6 +5,17 @@
 
 const API = 'http://localhost:8000';
 
+// ── Nếu đã đăng nhập rồi thì khỏi hiện lại trang login ─────────
+// (đọc ?next= để biết quay lại trang nào, mặc định loyalty.html)
+function getNextUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('next') || 'loyalty.html';
+}
+
+if (localStorage.getItem('aw_token')) {
+    window.location.href = getNextUrl();
+}
+
 // ── Helpers ──────────────────────────────────────────────────
 function validPhone(p) {
     return /^0[0-9]{9}$/.test(p.replace(/\s/g, ''));
@@ -131,7 +142,9 @@ document.getElementById('btn-login')?.addEventListener('click', async () => {
         localStorage.setItem('aw_user', JSON.stringify(meData));
 
         showAlert(`Chào mừng ${meData.full_name}! 🎉`, 'ok');
-        setTimeout(() => { location.href = 'loyalty.html'; }, 800);
+        // Quay lại đúng trang khách đang muốn vào trước khi bị yêu cầu đăng nhập
+        // (booking.html, loyalty.html...), thay vì luôn ép về loyalty.html
+        setTimeout(() => { location.href = getNextUrl(); }, 800);
 
     } catch(e) {
         showAlert(e.message);

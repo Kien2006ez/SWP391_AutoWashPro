@@ -64,9 +64,8 @@ document.addEventListener('DOMContentLoaded', () => {
     user.monthlySpend = user.monthlySpend ?? 0;
     user.visitCount   = user.visitCount ?? 0;
 
-    document.getElementById('header-auth-btn').innerHTML =
-        `<i class="fa-solid fa-user"></i> ${user.fullName || 'Tài khoản'}`;
-    document.getElementById('header-auth-btn').href = 'loyalty.html';
+    // Nút header (tên tài khoản + đăng xuất) đã được xử lý chung bởi
+    // js/header-auth.js — load cùng lúc với file này, không cần lặp lại ở đây.
 
     // ── 2. API layer ───────────────────────────────────────
     // Thay các hàm fake bên dưới bằng fetch thật khi backend sẵn sàng

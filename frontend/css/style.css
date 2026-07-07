@@ -89,6 +89,31 @@ nav ul li a:hover {
     color: #fff;
 }
 
+/* HEADER AUTH (đăng nhập / tài khoản + đăng xuất) */
+.header-auth {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 7px;
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    font-size: 15px;
+    transition: .2s;
+}
+
+.header-logout-btn:hover {
+    background: #ff6200;
+    color: #fff;
+}
+
 /* HERO */
 .hero {
     position: relative;
