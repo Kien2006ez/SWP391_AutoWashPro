@@ -1,5 +1,7 @@
-## Core latex/pdflatex auxiliary files:
+# Python virtual environment
 venv/
+.venv/
+
 __pycache__/
 .env
 *.aux
@@ -14,6 +16,7 @@ __pycache__/
 *.cb
 *.cb2
 .*.lb
+
 
 
 ## Intermediate documents:

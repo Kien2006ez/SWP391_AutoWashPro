@@ -177,45 +177,57 @@ Cấu trúc thư mục Backend ứng dụng \textbf{FastAPI} được tổ chứ
 
 \begin{verbatim}
 SWP391_AutoWashPro/
-`-- backend/
-    |-- requirement.txt      # Thu vien phu thuoc (fastapi, uvicorn, sqlalchemy,
-    |                         #   python-jose, passlib, bcrypt, apscheduler...)
-    `-- app/
-        |-- main.py           # Diem khoi chay ung dung FastAPI, include cac router
-        |-- database.py       # Khoi tao SQLAlchemy engine, SessionLocal, get_db()
-        |-- dependencies.py   # Dependency get_current_user() giai ma & xac thuc JWT
-        |-- models.py         # Cac lop SQLAlchemy Model (users, vehicles, bookings...)
-        |-- schemas.py        # Cac lop Pydantic Schema validate request/response
-        |
-        |-- routers/          # Tang dieu huong API Endpoints (tuong duong Controller)
-        |   |-- auth.py           # Feature 1: POST /auth/register, /auth/login
-        |   |-- bookings.py       # Feature 3: CRUD /bookings
-        |   |-- loyalty.py        # Feature 4: diem thuong, doi thuong
-        |   |-- promotions.py     # Feature 5: CRUD khuyen mai
-        |   |-- research.py       # Feature 7: nhan du lieu khao sat/log
-        |   `-- admin/             # Feature 6: quan tri he thong
-        |       |-- users.py          # Quan ly tai khoan khach hang
-        |       |-- bookings.py       # Dieu phoi lich hen tai quay
-        |       |-- services.py       # Quan ly danh muc dich vu
-        |       |-- promotions.py     # Quan ly khuyen mai (Admin)
-        |       `-- dashboard.py      # Thong ke doanh thu, bao cao
-        |
-        `-- services/          # Tang xu ly nghiep vu (Business Logic)
-            |-- auth_service.py       # Dang ky, dang nhap, sinh/xac thuc JWT
-            |-- booking_service.py    # Xu ly logic dat/huy lich hen
-            |-- loyalty_engine.py     # Tinh diem, Cron Job nang/ha hang (M4)
-            |-- notification_service.py
-            `-- admin/                # Service rieng cho phan he Admin (M3/M6)
-                |-- user_service.py
-                |-- booking_service.py
-                |-- service_service.py
-                |-- promotion_service.py
-                `-- dashboard_service.py
+|-- backend/
+|   |-- requirement.txt       # Danh sach thu vien phu thuoc
+|   |
+|   |-- alembic/              # Quan ly migration Database
+|   |
+|   `-- app/
+|       |-- main.py           # Diem khoi dong FastAPI
+|       |
+|       |-- core/             # Cau hinh va bao mat
+|       |   |-- config.py
+|       |   |-- deps.py
+|       |   `-- security.py
+|       |
+|       |-- db/               # Ket noi Database
+|       |   `-- session.py
+|       |
+|       |-- jobs/             # Scheduler/Cron Jobs
+|       |   `-- scheduler.py
+|       |
+|       |-- models/           # SQLAlchemy Models
+|       |   |-- admin_user.py
+|       |   |-- booking.py
+|       |   |-- customer.py
+|       |   |-- loyalty.py
+|       |   |-- otp.py
+|       |   |-- promotion.py
+|       |   `-- research_log.py
+|       |
+|       |-- schemas/          # Pydantic Schemas
+|       |   |-- auth_schema.py
+|       |   |-- booking_schema.py
+|       |   |-- customer_schema.py
+|       |   |-- loyalty_schema.py
+|       |   `-- promotion_schema.py
+|       |
+|       |-- routers/          # API Endpoints
+|       |   |-- auth.py
+|       |   |-- bookings.py
+|       |   |-- loyalty.py
+|       |   |-- promotions.py
+|       |   |-- research.py
+|       |   |-- vehicles.py
+|       |   `-- admin.py
+|       |
+|       `-- services/         # Business Logic
+|
+|-- frontend/                 # HTML, CSS, JavaScript
+|
+`-- report/                   # Tai lieu SRS, SDD, ...
 \end{verbatim}
 
-\textit{Ghi chú: một số tệp trong cây thư mục trên (\texttt{models.py}, \texttt{schemas.py}, \texttt{dependencies.py}, \texttt{database.py} và toàn bộ \texttt{routers/admin/}, \texttt{services/admin/}) hiện đang trong giai đoạn triển khai, chưa hoàn thiện mã nguồn tại thời điểm biên soạn báo cáo.}
-
-% =================================================================
 \newpage
 \section{Thiết kế sơ đồ tuần tự chi tiết (Sequence Diagrams)}
 Sơ đồ tuần tự mô tả chi tiết dòng chảy tương tác theo trục thời gian giữa Client, Server API, Hệ thống Cơ sở dữ liệu và Tác vụ chạy ngầm đối với 4 quy trình nghiệp vụ cốt lõi của hệ thống.
