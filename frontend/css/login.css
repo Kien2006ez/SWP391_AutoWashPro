@@ -51,22 +51,6 @@ input, select { font-family: inherit; }
     background: #1a1a1a; /* fallback khi chưa có ảnh */
 }
 
-/* 
-   PLACEHOLDER — Xoá phần này khi có ảnh thật
-   Thay bằng: background-image: url('../assets/images/your-photo.jpg');
-*/
-.img-placeholder {
-    position: absolute;
-    inset: 0;
-    background:
-        linear-gradient(
-            135deg,
-            #0f2027 0%,
-            #203a43 40%,
-            #2c5364 100%
-        );
-    /* Khi có ảnh thật, xoá class này và dùng thẻ <img> hoặc background-image */
-}
 
 /* Khi dùng thẻ <img> thật */
 .image-col img {
